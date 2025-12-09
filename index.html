@@ -14,7 +14,6 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
-    /* ... (ВЕСЬ ВАШ CSS ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ) ... */
     :root {
       --color-primary: #0000aa;
       --color-primary-light: rgba(0, 0, 170, 0.08);
@@ -316,7 +315,6 @@
         position: relative !important; 
         top: auto;
         left: auto;
-        /* FIXED WIDTH SAFE FOR MOBILE PDF GENERATION */
         width: 750px !important; 
         max-width: 750px !important;
         margin: 0 !important;
@@ -330,7 +328,6 @@
     /* Print Layout Shared Styles */
     .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 3px solid var(--color-primary); padding-bottom: 20px; }
     .print-logo { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 32px; color: var(--color-primary); }
-    /* Slightly reduced font size for title to prevent clipping */
     .print-title { font-size: 18px; font-weight: 700; text-transform: uppercase; color: #333; }
     
     .print-manager { margin-bottom: 30px; padding: 15px; background: #F8F9FC; border-radius: 12px; border: 1px solid #eee; }
@@ -340,7 +337,6 @@
     /* Grouping Logic Styles */
     .print-section { 
         margin-bottom: 20px; 
-        /* Allow breaking but prevent abrupt cuts inside block */
         page-break-inside: auto; 
         break-inside: auto;
         border: 1px solid #e0e0e0;
@@ -355,7 +351,6 @@
     .print-table { width: 100%; border-collapse: collapse; }
     .print-table td { padding: 10px 5px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
     
-    /* PREVENT ROWS FROM SPLITTING */
     .print-table tr { 
         page-break-inside: avoid; 
         break-inside: avoid; 
@@ -432,7 +427,6 @@
 <div class="bg-cloud"></div>
 
 <div class="layout-wrapper">
-  <!-- (СТРУКТУРА СТРАНИЦЫ ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ, ТОЛЬКО JS) -->
   
   <!-- Left Column: Options -->
   <div class="main-column">
@@ -1337,6 +1331,12 @@
 </div>
 
 <script>
+    // ИНИЦИАЛИЗАЦИЯ TELEGRAM
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand(); // на всякий случай развернем
+    }
+
     /* --- HELPER: COLLECT ALL FORM DATA --- */
     function getFormData() {
         const data = {};
@@ -1585,25 +1585,27 @@
         }
 
         // --- NEW TELEGRAM LOGIC ---
-        // 1. Check if we are inside Telegram WebApp
-        const isTelegram = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) || navigator.userAgent.includes('Telegram');
+        // Robust check for Telegram environment
+        const isTelegramApp = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) || navigator.userAgent.includes('Telegram');
         
-        // 2. If inside Telegram AND not already forced to print (via URL param)
-        // We redirect to system browser
-        if (isTelegram && !forcePrint) {
-            const formData = getFormData();
-            const serialized = btoa(encodeURIComponent(JSON.stringify(formData)));
-            const currentUrl = window.location.href.split('?')[0]; // Base URL
-            const newUrl = `${currentUrl}?data=${serialized}&print=true`;
-            
-            // Use Telegram API to open link in external browser
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-                window.Telegram.WebApp.openLink(newUrl, { try_instant_view: false });
-            } else {
-                // Fallback (might not work in strictly sandboxed webviews, but worth a try)
-                window.open(newUrl, '_system');
+        // If inside Telegram AND not already forced to print (via URL param from redirection)
+        if (isTelegramApp && !forcePrint) {
+            // Confirm with user
+            if(confirm("Для печати документ будет открыт в системном браузере. Открыть?")) {
+                const formData = getFormData();
+                const serialized = btoa(encodeURIComponent(JSON.stringify(formData)));
+                const currentUrl = window.location.href.split('?')[0]; // Base URL
+                const newUrl = `${currentUrl}?data=${serialized}&print=true`;
+                
+                // Use Telegram API to open link in external browser
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+                    window.Telegram.WebApp.openLink(newUrl, { try_instant_view: false });
+                } else {
+                    // Fallback
+                    window.open(newUrl, '_system');
+                }
             }
-            return; // Stop execution here
+            return; // Stop execution here to prevent local PDF generation failure
         }
         // --- END TELEGRAM LOGIC ---
 
@@ -1847,22 +1849,19 @@
             }
         });
 
-        // STANDARD BROWSER PRINT (If not forced telegram redirect)
-        // Check for mobile layout to adjust print mode
+        // DETECT ENVIRONMENT FOR PDF GENERATION
         const isMobile = window.matchMedia('(max-width: 900px)').matches;
-
+        
+        // If not Telegram (logic handled above), then normal mobile browser or desktop
         if (isMobile) {
-            // For standard mobile browsers (not Telegram Webview)
-            // Use html2pdf to avoid layout issues
-            // BUT: If Telegram Redirect Logic was skipped (because not in telegram), 
-            // we use the PDF generator.
-            
-             const element = document.getElementById('print-area');
+            // Use html2pdf
+            const element = document.getElementById('print-area');
+            // Add specific class to force print styles visible on screen for capture
             document.body.classList.add('pdf-mode');
-            window.scrollTo(0, 0); 
+            window.scrollTo(0, 0); // Scroll to top for correct canvas rendering
             
             const opt = {
-              margin:       5, 
+              margin:       5, // top, left, bottom, right in mm
               filename:     'KP_UIS.pdf',
               image:        { type: 'jpeg', quality: 0.98 },
               html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, scrollX: 0, windowWidth: 794 },
@@ -1870,14 +1869,14 @@
               pagebreak:    { mode: ['css', 'legacy'] } 
             };
 
+            // Small delay to ensure render
             setTimeout(() => {
                 html2pdf().set(opt).from(element).save().then(function(){
                     document.body.classList.remove('pdf-mode');
                 });
             }, 100);
-
         } else {
-            // Desktop
+            // Desktop standard print
             setTimeout(() => {
                 window.print();
             }, 300);
@@ -1886,7 +1885,7 @@
 
 
     /* --- BUSINESS LOGIC --- */
-    // ... (Остальной код логики калькулятора остается без изменений) ...
+    // ... (ОСТАВЬТЕ ВСЮ ЛОГИКУ НИЖЕ БЕЗ ИЗМЕНЕНИЙ, ОНА КОПИРУЕТСЯ ИЗ ПРЕДЫДУЩЕГО ОТВЕТА) ...
 
     function resetForm() {
         document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
@@ -1920,17 +1919,44 @@
         return isNaN(val) ? 0 : val;
     }
     function getSelect(id) { return document.getElementById(id)?.value ?? ""; }
-    
-    // ... (весь блок formulaMap, rules, runCascade, updateTotals остается без изменений) ...
-    // Вставлю их сокращенно для целостности структуры, но код тот же
 
     const formulaMap = {
         VATS: { cost: () => getCheckbox("VATS") ? 1200 : 0 },
         VATSPRO: { cost: () => getCheckbox("VATSPRO") ? 2200 : 0 },
-        KolvoSotrudnikovVATS: { limit: () => { const val = getNumber("KolvoSotrudnikovVATS"); const vatspro = getCheckbox("VATSPRO"); return val < 4 ? 0 : (val - 3) * (vatspro ? 200 : 120); } },
-        DlitelnostHraneniyaVATS: { limit: () => { const ar = getSelect("DlitelnostHraneniyaAR"); const vats = getSelect("DlitelnostHraneniyaVATS"); const price = { "1 месяц": 500, "3 месяца": 1000, "6 месяцев": 1500, "1 год": 3000, "2 года": 5000, "4 года": 7000 }; if (!vats || vats === "0") return 0; if (!ar || ar === "0") return price[vats] || 0; if ((price[ar] || 0) > (price[vats] || 0)) return "учтено в KT"; return price[vats] || 0; } },
-        LiniyGrupovogoVizova: { limit: () => { const val = getNumber("LiniyGrupovogoVizova"); if (val < 4) return 0; if (val < 51) return (val - 3) * 190; return "уменьшите до 50"; } },
-        LiniyIshodyashihZvonkov: { limit: () => { const val = getNumber("LiniyIshodyashihZvonkov"); if (val < 31) return 0; if (val < 101) return (val - 30) * 190; return "уменьшите до 100"; } },
+        KolvoSotrudnikovVATS: {
+            limit: () => {
+                const val = getNumber("KolvoSotrudnikovVATS");
+                const vatspro = getCheckbox("VATSPRO");
+                return val < 4 ? 0 : (val - 3) * (vatspro ? 200 : 120);
+            }
+        },
+        DlitelnostHraneniyaVATS: {
+            limit: () => {
+                const ar = getSelect("DlitelnostHraneniyaAR");
+                const vats = getSelect("DlitelnostHraneniyaVATS");
+                const price = { "1 месяц": 500, "3 месяца": 1000, "6 месяцев": 1500, "1 год": 3000, "2 года": 5000, "4 года": 7000 };
+                if (!vats || vats === "0") return 0;
+                if (!ar || ar === "0") return price[vats] || 0;
+                if ((price[ar] || 0) > (price[vats] || 0)) return "учтено в KT";
+                return price[vats] || 0;
+            }
+        },
+        LiniyGrupovogoVizova: {
+            limit: () => {
+                const val = getNumber("LiniyGrupovogoVizova");
+                if (val < 4) return 0;
+                if (val < 51) return (val - 3) * 190;
+                return "уменьшите до 50";
+            }
+        },
+        LiniyIshodyashihZvonkov: {
+            limit: () => {
+                const val = getNumber("LiniyIshodyashihZvonkov");
+                if (val < 31) return 0;
+                if (val < 101) return (val - 30) * 190;
+                return "уменьшите до 100";
+            }
+        },
         KolvoSIPTrankov: { cost: () => { const val = getNumber("KolvoSIPTrankov"); return val < 1501 ? val * 400 : "уменьшите до 1500"; } },
         KanalnostSIPTrankov: { limit: () => { const val = getNumber("KanalnostSIPTrankov"); if (val < 31) return 0; if (val < 61) return 1000; if (val < 91) return 1500; if (val < 181) return 3000; return 0; } },
         KolvoSIPURI: { cost: () => { const val = getNumber("KolvoSIPURI"); return val < 1501 ? val * 100 : "уменьшите до 1500"; } },
@@ -1939,10 +1965,37 @@
         NomeraVATS: { cost: () => getNumber("NomeraVATS") * 300 },
         NomeraVATS8800: { cost: () => getNumber("NomeraVATS8800") * 590 },
         KolvoSvoihNomerov: { cost: () => { const val = getNumber("KolvoSvoihNomerov"); if (val < 1) return 0; if (val < 11) return val * 200; return 2000 + ((val - 10) * 100); } },
-        KolvoFMC: { cost: () => { const tarif = document.getElementById("TarifFMC")?.value || ""; const count = getNumber("KolvoFMC"); let price = 0; switch (tarif) { case "200 минут, 1Гб интернета": price = 790; break; case "600 минут, 5Гб интернета": price = 1290; break; case "800 минут, 10Гб интернета": price = 1990; break; case "2000 минут, 20Гб интернета": price = 4490; break; case "15 минут, 0,2Гб интернета": price = 390; break; } return price * count; } },
+        KolvoFMC: {
+            cost: () => {
+                const tarif = document.getElementById("TarifFMC")?.value || "";
+                const count = getNumber("KolvoFMC");
+                let price = 0;
+                switch (tarif) {
+                    case "200 минут, 1Гб интернета": price = 790; break;
+                    case "600 минут, 5Гб интернета": price = 1290; break;
+                    case "800 минут, 10Гб интернета": price = 1990; break;
+                    case "2000 минут, 20Гб интернета": price = 4490; break;
+                    case "15 минут, 0,2Гб интернета": price = 390; break;
+                }
+                return price * count;
+            }
+        },
         NomeraVATSVsego: { limit: () => { const val = getNumber("NomeraVATSVsego"); return val < 4 ? 0 : (val - 3) * 100; } },
         OMNI: { cost: () => getCheckbox("OMNI") ? 2600 : 0 },
-        KolvoSotrudnikovOMNI: { limit: () => { const val = getNumber("KolvoSotrudnikovOMNI"); if (val < 4) return 0; if (val < 21) return (val - 3) * 590; if (val < 31) return (val - 3) * 540; if (val < 41) return (val - 3) * 490; if (val < 101) return (val - 3) * 440; if (val < 201) return (val - 3) * 390; if (val < 1001) return (val - 3) * 340; if (val < 10001) return (val - 3) * 290; return "уменьшите до 10000"; } },
+        KolvoSotrudnikovOMNI: {
+            limit: () => {
+                const val = getNumber("KolvoSotrudnikovOMNI");
+                if (val < 4) return 0;
+                if (val < 21) return (val - 3) * 590;
+                if (val < 31) return (val - 3) * 540;
+                if (val < 41) return (val - 3) * 490;
+                if (val < 101) return (val - 3) * 440;
+                if (val < 201) return (val - 3) * 390;
+                if (val < 1001) return (val - 3) * 340;
+                if (val < 10001) return (val - 3) * 290;
+                return "уменьшите до 10000";
+            }
+        },
         KolvoWA: { limit: () => getNumber("KolvoWA") * 990 },
         KolvoWABA: { cost: () => getNumber("KolvoWABA") > 0 ? 4000 : 0, limit: () => getNumber("KolvoWABA") * 5000 },
         TgVkAvito: { cost: () => getCheckbox("TgVkAvito") ? "вкл" : 0 },
@@ -1950,11 +2003,34 @@
         AR: { cost: () => getCheckbox("AR") ? 2000 : 0 },
         KolvoSaitov: { limit: () => getNumber("KolvoSaitov") ? "вкл" : 0 },
         KolvoPolzovatelskihIstochnikov: { limit: () => { const val = getNumber("KolvoPolzovatelskihIstochnikov"); if (val === 250) return 1000; if (val === 500) return 2000; if (val === 5000) return 3000; return 0; } },
-        PaketTrafika: { limit: () => { const val = document.getElementById("PaketTrafika")?.value || ""; const num = parseInt(val); if (val === "безлимит") return 50000; if (num === 0 || num === 10000) return 0; if (num === 20000) return 1000; if (num === 50000) return 3500; if (num === 100000) return 7500; if (num === 200000) return 15000; if (num === 500000) return 30000; return 50000; } },
+        PaketTrafika: {
+            limit: () => {
+                const val = document.getElementById("PaketTrafika")?.value || "";
+                const num = parseInt(val);
+                if (val === "безлимит") return 50000;
+                if (num === 0 || num === 10000) return 0;
+                if (num === 20000) return 1000;
+                if (num === 50000) return 3500;
+                if (num === 100000) return 7500;
+                if (num === 200000) return 15000;
+                if (num === 500000) return 30000;
+                return 50000;
+            }
+        },
         KT: { cost: () => getCheckbox("KT") ? 1500 : 0 },
         NomeraKT: { cost: () => getNumber("NomeraKT") * 300 },
         NomeraKT8800: { cost: () => getNumber("NomeraKT8800") * 590 },
-        DlitelnostHraneniyaAR: { limit: () => { const values = { "0": 0, "1 месяц": 500, "3 месяца": 1000, "6 месяцев": 1500, "1 год": 3000, "2 года": 5000, "4 года": 7000 }; const vats = document.getElementById("DlitelnostHraneniyaVATS")?.value || ""; const ar = document.getElementById("DlitelnostHraneniyaAR")?.value || ""; if (ar === "0") return 0; const vatsVal = values[vats] ?? 0; const arVal = values[ar] ?? 0; return vatsVal >= arVal ? "учтено в ВАТС" : arVal; } },
+        DlitelnostHraneniyaAR: {
+            limit: () => {
+                const values = { "0": 0, "1 месяц": 500, "3 месяца": 1000, "6 месяцев": 1500, "1 год": 3000, "2 года": 5000, "4 года": 7000 };
+                const vats = document.getElementById("DlitelnostHraneniyaVATS")?.value || "";
+                const ar = document.getElementById("DlitelnostHraneniyaAR")?.value || "";
+                if (ar === "0") return 0;
+                const vatsVal = values[vats] ?? 0;
+                const arVal = values[ar] ?? 0;
+                return vatsVal >= arVal ? "учтено в ВАТС" : arVal;
+            }
+        },
         EmailTreking: { cost: () => document.getElementById("EmailTreking")?.value !== "нет" ? 2000 : 0, limit: () => document.getElementById("EmailTreking")?.value === "больше 100 шт." ? 1000 : 0 },
         KonstruktorOtchetov: { cost: () => getCheckbox("KonstruktorOtchetov") ? 4000 : 0 },
         AnalitikaProdaj: { cost: () => getCheckbox("AnalitikaProdaj") ? 3000 : 0 },
@@ -1967,51 +2043,497 @@
         AvtoperezvonPoZayavkam: { cost: () => getCheckbox("AvtoperezvonPoZayavkam") ? 1600 : 0 },
         VezdeKakDoma: { cost: () => getCheckbox("VezdeKakDoma") ? 2000 : 0 }
     };
-    
-    // ... (rules объект остается без изменений) ...
+
     const rules = {
-      VATS: (context) => { const val = getCheckbox("VATS"); if (val === true) { context.select("DlitelnostHraneniyaVATS", "1 неделя"); if (getNumber("KolvoSotrudnikovVATS") < 3) context.set("KolvoSotrudnikovVATS", 3); if (getNumber("LiniyGrupovogoVizova") < 3) context.set("LiniyGrupovogoVizova", 3); if (getNumber("LiniyIshodyashihZvonkov") < 30) context.set("LiniyIshodyashihZvonkov", 30); } else { context.set("KolvoSotrudnikovVATS", 0); context.set("LiniyGrupovogoVizova", 0); context.set("LiniyIshodyashihZvonkov", 0); context.set("KolvoSIPTrankov", 0); context.set("KolvoSIPURI", 0); context.set("KolvoSIPAkkauntov", 0); context.set("NomeraVATS", 0); context.set("NomeraVATS8800", 0); context.set("KolvoSvoihNomerov", 0); context.set("KolvoFMC", 0); context.set("VATSPRO", false); context.select("DlitelnostHraneniyaVATS", 0); context.select("KanalnostSIPTrankov", 0); context.select("KanalnostSIPAkkauntov", 0); context.select("TarifFMC", "нет"); context.select("RegionDostavki", "нет"); context.set("VneshnieATS", false); context.set("SpasenieKommunikatsiy", false); context.set("AvtoperezvonPoZayavkam", false); context.set("VezdeKakDoma", false); if (!getCheckbox("OMNI") && !getCheckbox("AnalitikaProdaj")) { context.set("AmoBitrix", false); } context.set("IntegraciyaOtraslevie", false); if ( getCheckbox("UvedomlenieOSobitiyah") === true && !getCheckbox("OMNI") && !getCheckbox("AR") ) { context.set("UvedomlenieOSobitiyah", false); } } },
-      VATSPRO: (context) => { if (getCheckbox("VATSPRO") && !getCheckbox("VATS")) { context.set("VATS", true); } },
-      KolvoSotrudnikovVATS: (context) => { const val = getNumber("KolvoSotrudnikovVATS"); if (val > 0 && !getCheckbox("VATS")) { context.set("VATS", true); } if (val > 0 && val < 3) { context.set("KolvoSotrudnikovVATS", 3); } if ( val === 0 && getNumber("KolvoSIPTrankov") === 0 && getNumber("KolvoSIPURI") === 0 && getNumber("KolvoSIPAkkauntov") === 0 && getCheckbox("VATS") === true ) { context.set("VATS", false); } },
-      DlitelnostHraneniyaVATS: (context) => { const val = document.getElementById("DlitelnostHraneniyaVATS")?.value; if (val !== "0" && !getCheckbox("VATS")) { context.set("VATS", true); } if (val === "0" && getCheckbox("VATS")) { context.select("DlitelnostHraneniyaVATS", "1 неделя"); } },
-      LiniyGrupovogoVizova: (context) => { const val = getNumber("LiniyGrupovogoVizova"); if (val > 0 && !getCheckbox("VATS")) { context.set("VATS", true); } if (val >= 0 && val < 3 && getCheckbox("VATS")) { context.set("LiniyGrupovogoVizova", 3); } },
-      LiniyIshodyashihZvonkov: (context) => { const val = getNumber("LiniyIshodyashihZvonkov"); if (val > 0 && !getCheckbox("VATS")) { context.set("VATS", true); } if (val >= 0 && val < 30 && getCheckbox("VATS")) { context.set("LiniyIshodyashihZvonkov", 30); } },
-      KolvoSIPTrankov: (context) => { const val = getNumber("KolvoSIPTrankov"); const kanalnost = document.getElementById("KanalnostSIPTrankov")?.value; if (val > 0) { if (!getCheckbox("VATS")) { context.set("VATS", true); } if (parseInt(kanalnost, 10) < 30) { context.select("KanalnostSIPTrankov", "30"); } } if ( val === 0 && getNumber("KolvoSotrudnikovVATS") === 0 && getNumber("KolvoSIPURI") === 0 && getNumber("KolvoSIPAkkauntov") === 0 && getCheckbox("VATS") === true ) { context.set("VATS", false); } if (val === 0 && kanalnost !== "0") { context.select("KanalnostSIPTrankov", "0"); } },
-      KanalnostSIPTrankov: (context) => { const val = document.getElementById("KanalnostSIPTrankov")?.value; if (val !== "0") { if (!getCheckbox("VATS")) { context.set("VATS", true); } if (getNumber("KolvoSIPTrankov") === 0) { context.set("KolvoSIPTrankov", 1); } } else { if (getNumber("KolvoSIPTrankov") !== 0) { context.set("KolvoSIPTrankov", 0); } } },
-      KolvoSIPURI: (context) => { const val = getNumber("KolvoSIPURI"); if (val > 0 && !getCheckbox("VATS")) { context.set("VATS", true); } if ( val === 0 && getNumber("KolvoSotrudnikovVATS") === 0 && getNumber("KolvoSIPTrankov") === 0 && getNumber("KolvoSIPAkkauntov") === 0 && getCheckbox("VATS") === true ) { context.set("VATS", false); } },
-      KolvoSIPAkkauntov: (context) => { const val = getNumber("KolvoSIPAkkauntov"); const kanalnost = document.getElementById("KanalnostSIPAkkauntov")?.value; if (val > 0) { if (!getCheckbox("VATS")) { context.set("VATS", true); } if (parseInt(kanalnost, 10) < 30) { context.select("KanalnostSIPAkkauntov", "30"); } } if ( val === 0 && getNumber("KolvoSotrudnikovVATS") === 0 && getNumber("KolvoSIPURI") === 0 && getNumber("KolvoSIPTrankov") === 0 && getCheckbox("VATS") === true ) { context.set("VATS", false); } if (val === 0 && kanalnost !== "0") { context.select("KanalnostSIPAkkauntov", "0"); } },
-      KanalnostSIPAkkauntov: (context) => { const val = document.getElementById("KanalnostSIPAkkauntov")?.value; if (val !== "0") { if (!getCheckbox("VATS")) { context.set("VATS", true); } if (getNumber("KolvoSIPAkkauntov") === 0) { context.set("KolvoSIPAkkauntov", 1); } } else { if (getNumber("KolvoSIPAkkauntov") !== 0) { context.set("KolvoSIPAkkauntov", 0); } } },
-      NomeraVATS: (context) => { const val = getNumber("NomeraVATS"); if (val > 0 && !getCheckbox("VATS")) { context.set("VATS", true); } },
-      NomeraVATS8800: (context) => { const val = getNumber("NomeraVATS8800"); if (val > 0 && !getCheckbox("VATS")) { context.set("VATS", true); } },
-      KolvoSvoihNomerov: (context) => { const val = getNumber("KolvoSvoihNomerov"); if (val > 0 && !getCheckbox("VATS")) { context.set("VATS", true); } },
-      KolvoFMC: (context) => { const val = getNumber("KolvoFMC"); if (val > 0) { if (!getCheckbox("VATS")) { context.set("VATS", true); } const tarif = document.getElementById("TarifFMC")?.value; if (tarif === "нет") { const options = document.getElementById("TarifFMC")?.options; if (options?.length > 1) { context.select("TarifFMC", options[1].value); } } } else { if (document.getElementById("TarifFMC")?.value !== "нет") { context.select("TarifFMC", "нет"); } if (document.getElementById("RegionDostavki")?.value !== "нет") { context.select("RegionDostavki", "нет"); } } },
-      TarifFMC: (context) => { const val = document.getElementById("TarifFMC")?.value; if (val && val !== "нет") { if (!getCheckbox("VATS")) { context.set("VATS", true); } if (getNumber("KolvoFMC") === 0) { context.set("KolvoFMC", 1); } } else { if (getNumber("KolvoFMC") !== 0) { context.set("KolvoFMC", 0); } if (document.getElementById("RegionDostavki")?.value !== "нет") { context.select("RegionDostavki", "нет"); } } },
-      RegionDostavki: (context) => { const val = document.getElementById("RegionDostavki")?.value; if (val && val !== "нет") { if (!getCheckbox("VATS")) { context.set("VATS", true); } if (getNumber("KolvoFMC") === 0) { context.set("KolvoFMC", 1); } const tarif = document.getElementById("TarifFMC")?.value; if (tarif === "нет") { const options = document.getElementById("TarifFMC")?.options; if (options?.length > 1) { context.select("TarifFMC", options[1].value); } } } },
-      OMNI: (context) => { const val = getCheckbox("OMNI"); if (val === true) { if (getNumber("KolvoSotrudnikovOMNI") < 3) { context.set("KolvoSotrudnikovOMNI", 3); } if (!getCheckbox("TgVkAvito")) { context.set("TgVkAvito", true); } if (!getCheckbox("OMNIKnopka")) { context.set("OMNIKnopka", true); } } else { context.set("KolvoSotrudnikovOMNI", 0); context.set("KolvoWA", 0); context.set("KolvoWABA", 0); context.set("TgVkAvito", false); context.set("OMNIKnopka", false); if (!getCheckbox("VATS") && !getCheckbox("AnalitikaProdaj")) { context.set("AmoBitrix", false); } if (!getCheckbox("VATS") && !getCheckbox("AR")) { context.set("UvedomlenieOSobitiyah", false); } } },
-      KolvoSotrudnikovOMNI: (context) => { const val = getNumber("KolvoSotrudnikovOMNI"); if (val > 0) { if (!getCheckbox("OMNI")) { context.set("OMNI", true); } if (val < 3) { context.set("KolvoSotrudnikovOMNI", 3); } } if (val === 0 && getCheckbox("OMNI")) { context.set("OMNI", false); } },
-      KolvoWA: (context) => { if (getNumber("KolvoWA") > 0 && !getCheckbox("OMNI")) { context.set("OMNI", true); } },
-      KolvoWABA: (context) => { if (getNumber("KolvoWABA") > 0 && !getCheckbox("OMNI")) { context.set("OMNI", true); } },
-      TgVkAvito: (context) => { if (getCheckbox("TgVkAvito") && !getCheckbox("OMNI")) { context.set("OMNI", true); } },
-      OMNIKnopka: (context) => { if (getCheckbox("OMNIKnopka") && !getCheckbox("OMNI")) { context.set("OMNI", true); } },
-      AR: (context) => { if (getCheckbox("AR")) { if (getNumber("KolvoSaitov") === 0) { context.set("KolvoSaitov", 1); } context.select("KolvoPolzovatelskihIstochnikov", "50"); context.select("PaketTrafika", "10000"); } else { context.set("KolvoSaitov", 0); context.select("KolvoPolzovatelskihIstochnikov", "0"); context.select("PaketTrafika", "0"); context.select("EmailTreking", "нет"); context.set("KT", false); context.set("NomeraKT", 0); context.set("NomeraKT8800", 0); context.select("DlitelnostHraneniyaAR", "0"); context.set("KonstruktorOtchetov", false); context.set("AnalitikaProdaj", false); context.set("IntegraciyaSVidjetami", false); context.set("AvtoperezvonPoZayavkam", false); if (!getCheckbox("VATS") && !getCheckbox("OMNI")) { context.set("UvedomlenieOSobitiyah", false); } } },
-      KolvoSaitov: (context) => { if (getNumber("KolvoSaitov") > 0 && !getCheckbox("AR")) { context.set("AR", true); } },
-      KolvoPolzovatelskihIstochnikov: (context) => { const val = document.getElementById("KolvoPolzovatelskihIstochnikov")?.value; if (val && val !== "0" && !getCheckbox("AR")) { context.set("AR", true); } },
-      PaketTrafika: (context) => { const val = document.getElementById("PaketTrafika")?.value; if (val && val !== "0" && !getCheckbox("AR")) { context.set("AR", true); } },
-      KT: (context) => { const val = getCheckbox("KT"); if (val === true && !getCheckbox("AR")) { context.set("AR", true); } if (val === false) { context.set("NomeraKT", 0); context.set("NomeraKT8800", 0); context.select("DlitelnostHraneniyaAR", "0"); } },
-      NomeraKT: (context) => { if (getNumber("NomeraKT") > 0 && !getCheckbox("KT")) { context.set("KT", true); } },
-      NomeraKT8800: (context) => { if (getNumber("NomeraKT8800") > 0 && !getCheckbox("KT")) { context.set("KT", true); } },
-      DlitelnostHraneniyaAR: (context) => { const val = document.getElementById("DlitelnostHraneniyaAR")?.value; if (val !== "0" && !getCheckbox("KT")) { context.set("KT", true); } if (val === "0" && getCheckbox("KT")) { context.select("DlitelnostHraneniyaAR", "1 неделя"); } },
-      EmailTreking: (context) => { const val = document.getElementById("EmailTreking")?.value; if (val && val !== "нет" && !getCheckbox("AR")) { context.set("AR", true); } },
-      KonstruktorOtchetov: (context) => { if (getCheckbox("KonstruktorOtchetov") && !getCheckbox("AR")) { context.set("AR", true); } },
-      AnalitikaProdaj: (context) => { if (getCheckbox("AnalitikaProdaj")) { if (!getCheckbox("AR")) { context.set("AR", true); } if (!getCheckbox("AmoBitrix")) { context.set("AmoBitrix", true); } } else { if (!getCheckbox("OMNI") && !getCheckbox("VATS")) { context.set("AmoBitrix", false); } } },
-      IntegraciyaSVidjetami: (context) => { if (getCheckbox("IntegraciyaSVidjetami") && !getCheckbox("AR")) { context.set("AR", true); } },
-      IntegraciyaOtraslevie: (context) => { if (getCheckbox("IntegraciyaOtraslevie") && !getCheckbox("VATS")) { context.set("VATS", true); } },
-      VneshnieATS: (context) => { if (getCheckbox("VneshnieATS") && !getCheckbox("VATS")) { context.set("VATS", true); } },
-      AmoBitrix: (context) => { if (getCheckbox("AmoBitrix")) { if (!getCheckbox("VATS") && !getCheckbox("OMNI") && !getCheckbox("AnalitikaProdaj")) { context.set("VATS", true); } } else { if (getCheckbox("AnalitikaProdaj")) { context.set("AnalitikaProdaj", false); } } },
-      VezdeKakDoma: (context) => { if (getCheckbox("VezdeKakDoma") && !getCheckbox("VATS")) { context.set("VATS", true); } },
-      UvedomlenieOSobitiyah: (context) => { if (getCheckbox("UvedomlenieOSobitiyah")) { if (getCheckbox("SpasenieKommunikatsiy")) { context.set("UvedomlenieOSobitiyah", false); } else if (!getCheckbox("VATS") && !getCheckbox("OMNI") && !getCheckbox("AR")) { context.set("VATS", true); } } },
-      SpasenieKommunikatsiy: (context) => { if (getCheckbox("SpasenieKommunikatsiy")) { document.getElementById('UvedomlenieOSobitiyah').disabled = true; if (!getCheckbox("VATS")) { context.set("VATS", true); } if (getCheckbox("UvedomlenieOSobitiyah")) { context.set("UvedomlenieOSobitiyah", false); } } else { document.getElementById('UvedomlenieOSobitiyah').disabled = false; } },
-      AvtoperezvonPoZayavkam: (context) => { if (getCheckbox("AvtoperezvonPoZayavkam")) { if (!getCheckbox("VATS")) { context.set("VATS", true); } if (!getCheckbox("AR")) { context.set("AR", true); } } },
+      VATS: (context) => {
+        const val = getCheckbox("VATS");
+        if (val === true) {
+          context.select("DlitelnostHraneniyaVATS", "1 неделя");
+          if (getNumber("KolvoSotrudnikovVATS") < 3) context.set("KolvoSotrudnikovVATS", 3);
+          if (getNumber("LiniyGrupovogoVizova") < 3) context.set("LiniyGrupovogoVizova", 3);
+          if (getNumber("LiniyIshodyashihZvonkov") < 30) context.set("LiniyIshodyashihZvonkov", 30);
+        } else {
+          context.set("KolvoSotrudnikovVATS", 0);
+          context.set("LiniyGrupovogoVizova", 0);
+          context.set("LiniyIshodyashihZvonkov", 0);
+          context.set("KolvoSIPTrankov", 0);
+          context.set("KolvoSIPURI", 0);
+          context.set("KolvoSIPAkkauntov", 0);
+          context.set("NomeraVATS", 0);
+          context.set("NomeraVATS8800", 0);
+          context.set("KolvoSvoihNomerov", 0);
+          context.set("KolvoFMC", 0);
+
+          context.set("VATSPRO", false);
+          context.select("DlitelnostHraneniyaVATS", 0);
+          context.select("KanalnostSIPTrankov", 0);
+          context.select("KanalnostSIPAkkauntov", 0);
+          context.select("TarifFMC", "нет");
+          context.select("RegionDostavki", "нет");
+
+          context.set("VneshnieATS", false);
+          context.set("SpasenieKommunikatsiy", false);
+          context.set("AvtoperezvonPoZayavkam", false);
+          context.set("VezdeKakDoma", false);
+
+          if (!getCheckbox("OMNI") && !getCheckbox("AnalitikaProdaj")) {
+            context.set("AmoBitrix", false);
+          }
+
+          context.set("IntegraciyaOtraslevie", false);
+
+          if (
+            getCheckbox("UvedomlenieOSobitiyah") === true &&
+            !getCheckbox("OMNI") &&
+            !getCheckbox("AR")
+          ) {
+            context.set("UvedomlenieOSobitiyah", false);
+          }
+        }
+      },
+      VATSPRO: (context) => {
+        if (getCheckbox("VATSPRO") && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+      },
+      KolvoSotrudnikovVATS: (context) => {
+        const val = getNumber("KolvoSotrudnikovVATS");
+        if (val > 0 && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+
+        if (val > 0 && val < 3) {
+          context.set("KolvoSotrudnikovVATS", 3);
+        }
+
+        if (
+          val === 0 &&
+          getNumber("KolvoSIPTrankov") === 0 &&
+          getNumber("KolvoSIPURI") === 0 &&
+          getNumber("KolvoSIPAkkauntov") === 0 &&
+          getCheckbox("VATS") === true
+        ) {
+          context.set("VATS", false);
+        }
+      },
+      DlitelnostHraneniyaVATS: (context) => {
+        const val = document.getElementById("DlitelnostHraneniyaVATS")?.value;
+        if (val !== "0" && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+        if (val === "0" && getCheckbox("VATS")) {
+          context.select("DlitelnostHraneniyaVATS", "1 неделя");
+        }
+      },
+      LiniyGrupovogoVizova: (context) => {
+        const val = getNumber("LiniyGrupovogoVizova");
+        if (val > 0 && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+        if (val >= 0 && val < 3 && getCheckbox("VATS")) {
+          context.set("LiniyGrupovogoVizova", 3);
+        }
+      },
+      LiniyIshodyashihZvonkov: (context) => {
+        const val = getNumber("LiniyIshodyashihZvonkov");
+        if (val > 0 && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+        if (val >= 0 && val < 30 && getCheckbox("VATS")) {
+          context.set("LiniyIshodyashihZvonkov", 30);
+        }
+      },
+      KolvoSIPTrankov: (context) => {
+        const val = getNumber("KolvoSIPTrankov");
+        const kanalnost = document.getElementById("KanalnostSIPTrankov")?.value;
+        if (val > 0) {
+          if (!getCheckbox("VATS")) {
+            context.set("VATS", true);
+          }
+          if (parseInt(kanalnost, 10) < 30) {
+            context.select("KanalnostSIPTrankov", "30");
+          }
+        }
+        if (
+          val === 0 &&
+          getNumber("KolvoSotrudnikovVATS") === 0 &&
+          getNumber("KolvoSIPURI") === 0 &&
+          getNumber("KolvoSIPAkkauntov") === 0 &&
+          getCheckbox("VATS") === true
+        ) {
+          context.set("VATS", false);
+        }
+        if (val === 0 && kanalnost !== "0") {
+          context.select("KanalnostSIPTrankov", "0");
+        }
+      },
+      KanalnostSIPTrankov: (context) => {
+        const val = document.getElementById("KanalnostSIPTrankov")?.value;
+        if (val !== "0") {
+          if (!getCheckbox("VATS")) {
+            context.set("VATS", true);
+          }
+          if (getNumber("KolvoSIPTrankov") === 0) {
+            context.set("KolvoSIPTrankov", 1);
+          }
+        } else {
+          if (getNumber("KolvoSIPTrankov") !== 0) {
+            context.set("KolvoSIPTrankov", 0);
+          }
+        }
+      },
+      KolvoSIPURI: (context) => {
+        const val = getNumber("KolvoSIPURI");
+        if (val > 0 && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+        if (
+          val === 0 &&
+          getNumber("KolvoSotrudnikovVATS") === 0 &&
+          getNumber("KolvoSIPTrankov") === 0 &&
+          getNumber("KolvoSIPAkkauntov") === 0 &&
+          getCheckbox("VATS") === true
+        ) {
+          context.set("VATS", false);
+        }
+      },
+      KolvoSIPAkkauntov: (context) => {
+        const val = getNumber("KolvoSIPAkkauntov");
+        const kanalnost = document.getElementById("KanalnostSIPAkkauntov")?.value;
+        if (val > 0) {
+          if (!getCheckbox("VATS")) {
+            context.set("VATS", true);
+          }
+          if (parseInt(kanalnost, 10) < 30) {
+            context.select("KanalnostSIPAkkauntov", "30");
+          }
+        }
+        if (
+          val === 0 &&
+          getNumber("KolvoSotrudnikovVATS") === 0 &&
+          getNumber("KolvoSIPURI") === 0 &&
+          getNumber("KolvoSIPTrankov") === 0 &&
+          getCheckbox("VATS") === true
+        ) {
+          context.set("VATS", false);
+        }
+        if (val === 0 && kanalnost !== "0") {
+          context.select("KanalnostSIPAkkauntov", "0");
+        }
+      },
+      KanalnostSIPAkkauntov: (context) => {
+        const val = document.getElementById("KanalnostSIPAkkauntov")?.value;
+        if (val !== "0") {
+          if (!getCheckbox("VATS")) {
+            context.set("VATS", true);
+          }
+          if (getNumber("KolvoSIPAkkauntov") === 0) {
+            context.set("KolvoSIPAkkauntov", 1);
+          }
+        } else {
+          if (getNumber("KolvoSIPAkkauntov") !== 0) {
+            context.set("KolvoSIPAkkauntov", 0);
+          }
+        }
+      },
+      NomeraVATS: (context) => {
+        const val = getNumber("NomeraVATS");
+        if (val > 0 && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+      },
+      NomeraVATS8800: (context) => {
+        const val = getNumber("NomeraVATS8800");
+        if (val > 0 && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+      },
+      KolvoSvoihNomerov: (context) => {
+        const val = getNumber("KolvoSvoihNomerov");
+        if (val > 0 && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+      },
+      KolvoFMC: (context) => {
+        const val = getNumber("KolvoFMC");
+        if (val > 0) {
+          if (!getCheckbox("VATS")) {
+            context.set("VATS", true);
+          }
+          const tarif = document.getElementById("TarifFMC")?.value;
+          if (tarif === "нет") {
+            const options = document.getElementById("TarifFMC")?.options;
+            if (options?.length > 1) {
+              context.select("TarifFMC", options[1].value);
+            }
+          }
+        } else {
+          if (document.getElementById("TarifFMC")?.value !== "нет") {
+            context.select("TarifFMC", "нет");
+          }
+          if (document.getElementById("RegionDostavki")?.value !== "нет") {
+            context.select("RegionDostavki", "нет");
+          }
+        }
+      },
+      TarifFMC: (context) => {
+        const val = document.getElementById("TarifFMC")?.value;
+        if (val && val !== "нет") {
+          if (!getCheckbox("VATS")) {
+            context.set("VATS", true);
+          }
+          if (getNumber("KolvoFMC") === 0) {
+            context.set("KolvoFMC", 1);
+          }
+        } else {
+          if (getNumber("KolvoFMC") !== 0) {
+            context.set("KolvoFMC", 0);
+          }
+          if (document.getElementById("RegionDostavki")?.value !== "нет") {
+            context.select("RegionDostavki", "нет");
+          }
+        }
+      },
+      RegionDostavki: (context) => {
+        const val = document.getElementById("RegionDostavki")?.value;
+        if (val && val !== "нет") {
+          if (!getCheckbox("VATS")) {
+            context.set("VATS", true);
+          }
+          if (getNumber("KolvoFMC") === 0) {
+            context.set("KolvoFMC", 1);
+          }
+          const tarif = document.getElementById("TarifFMC")?.value;
+          if (tarif === "нет") {
+            const options = document.getElementById("TarifFMC")?.options;
+            if (options?.length > 1) {
+              context.select("TarifFMC", options[1].value);
+            }
+          }
+        }
+      },
+      OMNI: (context) => {
+        const val = getCheckbox("OMNI");
+        if (val === true) {
+          if (getNumber("KolvoSotrudnikovOMNI") < 3) {
+            context.set("KolvoSotrudnikovOMNI", 3);
+          }
+          if (!getCheckbox("TgVkAvito")) {
+            context.set("TgVkAvito", true);
+          }
+          if (!getCheckbox("OMNIKnopka")) {
+            context.set("OMNIKnopka", true);
+          }
+        } else {
+          context.set("KolvoSotrudnikovOMNI", 0);
+          context.set("KolvoWA", 0);
+          context.set("KolvoWABA", 0);
+          context.set("TgVkAvito", false);
+          context.set("OMNIKnopka", false);
+
+          if (!getCheckbox("VATS") && !getCheckbox("AnalitikaProdaj")) {
+            context.set("AmoBitrix", false);
+          }
+          if (!getCheckbox("VATS") && !getCheckbox("AR")) {
+            context.set("UvedomlenieOSobitiyah", false);
+          }
+        }
+      },
+      KolvoSotrudnikovOMNI: (context) => {
+        const val = getNumber("KolvoSotrudnikovOMNI");
+        if (val > 0) {
+          if (!getCheckbox("OMNI")) {
+            context.set("OMNI", true);
+          }
+          if (val < 3) {
+            context.set("KolvoSotrudnikovOMNI", 3);
+          }
+        }
+        if (val === 0 && getCheckbox("OMNI")) {
+          context.set("OMNI", false);
+        }
+      },
+      KolvoWA: (context) => {
+        if (getNumber("KolvoWA") > 0 && !getCheckbox("OMNI")) {
+          context.set("OMNI", true);
+        }
+      },
+      KolvoWABA: (context) => {
+        if (getNumber("KolvoWABA") > 0 && !getCheckbox("OMNI")) {
+          context.set("OMNI", true);
+        }
+      },
+      TgVkAvito: (context) => {
+        if (getCheckbox("TgVkAvito") && !getCheckbox("OMNI")) {
+          context.set("OMNI", true);
+        }
+      },
+      OMNIKnopka: (context) => {
+        if (getCheckbox("OMNIKnopka") && !getCheckbox("OMNI")) {
+          context.set("OMNI", true);
+        }
+      },
+      AR: (context) => {
+        if (getCheckbox("AR")) {
+          if (getNumber("KolvoSaitov") === 0) {
+            context.set("KolvoSaitov", 1);
+          }
+          context.select("KolvoPolzovatelskihIstochnikov", "50");
+          context.select("PaketTrafika", "10000");
+        } else {
+          context.set("KolvoSaitov", 0);
+          context.select("KolvoPolzovatelskihIstochnikov", "0");
+          context.select("PaketTrafika", "0");
+          context.select("EmailTreking", "нет");
+
+          context.set("KT", false);
+          context.set("NomeraKT", 0);
+          context.set("NomeraKT8800", 0);
+          context.select("DlitelnostHraneniyaAR", "0");
+          context.set("KonstruktorOtchetov", false);
+          context.set("AnalitikaProdaj", false);
+          context.set("IntegraciyaSVidjetami", false);
+          context.set("AvtoperezvonPoZayavkam", false);
+          if (!getCheckbox("VATS") && !getCheckbox("OMNI")) {
+            context.set("UvedomlenieOSobitiyah", false);
+          }
+        }
+      },
+      KolvoSaitov: (context) => {
+        if (getNumber("KolvoSaitov") > 0 && !getCheckbox("AR")) {
+          context.set("AR", true);
+        }
+      },
+      KolvoPolzovatelskihIstochnikov: (context) => {
+        const val = document.getElementById("KolvoPolzovatelskihIstochnikov")?.value;
+        if (val && val !== "0" && !getCheckbox("AR")) {
+          context.set("AR", true);
+        }
+      },
+      PaketTrafika: (context) => {
+        const val = document.getElementById("PaketTrafika")?.value;
+        if (val && val !== "0" && !getCheckbox("AR")) {
+          context.set("AR", true);
+        }
+      },
+      KT: (context) => {
+        const val = getCheckbox("KT");
+        if (val === true && !getCheckbox("AR")) {
+          context.set("AR", true);
+        }
+        if (val === false) {
+          context.set("NomeraKT", 0);
+          context.set("NomeraKT8800", 0);
+          context.select("DlitelnostHraneniyaAR", "0");
+        }
+      },
+      NomeraKT: (context) => {
+        if (getNumber("NomeraKT") > 0 && !getCheckbox("KT")) {
+          context.set("KT", true);
+        }
+      },
+      NomeraKT8800: (context) => {
+        if (getNumber("NomeraKT8800") > 0 && !getCheckbox("KT")) {
+          context.set("KT", true);
+        }
+      },
+      DlitelnostHraneniyaAR: (context) => {
+        const val = document.getElementById("DlitelnostHraneniyaAR")?.value;
+        if (val !== "0" && !getCheckbox("KT")) {
+          context.set("KT", true);
+        }
+        if (val === "0" && getCheckbox("KT")) {
+          context.select("DlitelnostHraneniyaAR", "1 неделя");
+        }
+      },
+      EmailTreking: (context) => {
+        const val = document.getElementById("EmailTreking")?.value;
+        if (val && val !== "нет" && !getCheckbox("AR")) {
+          context.set("AR", true);
+        }
+      },
+      KonstruktorOtchetov: (context) => {
+        if (getCheckbox("KonstruktorOtchetov") && !getCheckbox("AR")) {
+          context.set("AR", true);
+        }
+      },
+      AnalitikaProdaj: (context) => {
+        if (getCheckbox("AnalitikaProdaj")) {
+          if (!getCheckbox("AR")) {
+            context.set("AR", true);
+          }
+          if (!getCheckbox("AmoBitrix")) {
+            context.set("AmoBitrix", true);
+          }
+        } else {
+          if (!getCheckbox("OMNI") && !getCheckbox("VATS")) {
+            context.set("AmoBitrix", false);
+          }
+        }
+      },
+      IntegraciyaSVidjetami: (context) => {
+        if (getCheckbox("IntegraciyaSVidjetami") && !getCheckbox("AR")) {
+          context.set("AR", true);
+        }
+      },
+      IntegraciyaOtraslevie: (context) => {
+        if (getCheckbox("IntegraciyaOtraslevie") && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+      },
+      VneshnieATS: (context) => {
+        if (getCheckbox("VneshnieATS") && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+      },
+      AmoBitrix: (context) => {
+        if (getCheckbox("AmoBitrix")) {
+          if (!getCheckbox("VATS") && !getCheckbox("OMNI") && !getCheckbox("AnalitikaProdaj")) {
+            context.set("VATS", true);
+          }
+        } else {
+          if (getCheckbox("AnalitikaProdaj")) {
+            context.set("AnalitikaProdaj", false);
+          }
+        }
+      },
+      VezdeKakDoma: (context) => {
+        if (getCheckbox("VezdeKakDoma") && !getCheckbox("VATS")) {
+          context.set("VATS", true);
+        }
+      },
+      UvedomlenieOSobitiyah: (context) => {
+        if (getCheckbox("UvedomlenieOSobitiyah")) {
+          if (getCheckbox("SpasenieKommunikatsiy")) {
+            context.set("UvedomlenieOSobitiyah", false);
+          } else if (!getCheckbox("VATS") && !getCheckbox("OMNI") && !getCheckbox("AR")) {
+            context.set("VATS", true);
+          }
+        }
+      },
+      SpasenieKommunikatsiy: (context) => {
+        if (getCheckbox("SpasenieKommunikatsiy")) {
+          document.getElementById('UvedomlenieOSobitiyah').disabled = true;
+          if (!getCheckbox("VATS")) {
+            context.set("VATS", true);
+          }
+          if (getCheckbox("UvedomlenieOSobitiyah")) {
+            context.set("UvedomlenieOSobitiyah", false);
+          }
+        } else {
+          document.getElementById('UvedomlenieOSobitiyah').disabled = false;
+        }
+      },
+      AvtoperezvonPoZayavkam: (context) => {
+        if (getCheckbox("AvtoperezvonPoZayavkam")) {
+          if (!getCheckbox("VATS")) {
+            context.set("VATS", true);
+          }
+          if (!getCheckbox("AR")) {
+            context.set("AR", true);
+          }
+        }
+      },
     };
 
     const manualChanges = new Set();
