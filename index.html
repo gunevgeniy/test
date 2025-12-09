@@ -7,10 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
-  <!-- Telegram WebApp -->
+  <!-- Подключаем Telegram WebApp -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
+    /* СТИЛИ ОСТАЮТСЯ ПРЕЖНИМИ (ДЛЯ КАЛЬКУЛЯТОРА) */
     :root { --color-primary: #0000aa; --color-primary-light: rgba(0, 0, 170, 0.08); --color-bg: #F0F2F5; --color-card-bg: #FFFFFF; --color-input-bg: #FFFFFF; --color-input-border: #C4C4C4; --color-text-main: #252525; --color-text-secondary: #878787; --color-limit: #e67e22; --radius-card: 20px; --radius-input: 10px; --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05); --font-head: 'Manrope', sans-serif; --font-body: 'Inter', sans-serif; }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: var(--font-body); background-color: var(--color-bg); color: var(--color-text-main); margin: 0; padding: 0; overflow-x: hidden; }
@@ -391,7 +392,7 @@
     <div id="tooltip-save">- Автоматический перезвон по пропущенным<br>- Автотегирование<br>- Уведомления по E-mail и SMS (SMS — 3.7 руб/шт)<br>- Дашборд с аналитикой по звонкам</div>
     <div id="tooltip-home">Автоматический выбор номера при исходящих звонках</div>
     <div id="tooltip-min8800">Расходуется на звонки с номерами 8-800</div>
-    <div id="tooltip-guarantee">Будет "заморожен" на счете как гарантия оплаты и возвращен или учтен при закрытии договора. <br>Максимальный порог кредитного лимита: <b>${maxLimit} руб.</b></div>
+    <div id="tooltip-guarantee">Будет "заморожен" на счете как гарантия оплаты и возвращен или учтен при закрытии договора.</div>
     <div id="tooltip-widget">Интеграция аналитики рекламы с виджетами клиента</div>
     <div id="tooltip-connect">Разово за подключаемые номера и/или FMC-сим карты</div>
     <div id="tooltip-delivery">Разово за один адрес</div>
@@ -505,8 +506,8 @@
         });
 
         const totalsData = {
-            monthly: document.getElementById('total-monthly').textContent + " ₽ / мес",
-            minimal: document.getElementById('total-minimal').textContent,
+            monthly: document.getElementById('total-monthly').textContent + " ₽ / мес", // Добавляем хвост, так как на главной он отделен
+            minimal: document.getElementById('total-minimal').textContent, // Уже с хвостом
             minimalDesc: document.getElementById('tooltip-min8800').innerHTML,
             connection: document.getElementById('total-connection').textContent,
             connectDesc: document.getElementById('tooltip-connect').innerHTML,
@@ -724,6 +725,5 @@
     document.querySelectorAll('select').forEach(s => updateSelectTrigger(s.id));
     updateTotals();
 </script>
-
 </body>
 </html>
