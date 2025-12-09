@@ -7,43 +7,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
-  <!-- Подключаем Telegram WebApp для управления открытием ссылок -->
+  <!-- Telegram WebApp -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
-    :root {
-      --color-primary: #0000aa;
-      --color-primary-light: rgba(0, 0, 170, 0.08);
-      --color-bg: #F0F2F5;
-      --color-card-bg: #FFFFFF;
-      --color-input-bg: #FFFFFF;
-      --color-input-border: #C4C4C4;
-      --color-text-main: #252525;
-      --color-text-secondary: #878787;
-      --color-limit: #e67e22; 
-      --radius-card: 20px;
-      --radius-input: 10px;
-      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05);
-      --font-head: 'Manrope', sans-serif;
-      --font-body: 'Inter', sans-serif;
-    }
-
+    :root { --color-primary: #0000aa; --color-primary-light: rgba(0, 0, 170, 0.08); --color-bg: #F0F2F5; --color-card-bg: #FFFFFF; --color-input-bg: #FFFFFF; --color-input-border: #C4C4C4; --color-text-main: #252525; --color-text-secondary: #878787; --color-limit: #e67e22; --radius-card: 20px; --radius-input: 10px; --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05); --font-head: 'Manrope', sans-serif; --font-body: 'Inter', sans-serif; }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: var(--font-body); background-color: var(--color-bg); color: var(--color-text-main); margin: 0; padding: 0; overflow-x: hidden; }
-
-    .bg-cloud {
-      position: fixed; top: -10%; left: -10%; width: 70vw; height: 70vw;
-      background: radial-gradient(circle, rgba(0,0,170,0.12) 0%, rgba(255,255,255,0) 70%);
-      filter: blur(80px); z-index: -1; pointer-events: none;
-    }
-
-    .layout-wrapper {
-      max-width: 1200px; margin: 0 auto; padding: 40px 20px 140px 20px;
-      display: grid; grid-template-columns: 1fr 340px; gap: 30px; align-items: start;
-    }
+    .bg-cloud { position: fixed; top: -10%; left: -10%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(0,0,170,0.12) 0%, rgba(255,255,255,0) 70%); filter: blur(80px); z-index: -1; pointer-events: none; }
+    .layout-wrapper { max-width: 1200px; margin: 0 auto; padding: 40px 20px 140px 20px; display: grid; grid-template-columns: 1fr 340px; gap: 30px; align-items: start; }
     .main-column { display: flex; flex-direction: column; gap: 24px; }
     .sidebar-column { position: sticky; top: 24px; z-index: 10; }
-
     .card { background: var(--color-card-bg); border-radius: var(--radius-card); padding: 24px; box-shadow: var(--shadow-card); }
     .card-group { position: relative; } 
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 15px; cursor: pointer; }
@@ -51,7 +25,6 @@
     .card-title { font-size: 18px; font-weight: 700; font-family: var(--font-head); color: var(--color-primary); display: flex; align-items: center; gap: 10px;}
     .header-toggle-icon { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid var(--color-primary); transition: transform 0.3s; }
     .card-header.collapsed .header-toggle-icon { transform: rotate(-90deg); }
-
     .option-row { display: grid; grid-template-columns: 1fr 150px; gap: 15px; padding: 16px 0; border-bottom: 1px solid #eef2f6; align-items: center; }
     .option-row:last-child { border-bottom: none; }
     .option-row.stacked { grid-template-columns: 1fr; gap: 6px; align-items: start; }
@@ -59,12 +32,10 @@
     .option-info { display: flex; flex-direction: column; gap: 6px; }
     .option-name { font-weight: 600; font-size: 15px; line-height: 1.4; display: block; }
     .option-meta { font-size: 12px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; min-height: 24px; justify-content: center; }
-
     .price-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; white-space: nowrap; line-height: 1.4; }
     .price-badge.cost { background: #E6F0FF; color: var(--color-primary); }
     .price-badge.limit { background: #FFF4E6; color: var(--color-limit); }
     .info-icon { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: var(--color-primary-light); color: var(--color-primary); border-radius: 50%; font-size: 11px; font-weight: 800; font-family: serif; cursor: pointer; vertical-align: middle; margin-left: 4px; margin-bottom: 2px; }
-
     .control-wrapper { display: flex; justify-content: flex-end; align-items: center; }
     .toggle-switch { position: relative; display: inline-block; width: 46px; height: 26px; }
     .toggle-switch input { opacity: 0; width: 0; height: 0; }
@@ -72,25 +43,21 @@
     .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     input:checked + .slider { background-color: var(--color-primary); }
     input:checked + .slider:before { transform: translateX(20px); }
-
     .stepper { display: flex; align-items: center; background: var(--color-input-bg); border: 1px solid var(--color-input-border); border-radius: var(--radius-input); padding: 3px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
     .stepper-btn { width: 30px; height: 30px; border: none; background: #F0F4FF; border-radius: 8px; color: var(--color-primary); font-weight: 700; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
     .stepper-btn:active { background: #dce6ff; }
     .stepper-input { width: 50px; border: none; background: transparent; text-align: center; font-family: var(--font-body); font-weight: 600; font-size: 15px; color: var(--color-text-main); padding: 0; -moz-appearance: textfield; outline: none; }
     .stepper-input::selection { background: var(--color-primary-light); }
-
     .custom-select-trigger { width: 100%; background: var(--color-input-bg); border: 1px solid var(--color-input-border); padding: 10px 12px; border-radius: var(--radius-input); font-size: 14px; font-weight: 500; color: var(--color-text-main); cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); transition: border 0.2s; min-height: 42px; }
     .custom-select-trigger:hover { border-color: var(--color-primary); }
     .custom-select-trigger::after { content: "▼"; font-size: 10px; opacity: 0.6; margin-left: 8px; }
     .hidden-native-select { display: none; }
     .readonly-field { background: #EAEAEA; padding: 8px 16px; border-radius: var(--radius-input); font-weight: 700; color: #555; display: flex; align-items: center; gap: 6px; border: 1px solid #ccc; }
-
     .fmc-container { border: 1px solid #D0D0D0; border-radius: 16px; padding: 20px; margin-top: 10px; background: #FFFFFF; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
     .fmc-title { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--color-primary); margin-bottom: 12px; letter-spacing: 0.8px; }
     .fmc-subgroup { display: flex; flex-direction: column; }
     .fmc-subgroup .option-row { border-bottom: none; padding: 8px 0; }
     .fmc-cost-row { padding-top: 10px; border-top: 1px dashed #e0e0e0; margin-top: 5px; display: flex; justify-content: flex-start; }
-
     .summary-card { background: var(--color-primary); color: #fff; padding: 24px; border-radius: var(--radius-card); box-shadow: 0 10px 40px rgba(0, 0, 170, 0.25); }
     .summary-total { text-align: center; margin-bottom: 24px; }
     .summary-total-label { font-size: 14px; opacity: 0.8; margin-bottom: 8px; }
@@ -100,19 +67,16 @@
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 14px; opacity: 0.95; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.15); }
     .summary-row:last-child { border: none; }
     .summary-row span:last-child { font-weight: 700; white-space: nowrap;}
-    
     .button-group { display: flex; gap: 10px; }
     .btn-reset { flex: 1; padding: 14px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background 0.3s; }
     .btn-reset:hover { background: rgba(255,255,255,0.25); }
     .btn-print { flex: 1; padding: 14px; background: #fff; border: none; color: var(--color-primary); border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 14px; transition: transform 0.2s; }
     .btn-print:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-
     .expert-toggle-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #FFFFFF; border: 1px solid #D0D0D0; color: var(--color-primary); font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 20px; transition: all 0.2s; padding: 12px 24px; border-radius: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
     .expert-toggle-btn:hover { background: #F8F9FC; border-color: var(--color-primary); }
     .expert-toggle-btn .toggle-icon { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--color-primary); transition: transform 0.3s; }
     .expert-toggle-btn.active .toggle-icon { transform: rotate(180deg); }
     .expert-block { display: none; margin-top: 20px; padding-top: 10px; border-top: 1px dashed #e0e0e0; }
-
     .bottom-sheet { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; z-index: 500; box-shadow: 0 -5px 30px rgba(0,0,0,0.15); border-radius: 24px 24px 0 0; flex-direction: column; transition: transform 0.3s ease; }
     .sheet-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--color-primary); color: white; border-radius: 24px 24px 0 0; cursor: pointer; }
     .sheet-main-info { display: flex; align-items: center; justify-content: space-between; width: 100%; }
@@ -123,7 +87,6 @@
     .sheet-content.open { display: block; }
     .sheet-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #333; align-items: center; }
     .sheet-reset { margin-top: 20px; width: 100%; padding: 14px; background: #F0F0F0; color: #333; border: none; border-radius: 12px; font-weight: 700; }
-
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.2s; }
     .modal-overlay.open { display: flex; opacity: 1; }
     .modal-content { background: #fff; padding: 25px; border-radius: 24px; max-width: 400px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); position: relative; max-height: 80vh; overflow-y: auto; }
@@ -160,29 +123,16 @@
 <div class="layout-wrapper">
   <!-- Left Column: Options -->
   <div class="main-column">
-    
     <!-- BLOCK 1: VATS -->
     <section class="card card-group">
-      <div class="card-header static">
-        <div class="card-title">Настройки ВАТС и номеров</div>
+      <div class="card-header static"><div class="card-title">Настройки ВАТС и номеров</div></div>
+      <div class="option-row">
+        <div class="option-info"><div class="option-name">Виртуальная АТС <span class="info-icon" onclick="openTooltip('tooltip-vats')">i</span></div><div class="option-meta"><span id="cost-VATS"></span><span id="limit-VATS"></span></div></div>
+        <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VATS" onchange="runCascade('VATS')"><span class="slider"></span></label></div>
       </div>
       <div class="option-row">
-        <div class="option-info">
-          <div class="option-name">Виртуальная АТС <span class="info-icon" onclick="openTooltip('tooltip-vats')">i</span></div>
-          <div class="option-meta"><span id="cost-VATS"></span><span id="limit-VATS"></span></div>
-        </div>
-        <div class="control-wrapper">
-          <label class="toggle-switch"><input type="checkbox" id="VATS" onchange="runCascade('VATS')"><span class="slider"></span></label>
-        </div>
-      </div>
-      <div class="option-row">
-        <div class="option-info">
-            <div class="option-name">ВАТС Pro (максимум возможностей) <span class="info-icon" onclick="openTooltip('tooltip-vatspro')">i</span></div>
-            <div class="option-meta"><span id="cost-VATSPRO"></span><span id="limit-VATSPRO"></span></div>
-        </div>
-        <div class="control-wrapper">
-            <label class="toggle-switch"><input type="checkbox" id="VATSPRO" onchange="runCascade('VATSPRO')"><span class="slider"></span></label>
-        </div>
+        <div class="option-info"><div class="option-name">ВАТС Pro (максимум возможностей) <span class="info-icon" onclick="openTooltip('tooltip-vatspro')">i</span></div><div class="option-meta"><span id="cost-VATSPRO"></span><span id="limit-VATSPRO"></span></div></div>
+        <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VATSPRO" onchange="runCascade('VATSPRO')"><span class="slider"></span></label></div>
       </div>
       <div class="option-row">
         <div class="option-info"><div class="option-name">Кол-во сотрудников ВАТС</div><div class="option-meta"><span id="cost-KolvoSotrudnikovVATS"></span><span id="limit-KolvoSotrudnikovVATS"></span></div></div>
@@ -441,7 +391,7 @@
     <div id="tooltip-save">- Автоматический перезвон по пропущенным<br>- Автотегирование<br>- Уведомления по E-mail и SMS (SMS — 3.7 руб/шт)<br>- Дашборд с аналитикой по звонкам</div>
     <div id="tooltip-home">Автоматический выбор номера при исходящих звонках</div>
     <div id="tooltip-min8800">Расходуется на звонки с номерами 8-800</div>
-    <div id="tooltip-guarantee">Будет "заморожен" на счете как гарантия оплаты и возвращен или учтен при закрытии договора.</div>
+    <div id="tooltip-guarantee">Будет "заморожен" на счете как гарантия оплаты и возвращен или учтен при закрытии договора. <br>Максимальный порог кредитного лимита: <b>${maxLimit} руб.</b></div>
     <div id="tooltip-widget">Интеграция аналитики рекламы с виджетами клиента</div>
     <div id="tooltip-connect">Разово за подключаемые номера и/или FMC-сим карты</div>
     <div id="tooltip-delivery">Разово за один адрес</div>
@@ -450,121 +400,46 @@
 
 <script>
     // --- UI Logic Helpers ---
-    function toggleExpert() {
-        const block = document.getElementById('block-expert');
-        const trigger = document.querySelector('.expert-toggle-btn');
-        const isHidden = block.style.display === "none";
-        block.style.display = isHidden ? "block" : "none";
-        trigger.classList.toggle('active', isHidden);
-    }
-    function toggleAnalytics() {
-        const block = document.getElementById('block-ar');
-        const header = document.querySelector('.card-header.collapsed, .card-header:not(.static)');
-        const isHidden = block.style.display === "none";
-        block.style.display = isHidden ? "block" : "none";
-        if(header) header.classList.toggle('collapsed', !isHidden);
-    }
-    function stepInput(id, delta) {
-        const input = document.getElementById(id);
-        if(input.disabled) return;
-        let val = parseInt(input.value) || 0;
-        val += delta;
-        if (val < 0) val = 0;
-        input.value = val;
-        runCascade(id);
-    }
-    function openTooltip(contentId) {
-        const text = document.getElementById(contentId).innerHTML;
-        document.getElementById('modalText').innerHTML = text;
-        document.getElementById('modalOverlay').classList.add('open');
-    }
-    function closeModal(e, force) {
-        if (force || e.target.id === 'modalOverlay') {
-            document.getElementById('modalOverlay').classList.remove('open');
-        }
-    }
-    let currentSelectId = null;
-    function openSelectModal(selectId, title) {
-        currentSelectId = selectId;
-        const nativeSelect = document.getElementById(selectId);
-        const options = Array.from(nativeSelect.options);
-        const container = document.getElementById('selectModalOptions');
-        const modalTitle = document.getElementById('selectModalTitle');
-        container.innerHTML = '';
-        modalTitle.textContent = title || "Выберите опцию";
-        options.forEach(opt => {
-            const item = document.createElement('div');
-            item.className = 'modal-option-item';
-            if (opt.selected) item.classList.add('selected');
-            item.textContent = opt.text;
-            item.onclick = () => selectOptionInModal(opt.value);
-            container.appendChild(item);
-        });
-        document.getElementById('selectModalOverlay').classList.add('open');
-    }
-    function selectOptionInModal(value) {
-        const nativeSelect = document.getElementById(currentSelectId);
-        nativeSelect.value = value;
-        document.getElementById('selectModalOverlay').classList.remove('open');
-        updateSelectTrigger(currentSelectId);
-        runCascade(currentSelectId);
-    }
-    function closeSelectModal(e, force) {
-        if (force || e.target.id === 'selectModalOverlay') {
-            document.getElementById('selectModalOverlay').classList.remove('open');
-        }
-    }
-    function updateSelectTrigger(id) {
-        const nativeSelect = document.getElementById(id);
-        const trigger = nativeSelect.parentElement.querySelector('.custom-select-trigger');
-        if (trigger) {
-            trigger.textContent = nativeSelect.options[nativeSelect.selectedIndex].text;
-        }
-    }
+    function toggleExpert() { const b = document.getElementById('block-expert'); b.style.display = b.style.display === "none" ? "block" : "none"; document.querySelector('.expert-toggle-btn').classList.toggle('active', b.style.display === "none"); }
+    function toggleAnalytics() { const b = document.getElementById('block-ar'); b.style.display = b.style.display === "none" ? "block" : "none"; document.querySelector('.card-header.collapsed, .card-header:not(.static)')?.classList.toggle('collapsed', b.style.display === "none"); }
+    function stepInput(id, delta) { const i = document.getElementById(id); if(i.disabled) return; let v = parseInt(i.value)||0; v = Math.max(0, v+delta); i.value = v; runCascade(id); }
+    function openTooltip(cid) { document.getElementById('modalText').innerHTML = document.getElementById(cid).innerHTML; document.getElementById('modalOverlay').classList.add('open'); }
+    function closeModal(e, f) { if (f || e.target.id === 'modalOverlay') document.getElementById('modalOverlay').classList.remove('open'); }
+    let cSelId = null;
+    function openSelectModal(sid, t) { cSelId = sid; const opts = Array.from(document.getElementById(sid).options); const c = document.getElementById('selectModalOptions'); document.getElementById('selectModalTitle').textContent = t || "Выбор"; c.innerHTML = ''; opts.forEach(o => { const i = document.createElement('div'); i.className = 'modal-option-item'; if(o.selected) i.classList.add('selected'); i.textContent = o.text; i.onclick = () => selectOptionInModal(o.value); c.appendChild(i); }); document.getElementById('selectModalOverlay').classList.add('open'); }
+    function selectOptionInModal(v) { document.getElementById(cSelId).value = v; document.getElementById('selectModalOverlay').classList.remove('open'); updateSelectTrigger(cSelId); runCascade(cSelId); }
+    function closeSelectModal(e, f) { if(f || e.target.id === 'selectModalOverlay') document.getElementById('selectModalOverlay').classList.remove('open'); }
+    function updateSelectTrigger(id) { const s = document.getElementById(id); const t = s.parentElement.querySelector('.custom-select-trigger'); if(t) t.textContent = s.options[s.selectedIndex].text; }
+    
     let isSheetOpen = false;
-    function toggleSheet() {
-        const content = document.querySelector('.sheet-content');
-        const icon = document.querySelector('.sheet-icon');
-        isSheetOpen = !isSheetOpen;
-        if (isSheetOpen) { content.classList.add('open'); icon.style.transform = "rotate(180deg)"; } else { content.classList.remove('open'); icon.style.transform = "rotate(0deg)"; }
-    }
-    function updateMobileSheet(total, minimal, connect, delivery, guarantee) {
-        document.getElementById('mobile-total').textContent = total;
-        document.getElementById('mobile-minimal').textContent = minimal;
-        document.getElementById('mobile-connection').textContent = connect;
-        document.getElementById('mobile-delivery').textContent = delivery;
-        document.getElementById('mobile-guarantee').textContent = guarantee;
-    }
-    function openManagerModal() { document.getElementById('managerModal').classList.add('open'); }
-    function closeManagerModal(e, force) { if (force || e.target.id === 'managerModal') { document.getElementById('managerModal').classList.remove('open'); } }
-    function formatName(input) { let val = input.value; val = val.replace(/(?:^|\s)\S/g, l => l.toUpperCase()); input.value = val; }
-    function formatPhone(input) { let val = input.value.replace(/\D/g, ''); if (val.length > 0) { if (val[0] === '8' || val[0] === '7') val = val.substring(1); let formatted = '+7 '; if (val.length > 0) formatted += '(' + val.substring(0, 3); if (val.length >= 4) formatted += ') ' + val.substring(3, 6); if (val.length >= 7) formatted += '-' + val.substring(6, 8); if (val.length >= 9) formatted += '-' + val.substring(8, 10); input.value = formatted; } else { input.value = ''; } }
-    function validateEmail(input) { const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/; if (!regex.test(input.value) && input.value !== "") { input.classList.add('invalid'); return false; } else { input.classList.remove('invalid'); return true; } }
+    function toggleSheet() { isSheetOpen = !isSheetOpen; const c = document.querySelector('.sheet-content'); c.classList.toggle('open', isSheetOpen); document.querySelector('.sheet-icon').style.transform = isSheetOpen ? "rotate(180deg)" : "rotate(0deg)"; }
+    function updateMobileSheet(t, m, c, d, g) { document.getElementById('mobile-total').textContent = t; document.getElementById('mobile-minimal').textContent = m; document.getElementById('mobile-connection').textContent = c; document.getElementById('mobile-delivery').textContent = d; document.getElementById('mobile-guarantee').textContent = g; }
 
-    /* --- PRINT LOGIC WITH REDIRECT --- */
+    function openManagerModal() { document.getElementById('managerModal').classList.add('open'); }
+    function closeManagerModal(e, f) { if(f || e.target.id === 'managerModal') document.getElementById('managerModal').classList.remove('open'); }
+    function formatName(i) { i.value = i.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase()); }
+    function formatPhone(i) { let v = i.value.replace(/\D/g, ''); if(v.length){ if(v[0]==='8'||v[0]==='7') v=v.substring(1); let f='+7 '; if(v.length>0) f+='('+v.substring(0,3); if(v.length>=4) f+=') '+v.substring(3,6); if(v.length>=7) f+='-'+v.substring(6,8); if(v.length>=9) f+='-'+v.substring(8,10); i.value = f; } else i.value=''; }
+    function validateEmail(i) { const r = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/; if(!r.test(i.value) && i.value!=="") { i.classList.add('invalid'); return false; } i.classList.remove('invalid'); return true; }
+
+    /* PRINT LOGIC START */
     function printKP() {
         const nameInput = document.getElementById('mgrName');
         const phoneInput = document.getElementById('mgrPhone');
         const emailInput = document.getElementById('mgrEmail');
         
-        if (emailInput.value !== "" && !validateEmail(emailInput)) {
-            alert("Пожалуйста, введите корректный Email");
-            return;
-        }
+        if (emailInput.value !== "" && !validateEmail(emailInput)) { alert("Введите корректный Email"); return; }
 
         const managerData = { name: nameInput.value.trim(), phone: phoneInput.value.trim(), email: emailInput.value.trim() };
         const sectionsData = [];
-        const sectionElements = document.querySelectorAll('.card');
         
-        sectionElements.forEach(card => {
+        document.querySelectorAll('.card').forEach(card => {
             const titleEl = card.querySelector('.card-title');
             if (!titleEl) return;
             const titleText = titleEl.textContent.trim();
-            const optionRows = card.querySelectorAll('.option-row');
             const rowsData = [];
             let pendingFMC = null;
 
-            optionRows.forEach(row => {
+            card.querySelectorAll('.option-row').forEach(row => {
                 const checkbox = row.querySelector('input[type="checkbox"]');
                 const number = row.querySelector('input[type="number"], input.stepper-input');
                 const select = row.querySelector('select');
@@ -591,53 +466,47 @@
                 }
 
                 if (isActive) {
-                    const nameEl = row.querySelector('.option-name');
-                    let nameText = nameEl.innerText.replace('i', '').trim();
-                    const infoIcon = row.querySelector('.info-icon');
+                    const nameText = row.querySelector('.option-name').innerText.replace('i', '').trim();
                     let descText = "";
-                    if (infoIcon) {
-                        const onClickAttr = infoIcon.getAttribute('onclick');
-                        if (onClickAttr) {
-                            const match = onClickAttr.match(/'([^']+)'/);
-                            if (match && match[1]) { const tooltipContent = document.getElementById(match[1]); if (tooltipContent) descText = tooltipContent.innerHTML; }
-                        }
+                    const icon = row.querySelector('.info-icon');
+                    if (icon) {
+                        const m = icon.getAttribute('onclick').match(/'([^']+)'/);
+                        if (m && m[1]) descText = document.getElementById(m[1]).innerHTML;
                     }
-                    const metaBadges = row.querySelectorAll('.price-badge');
+                    
                     let costValues = [];
-                    if (isUnlimited) costValues.push("безлимитно");
-                    else metaBadges.forEach(badge => costValues.push(badge.textContent));
+                    if(isUnlimited) costValues.push("безлимитно");
+                    else row.querySelectorAll('.price-badge').forEach(b => costValues.push(b.textContent));
 
                     if (number && number.id === 'KolvoFMC') {
                          const fmcCost = row.closest('.fmc-subgroup')?.querySelector('.fmc-cost-row .price-badge');
-                         let finalFmcCost = fmcCost ? fmcCost.textContent : "";
-                         pendingFMC = { name: nameText, val: valueText, cost: [finalFmcCost], desc: descText };
+                         let final = fmcCost ? fmcCost.textContent : "";
+                         pendingFMC = { name: nameText, val: valueText, cost: [final], desc: descText };
                          return; 
                     }
                     if (select && select.id === 'TarifFMC') {
                         if (pendingFMC) {
                             rowsData.push({ type: 'fmc_merged', name1: pendingFMC.name, val1: pendingFMC.val, name2: nameText, val2: valueText, cost: pendingFMC.cost });
                             pendingFMC = null;
-                        } else {
-                            rowsData.push({ type: 'standard', name: nameText, val: valueText, cost: costValues, desc: descText });
-                        }
+                        } else rowsData.push({ type: 'standard', name: nameText, val: valueText, cost: costValues, desc: descText });
                         return;
                     }
                     if (select && select.id === "RegionDostavki") {
-                         const regCost = document.getElementById('cost-RegionDostavki-placeholder');
-                         let regCostText = regCost && regCost.textContent ? regCost.textContent : "";
-                         rowsData.push({ type: 'region', name: nameText, val: valueText, cost: [regCostText], desc: descText });
+                         const rc = document.getElementById('cost-RegionDostavki-placeholder');
+                         let rct = rc && rc.textContent ? rc.textContent : "";
+                         rowsData.push({ type: 'region', name: nameText, val: valueText, cost: [rct], desc: descText });
                          return;
                     }
                     rowsData.push({ type: 'standard', name: nameText, val: valueText, cost: costValues, desc: descText });
                 }
             });
-            if (pendingFMC) { rowsData.push({ type: 'standard', name: pendingFMC.name, val: pendingFMC.val, cost: pendingFMC.cost, desc: pendingFMC.desc }); }
-            if (rowsData.length > 0) { sectionsData.push({ title: titleText, rows: rowsData }); }
+            if (pendingFMC) rowsData.push({ type: 'standard', name: pendingFMC.name, val: pendingFMC.val, cost: pendingFMC.cost, desc: pendingFMC.desc });
+            if (rowsData.length > 0) sectionsData.push({ title: titleText, rows: rowsData });
         });
 
         const totalsData = {
-            monthly: document.getElementById('total-monthly').textContent + " ₽ / мес", // Добавляем хвост, так как на главной он отделен
-            minimal: document.getElementById('total-minimal').textContent, // Уже с хвостом
+            monthly: document.getElementById('total-monthly').textContent + " ₽ / мес",
+            minimal: document.getElementById('total-minimal').textContent,
             minimalDesc: document.getElementById('tooltip-min8800').innerHTML,
             connection: document.getElementById('total-connection').textContent,
             connectDesc: document.getElementById('tooltip-connect').innerHTML,
@@ -647,11 +516,9 @@
             guaranteeDesc: document.getElementById('tooltip-guarantee').innerHTML
         };
 
-        const fullData = { manager: managerData, sections: sectionsData, totals: totalsData };
-        const json = JSON.stringify(fullData);
-        const payload = btoa(unescape(encodeURIComponent(json)));
-
-        // ССЫЛКА НА ВТОРОЙ ФАЙЛ
+        const json = JSON.stringify({ manager: managerData, sections: sectionsData, totals: totalsData });
+        // Correct encoding for URL
+        const payload = encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
         const exportUrl = 'https://gunevgeniy.github.io/test/pdf_export.html?payload=' + payload;
 
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
@@ -661,102 +528,14 @@
         }
         document.getElementById('managerModal').classList.remove('open');
     }
+    /* PRINT LOGIC END */
 
-    /* --- CALCULATOR LOGIC --- */
-    function resetForm() { document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => { if(!input.disabled && !input.id.startsWith("mgr")) input.value = 0; }); document.querySelectorAll('input[type="checkbox"]').forEach(box => { box.checked = false; }); document.querySelectorAll('select').forEach(select => { select.selectedIndex = 0; updateSelectTrigger(select.id); }); const vsego = document.getElementById("NomeraVATSVsego"); if (vsego) vsego.value = 0; if (typeof manualChanges !== 'undefined') manualChanges.clear(); updateTotals(); }
+    /* CALCULATOR LOGIC */
+    function resetForm() { document.querySelectorAll('input:not(:disabled):not([id^="mgr"])').forEach(i=>i.value=0); document.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=false); document.querySelectorAll('select').forEach(s=>{s.selectedIndex=0;updateSelectTrigger(s.id)}); const v=document.getElementById("NomeraVATSVsego"); if(v)v.value=0; if(typeof manualChanges!=='undefined')manualChanges.clear(); updateTotals(); }
     function getCheckbox(id) { return document.getElementById(id)?.checked ?? false; }
-    function getNumber(id) { const val = parseFloat(document.getElementById(id)?.value ?? 0); return isNaN(val) ? 0 : val; }
-    function getSelect(id) { return document.getElementById(id)?.value ?? ""; }
-    function parseVal(id) { const el = document.getElementById(id); if (!el) return 0; const val = el.value || el.textContent; const num = parseFloat(val.toString().replace(/[^\d.]/g, '')); return isNaN(num) ? 0 : num; }
-
-    const formulaMap = {
-        VATS: { cost: () => getCheckbox("VATS") ? 1200 : 0 },
-        VATSPRO: { cost: () => getCheckbox("VATSPRO") ? 2200 : 0 },
-        KolvoSotrudnikovVATS: { limit: () => { const val = getNumber("KolvoSotrudnikovVATS"); const vatspro = getCheckbox("VATSPRO"); return val < 4 ? 0 : (val - 3) * (vatspro ? 200 : 120); } },
-        DlitelnostHraneniyaVATS: { limit: () => { const ar = getSelect("DlitelnostHraneniyaAR"); const vats = getSelect("DlitelnostHraneniyaVATS"); const price = { "1 месяц": 500, "3 месяца": 1000, "6 месяцев": 1500, "1 год": 3000, "2 года": 5000, "4 года": 7000 }; if (!vats || vats === "0") return 0; if (!ar || ar === "0") return price[vats] || 0; if ((price[ar] || 0) > (price[vats] || 0)) return "учтено в KT"; return price[vats] || 0; } },
-        LiniyGrupovogoVizova: { limit: () => { const val = getNumber("LiniyGrupovogoVizova"); if (val < 4) return 0; if (val < 51) return (val - 3) * 190; return "уменьшите до 50"; } },
-        LiniyIshodyashihZvonkov: { limit: () => { const val = getNumber("LiniyIshodyashihZvonkov"); if (val < 31) return 0; if (val < 101) return (val - 30) * 190; return "уменьшите до 100"; } },
-        KolvoSIPTrankov: { cost: () => { const val = getNumber("KolvoSIPTrankov"); return val < 1501 ? val * 400 : "уменьшите до 1500"; } },
-        KanalnostSIPTrankov: { limit: () => { const val = getNumber("KanalnostSIPTrankov"); if (val < 31) return 0; if (val < 61) return 1000; if (val < 91) return 1500; if (val < 181) return 3000; return 0; } },
-        KolvoSIPURI: { cost: () => { const val = getNumber("KolvoSIPURI"); return val < 1501 ? val * 100 : "уменьшите до 1500"; } },
-        KolvoSIPAkkauntov: { cost: () => { const val = getNumber("KolvoSIPAkkauntov"); return val < 1501 ? val * 300 : "уменьшите до 1500"; } },
-        KanalnostSIPAkkauntov: { limit: () => { const val = getNumber("KanalnostSIPAkkauntov"); if (val < 31) return 0; if (val < 61) return 1000; if (val < 91) return 1500; if (val < 181) return 3000; return 0; } },
-        NomeraVATS: { cost: () => getNumber("NomeraVATS") * 300 },
-        NomeraVATS8800: { cost: () => getNumber("NomeraVATS8800") * 590 },
-        KolvoSvoihNomerov: { cost: () => { const val = getNumber("KolvoSvoihNomerov"); if (val < 1) return 0; if (val < 11) return val * 200; return 2000 + ((val - 10) * 100); } },
-        KolvoFMC: { cost: () => { const tarif = document.getElementById("TarifFMC")?.value || ""; const count = getNumber("KolvoFMC"); let price = 0; switch (tarif) { case "200 минут, 1Гб интернета": price = 790; break; case "600 минут, 5Гб интернета": price = 1290; break; case "800 минут, 10Гб интернета": price = 1990; break; case "2000 минут, 20Гб интернета": price = 4490; break; case "15 минут, 0,2Гб интернета": price = 390; break; } return price * count; } },
-        NomeraVATSVsego: { limit: () => { const val = getNumber("NomeraVATSVsego"); return val < 4 ? 0 : (val - 3) * 100; } },
-        OMNI: { cost: () => getCheckbox("OMNI") ? 2600 : 0 },
-        KolvoSotrudnikovOMNI: { limit: () => { const val = getNumber("KolvoSotrudnikovOMNI"); if (val < 4) return 0; if (val < 21) return (val - 3) * 590; if (val < 31) return (val - 3) * 540; if (val < 41) return (val - 3) * 490; if (val < 101) return (val - 3) * 440; if (val < 201) return (val - 3) * 390; if (val < 1001) return (val - 3) * 340; if (val < 10001) return (val - 3) * 290; return "уменьшите до 10000"; } },
-        KolvoWA: { limit: () => getNumber("KolvoWA") * 990 },
-        KolvoWABA: { cost: () => getNumber("KolvoWABA") > 0 ? 4000 : 0, limit: () => getNumber("KolvoWABA") * 5000 },
-        TgVkAvito: { cost: () => getCheckbox("TgVkAvito") ? "вкл" : 0 },
-        OMNIKnopka: { cost: () => getCheckbox("OMNIKnopka") ? "вкл" : 0 },
-        AR: { cost: () => getCheckbox("AR") ? 2000 : 0 },
-        KolvoSaitov: { limit: () => getNumber("KolvoSaitov") ? "вкл" : 0 },
-        KolvoPolzovatelskihIstochnikov: { limit: () => { const val = getNumber("KolvoPolzovatelskihIstochnikov"); if (val === 250) return 1000; if (val === 500) return 2000; if (val === 5000) return 3000; return 0; } },
-        PaketTrafika: { limit: () => { const val = document.getElementById("PaketTrafika")?.value || ""; const num = parseInt(val); if (val === "безлимит") return 50000; if (num === 0 || num === 10000) return 0; if (num === 20000) return 1000; if (num === 50000) return 3500; if (num === 100000) return 7500; if (num === 200000) return 15000; if (num === 500000) return 30000; return 50000; } },
-        KT: { cost: () => getCheckbox("KT") ? 1500 : 0 },
-        NomeraKT: { cost: () => getNumber("NomeraKT") * 300 },
-        NomeraKT8800: { cost: () => getNumber("NomeraKT8800") * 590 },
-        DlitelnostHraneniyaAR: { limit: () => { const values = { "0": 0, "1 месяц": 500, "3 месяца": 1000, "6 месяцев": 1500, "1 год": 3000, "2 года": 5000, "4 года": 7000 }; const vats = document.getElementById("DlitelnostHraneniyaVATS")?.value || ""; const ar = document.getElementById("DlitelnostHraneniyaAR")?.value || ""; if (ar === "0") return 0; const vatsVal = values[vats] ?? 0; const arVal = values[ar] ?? 0; return vatsVal >= arVal ? "учтено в ВАТС" : arVal; } },
-        EmailTreking: { cost: () => document.getElementById("EmailTreking")?.value !== "нет" ? 2000 : 0, limit: () => document.getElementById("EmailTreking")?.value === "больше 100 шт." ? 1000 : 0 },
-        KonstruktorOtchetov: { cost: () => getCheckbox("KonstruktorOtchetov") ? 4000 : 0 },
-        AnalitikaProdaj: { cost: () => getCheckbox("AnalitikaProdaj") ? 3000 : 0 },
-        IntegraciyaSVidjetami: { cost: () => getCheckbox("IntegraciyaSVidjetami") ? 2000 : 0 },
-        AmoBitrix: { cost: () => getCheckbox("AmoBitrix") ? 1500 : 0 },
-        IntegraciyaOtraslevie: { cost: () => getCheckbox("IntegraciyaOtraslevie") ? 2000 : 0 },
-        UvedomlenieOSobitiyah: { cost: () => getCheckbox("UvedomlenieOSobitiyah") ? 800 : 0 },
-        VneshnieATS: { cost: () => getCheckbox("VneshnieATS") ? 3000 : 0 },
-        SpasenieKommunikatsiy: { cost: () => getCheckbox("SpasenieKommunikatsiy") ? 1600 : 0 },
-        AvtoperezvonPoZayavkam: { cost: () => getCheckbox("AvtoperezvonPoZayavkam") ? 1600 : 0 },
-        VezdeKakDoma: { cost: () => getCheckbox("VezdeKakDoma") ? 2000 : 0 }
-    };
-
-    const rules = {
-        VATS: (c) => { if(getCheckbox("VATS")){ c.select("DlitelnostHraneniyaVATS","1 неделя"); if(getNumber("KolvoSotrudnikovVATS")<3)c.set("KolvoSotrudnikovVATS",3); if(getNumber("LiniyGrupovogoVizova")<3)c.set("LiniyGrupovogoVizova",3); if(getNumber("LiniyIshodyashihZvonkov")<30)c.set("LiniyIshodyashihZvonkov",30); } else { c.set("KolvoSotrudnikovVATS",0); c.set("LiniyGrupovogoVizova",0); c.set("LiniyIshodyashihZvonkov",0); c.set("KolvoSIPTrankov",0); c.set("KolvoSIPURI",0); c.set("KolvoSIPAkkauntov",0); c.set("NomeraVATS",0); c.set("NomeraVATS8800",0); c.set("KolvoSvoihNomerov",0); c.set("KolvoFMC",0); c.set("VATSPRO",false); c.select("DlitelnostHraneniyaVATS",0); c.select("KanalnostSIPTrankov",0); c.select("KanalnostSIPAkkauntov",0); c.select("TarifFMC","нет"); c.select("RegionDostavki","нет"); c.set("VneshnieATS",false); c.set("SpasenieKommunikatsiy",false); c.set("AvtoperezvonPoZayavkam",false); c.set("VezdeKakDoma",false); if(!getCheckbox("OMNI")&&!getCheckbox("AnalitikaProdaj")) c.set("AmoBitrix",false); c.set("IntegraciyaOtraslevie",false); if(getCheckbox("UvedomlenieOSobitiyah")&&!getCheckbox("OMNI")&&!getCheckbox("AR")) c.set("UvedomlenieOSobitiyah",false); } },
-        VATSPRO: (c) => { if(getCheckbox("VATSPRO")&&!getCheckbox("VATS")) c.set("VATS",true); },
-        KolvoSotrudnikovVATS: (c) => { const v=getNumber("KolvoSotrudnikovVATS"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v>0&&v<3) c.set("KolvoSotrudnikovVATS",3); if(v===0&&getNumber("KolvoSIPTrankov")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); },
-        DlitelnostHraneniyaVATS: (c) => { const v=document.getElementById("DlitelnostHraneniyaVATS")?.value; if(v!=="0"&&!getCheckbox("VATS")) c.set("VATS",true); if(v==="0"&&getCheckbox("VATS")) c.select("DlitelnostHraneniyaVATS","1 неделя"); },
-        LiniyGrupovogoVizova: (c) => { const v=getNumber("LiniyGrupovogoVizova"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v>=0&&v<3&&getCheckbox("VATS")) c.set("LiniyGrupovogoVizova",3); },
-        LiniyIshodyashihZvonkov: (c) => { const v=getNumber("LiniyIshodyashihZvonkov"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v>=0&&v<30&&getCheckbox("VATS")) c.set("LiniyIshodyashihZvonkov",30); },
-        KolvoSIPTrankov: (c) => { const v=getNumber("KolvoSIPTrankov"); const k=document.getElementById("KanalnostSIPTrankov")?.value; if(v>0){ if(!getCheckbox("VATS")) c.set("VATS",true); if(parseInt(k,10)<30) c.select("KanalnostSIPTrankov","30"); } if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); if(v===0&&k!=="0") c.select("KanalnostSIPTrankov","0"); },
-        KanalnostSIPTrankov: (c) => { const v=document.getElementById("KanalnostSIPTrankov")?.value; if(v!=="0"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoSIPTrankov")===0) c.set("KolvoSIPTrankov",1); } else { if(getNumber("KolvoSIPTrankov")!==0) c.set("KolvoSIPTrankov",0); } },
-        KolvoSIPURI: (c) => { const v=getNumber("KolvoSIPURI"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPTrankov")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); },
-        KolvoSIPAkkauntov: (c) => { const v=getNumber("KolvoSIPAkkauntov"); const k=document.getElementById("KanalnostSIPAkkauntov")?.value; if(v>0){ if(!getCheckbox("VATS")) c.set("VATS",true); if(parseInt(k,10)<30) c.select("KanalnostSIPAkkauntov","30"); } if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPTrankov")===0&&getCheckbox("VATS")) c.set("VATS",false); if(v===0&&k!=="0") c.select("KanalnostSIPAkkauntov","0"); },
-        KanalnostSIPAkkauntov: (c) => { const v=document.getElementById("KanalnostSIPAkkauntov")?.value; if(v!=="0"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoSIPAkkauntov")===0) c.set("KolvoSIPAkkauntov",1); } else { if(getNumber("KolvoSIPAkkauntov")!==0) c.set("KolvoSIPAkkauntov",0); } },
-        NomeraVATS: (c) => { if(getNumber("NomeraVATS")>0&&!getCheckbox("VATS")) c.set("VATS",true); },
-        NomeraVATS8800: (c) => { if(getNumber("NomeraVATS8800")>0&&!getCheckbox("VATS")) c.set("VATS",true); },
-        KolvoSvoihNomerov: (c) => { if(getNumber("KolvoSvoihNomerov")>0&&!getCheckbox("VATS")) c.set("VATS",true); },
-        KolvoFMC: (c) => { const v=getNumber("KolvoFMC"); if(v>0){ if(!getCheckbox("VATS")) c.set("VATS",true); if(document.getElementById("TarifFMC")?.value==="нет") c.select("TarifFMC", document.getElementById("TarifFMC")?.options[1].value); } else { if(document.getElementById("TarifFMC")?.value!=="нет") c.select("TarifFMC","нет"); if(document.getElementById("RegionDostavki")?.value!=="нет") c.select("RegionDostavki","нет"); } },
-        TarifFMC: (c) => { const v=document.getElementById("TarifFMC")?.value; if(v&&v!=="нет"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoFMC")===0) c.set("KolvoFMC",1); } else { if(getNumber("KolvoFMC")!==0) c.set("KolvoFMC",0); if(document.getElementById("RegionDostavki")?.value!=="нет") c.select("RegionDostavki","нет"); } },
-        RegionDostavki: (c) => { const v=document.getElementById("RegionDostavki")?.value; if(v&&v!=="нет"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoFMC")===0) c.set("KolvoFMC",1); if(document.getElementById("TarifFMC")?.value==="нет") c.select("TarifFMC",document.getElementById("TarifFMC")?.options[1].value); } },
-        OMNI: (c) => { if(getCheckbox("OMNI")){ if(getNumber("KolvoSotrudnikovOMNI")<3) c.set("KolvoSotrudnikovOMNI",3); if(!getCheckbox("TgVkAvito")) c.set("TgVkAvito",true); if(!getCheckbox("OMNIKnopka")) c.set("OMNIKnopka",true); } else { c.set("KolvoSotrudnikovOMNI",0); c.set("KolvoWA",0); c.set("KolvoWABA",0); c.set("TgVkAvito",false); c.set("OMNIKnopka",false); if(!getCheckbox("VATS")&&!getCheckbox("AnalitikaProdaj")) c.set("AmoBitrix",false); if(!getCheckbox("VATS")&&!getCheckbox("AR")) c.set("UvedomlenieOSobitiyah",false); } },
-        KolvoSotrudnikovOMNI: (c) => { const v=getNumber("KolvoSotrudnikovOMNI"); if(v>0){ if(!getCheckbox("OMNI")) c.set("OMNI",true); if(v<3) c.set("KolvoSotrudnikovOMNI",3); } if(v===0&&getCheckbox("OMNI")) c.set("OMNI",false); },
-        KolvoWA: (c) => { if(getNumber("KolvoWA")>0&&!getCheckbox("OMNI")) c.set("OMNI",true); },
-        KolvoWABA: (c) => { if(getNumber("KolvoWABA")>0&&!getCheckbox("OMNI")) c.set("OMNI",true); },
-        TgVkAvito: (c) => { if(getCheckbox("TgVkAvito")&&!getCheckbox("OMNI")) c.set("OMNI",true); },
-        OMNIKnopka: (c) => { if(getCheckbox("OMNIKnopka")&&!getCheckbox("OMNI")) c.set("OMNI",true); },
-        AR: (c) => { if(getCheckbox("AR")){ if(getNumber("KolvoSaitov")===0) c.set("KolvoSaitov",1); c.select("KolvoPolzovatelskihIstochnikov","50"); c.select("PaketTrafika","10000"); } else { c.set("KolvoSaitov",0); c.select("KolvoPolzovatelskihIstochnikov","0"); c.select("PaketTrafika","0"); c.select("EmailTreking","нет"); c.set("KT",false); c.set("NomeraKT",0); c.set("NomeraKT8800",0); c.select("DlitelnostHraneniyaAR","0"); c.set("KonstruktorOtchetov",false); c.set("AnalitikaProdaj",false); c.set("IntegraciyaSVidjetami",false); c.set("AvtoperezvonPoZayavkam",false); if(!getCheckbox("VATS")&&!getCheckbox("OMNI")) c.set("UvedomlenieOSobitiyah",false); } },
-        KolvoSaitov: (c) => { if(getNumber("KolvoSaitov")>0&&!getCheckbox("AR")) c.set("AR",true); },
-        KolvoPolzovatelskihIstochnikov: (c) => { const v=document.getElementById("KolvoPolzovatelskihIstochnikov")?.value; if(v&&v!=="0"&&!getCheckbox("AR")) c.set("AR",true); },
-        PaketTrafika: (c) => { const v=document.getElementById("PaketTrafika")?.value; if(v&&v!=="0"&&!getCheckbox("AR")) c.set("AR",true); },
-        KT: (c) => { if(getCheckbox("KT")&&!getCheckbox("AR")) c.set("AR",true); if(!getCheckbox("KT")){ c.set("NomeraKT",0); c.set("NomeraKT8800",0); c.select("DlitelnostHraneniyaAR","0"); } },
-        NomeraKT: (c) => { if(getNumber("NomeraKT")>0&&!getCheckbox("KT")) c.set("KT",true); },
-        NomeraKT8800: (c) => { if(getNumber("NomeraKT8800")>0&&!getCheckbox("KT")) c.set("KT",true); },
-        DlitelnostHraneniyaAR: (c) => { const v=document.getElementById("DlitelnostHraneniyaAR")?.value; if(v!=="0"&&!getCheckbox("KT")) c.set("KT",true); if(v==="0"&&getCheckbox("KT")) c.select("DlitelnostHraneniyaAR","1 неделя"); },
-        EmailTreking: (c) => { const v=document.getElementById("EmailTreking")?.value; if(v&&v!=="нет"&&!getCheckbox("AR")) c.set("AR",true); },
-        KonstruktorOtchetov: (c) => { if(getCheckbox("KonstruktorOtchetov")&&!getCheckbox("AR")) c.set("AR",true); },
-        AnalitikaProdaj: (c) => { if(getCheckbox("AnalitikaProdaj")){ if(!getCheckbox("AR")) c.set("AR",true); if(!getCheckbox("AmoBitrix")) c.set("AmoBitrix",true); } else { if(!getCheckbox("OMNI")&&!getCheckbox("VATS")) c.set("AmoBitrix",false); } },
-        IntegraciyaSVidjetami: (c) => { if(getCheckbox("IntegraciyaSVidjetami")&&!getCheckbox("AR")) c.set("AR",true); },
-        IntegraciyaOtraslevie: (c) => { if(getCheckbox("IntegraciyaOtraslevie")&&!getCheckbox("VATS")) c.set("VATS",true); },
-        VneshnieATS: (c) => { if(getCheckbox("VneshnieATS")&&!getCheckbox("VATS")) c.set("VATS",true); },
-        AmoBitrix: (c) => { if(getCheckbox("AmoBitrix")){ if(!getCheckbox("VATS")&&!getCheckbox("OMNI")&&!getCheckbox("AnalitikaProdaj")) c.set("VATS",true); } else { if(getCheckbox("AnalitikaProdaj")) c.set("AnalitikaProdaj",false); } },
-        VezdeKakDoma: (c) => { if(getCheckbox("VezdeKakDoma")&&!getCheckbox("VATS")) c.set("VATS",true); },
-        UvedomlenieOSobitiyah: (c) => { if(getCheckbox("UvedomlenieOSobitiyah")){ if(getCheckbox("SpasenieKommunikatsiy")) c.set("UvedomlenieOSobitiyah",false); else if(!getCheckbox("VATS")&&!getCheckbox("OMNI")&&!getCheckbox("AR")) c.set("VATS",true); } },
-        SpasenieKommunikatsiy: (c) => { if(getCheckbox("SpasenieKommunikatsiy")){ document.getElementById('UvedomlenieOSobitiyah').disabled = true; if(!getCheckbox("VATS")) c.set("VATS",true); if(getCheckbox("UvedomlenieOSobitiyah")) c.set("UvedomlenieOSobitiyah",false); } else { document.getElementById('UvedomlenieOSobitiyah').disabled = false; } },
-        AvtoperezvonPoZayavkam: (c) => { if(getCheckbox("AvtoperezvonPoZayavkam")){ if(!getCheckbox("VATS")) c.set("VATS",true); if(!getCheckbox("AR")) c.set("AR",true); } },
-    };
+    function getNumber(id) { const v=parseFloat(document.getElementById(id)?.value??0); return isNaN(v)?0:v; }
+    function getSelect(id) { return document.getElementById(id)?.value??""; }
+    function parseVal(id) { const e=document.getElementById(id); if(!e)return 0; const v=parseFloat((e.value||e.textContent).replace(/[^\d.]/g,'')); return isNaN(v)?0:v; }
 
     const manualChanges = new Set();
     let cascadeQueue = [];
@@ -764,40 +543,63 @@
 
     function runCascade(startField) {
         if (isProcessing) { manualChanges.add(startField); return; }
-        cascadeQueue = [startField];
-        isProcessing = true;
-        let depth = 0; const maxDepth = 3;
+        cascadeQueue = [startField]; isProcessing = true; let depth = 0;
         const context = {
-            set: (id, value) => {
-                const el = document.getElementById(id); if (!el) return;
-                const current = el.type === "checkbox" ? el.checked : el.value;
-                const changedByUser = manualChanges.has(id);
-                const isSame = current == value; 
-                if (isSame || changedByUser) return;
-                
-                if (el.type === "checkbox") el.checked = value; else el.value = value;
-                cascadeQueue.push(id);
-            },
-            select: (id, value) => {
-                const el = document.getElementById(id); if (!el) return;
-                const changedByUser = manualChanges.has(id);
-                const isSame = el.value === value;
-                if (isSame || changedByUser) return;
-                
-                el.value = value;
-                updateSelectTrigger(id);
-                cascadeQueue.push(id);
-            }
+            set: (id, value) => { const el = document.getElementById(id); if (!el) return; const current = el.type === "checkbox" ? el.checked : el.value; if (current == value || manualChanges.has(id)) return; if (el.type === "checkbox") el.checked = value; else el.value = value; cascadeQueue.push(id); },
+            select: (id, value) => { const el = document.getElementById(id); if (!el || el.value === value || manualChanges.has(id)) return; el.value = value; updateSelectTrigger(id); cascadeQueue.push(id); }
         };
-        while (cascadeQueue.length && depth < maxDepth) {
+        // Simplified Logic Rules (Full Logic in previous responses, condensed here for size but functionally identical)
+        const rules = {
+             VATS: (c) => { if(getCheckbox("VATS")){ c.select("DlitelnostHraneniyaVATS","1 неделя"); if(getNumber("KolvoSotrudnikovVATS")<3)c.set("KolvoSotrudnikovVATS",3); if(getNumber("LiniyGrupovogoVizova")<3)c.set("LiniyGrupovogoVizova",3); if(getNumber("LiniyIshodyashihZvonkov")<30)c.set("LiniyIshodyashihZvonkov",30); } else { c.set("KolvoSotrudnikovVATS",0); c.set("LiniyGrupovogoVizova",0); c.set("LiniyIshodyashihZvonkov",0); c.set("KolvoSIPTrankov",0); c.set("KolvoSIPURI",0); c.set("KolvoSIPAkkauntov",0); c.set("NomeraVATS",0); c.set("NomeraVATS8800",0); c.set("KolvoSvoihNomerov",0); c.set("KolvoFMC",0); c.set("VATSPRO",false); c.select("DlitelnostHraneniyaVATS",0); c.select("KanalnostSIPTrankov",0); c.select("KanalnostSIPAkkauntov",0); c.select("TarifFMC","нет"); c.select("RegionDostavki","нет"); c.set("VneshnieATS",false); c.set("SpasenieKommunikatsiy",false); c.set("AvtoperezvonPoZayavkam",false); c.set("VezdeKakDoma",false); if(!getCheckbox("OMNI")&&!getCheckbox("AnalitikaProdaj")) c.set("AmoBitrix",false); c.set("IntegraciyaOtraslevie",false); if(getCheckbox("UvedomlenieOSobitiyah")&&!getCheckbox("OMNI")&&!getCheckbox("AR")) c.set("UvedomlenieOSobitiyah",false); } },
+             VATSPRO: (c) => { if(getCheckbox("VATSPRO")&&!getCheckbox("VATS")) c.set("VATS",true); },
+             KolvoSotrudnikovVATS: (c) => { const v=getNumber("KolvoSotrudnikovVATS"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v>0&&v<3) c.set("KolvoSotrudnikovVATS",3); if(v===0&&getNumber("KolvoSIPTrankov")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); },
+             DlitelnostHraneniyaVATS: (c) => { const v=document.getElementById("DlitelnostHraneniyaVATS")?.value; if(v!=="0"&&!getCheckbox("VATS")) c.set("VATS",true); if(v==="0"&&getCheckbox("VATS")) c.select("DlitelnostHraneniyaVATS","1 неделя"); },
+             LiniyGrupovogoVizova: (c) => { const v=getNumber("LiniyGrupovogoVizova"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v>=0&&v<3&&getCheckbox("VATS")) c.set("LiniyGrupovogoVizova",3); },
+             LiniyIshodyashihZvonkov: (c) => { const v=getNumber("LiniyIshodyashihZvonkov"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v>=0&&v<30&&getCheckbox("VATS")) c.set("LiniyIshodyashihZvonkov",30); },
+             KolvoSIPTrankov: (c) => { const v=getNumber("KolvoSIPTrankov"); const k=document.getElementById("KanalnostSIPTrankov")?.value; if(v>0){ if(!getCheckbox("VATS")) c.set("VATS",true); if(parseInt(k,10)<30) c.select("KanalnostSIPTrankov","30"); } if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); if(v===0&&k!=="0") c.select("KanalnostSIPTrankov","0"); },
+             KanalnostSIPTrankov: (c) => { const v=document.getElementById("KanalnostSIPTrankov")?.value; if(v!=="0"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoSIPTrankov")===0) c.set("KolvoSIPTrankov",1); } else { if(getNumber("KolvoSIPTrankov")!==0) c.set("KolvoSIPTrankov",0); } },
+             KolvoSIPURI: (c) => { const v=getNumber("KolvoSIPURI"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPTrankov")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); },
+             KolvoSIPAkkauntov: (c) => { const v=getNumber("KolvoSIPAkkauntov"); const k=document.getElementById("KanalnostSIPAkkauntov")?.value; if(v>0){ if(!getCheckbox("VATS")) c.set("VATS",true); if(parseInt(k,10)<30) c.select("KanalnostSIPAkkauntov","30"); } if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPTrankov")===0&&getCheckbox("VATS")) c.set("VATS",false); if(v===0&&k!=="0") c.select("KanalnostSIPAkkauntov","0"); },
+             KanalnostSIPAkkauntov: (c) => { const v=document.getElementById("KanalnostSIPAkkauntov")?.value; if(v!=="0"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoSIPAkkauntov")===0) c.set("KolvoSIPAkkauntov",1); } else { if(getNumber("KolvoSIPAkkauntov")!==0) c.set("KolvoSIPAkkauntov",0); } },
+             NomeraVATS: (c) => { if(getNumber("NomeraVATS")>0&&!getCheckbox("VATS")) c.set("VATS",true); },
+             NomeraVATS8800: (c) => { if(getNumber("NomeraVATS8800")>0&&!getCheckbox("VATS")) c.set("VATS",true); },
+             KolvoSvoihNomerov: (c) => { if(getNumber("KolvoSvoihNomerov")>0&&!getCheckbox("VATS")) c.set("VATS",true); },
+             KolvoFMC: (c) => { const v=getNumber("KolvoFMC"); if(v>0){ if(!getCheckbox("VATS")) c.set("VATS",true); if(document.getElementById("TarifFMC")?.value==="нет") c.select("TarifFMC", document.getElementById("TarifFMC")?.options[1].value); } else { if(document.getElementById("TarifFMC")?.value!=="нет") c.select("TarifFMC","нет"); if(document.getElementById("RegionDostavki")?.value!=="нет") c.select("RegionDostavki","нет"); } },
+             TarifFMC: (c) => { const v=document.getElementById("TarifFMC")?.value; if(v&&v!=="нет"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoFMC")===0) c.set("KolvoFMC",1); } else { if(getNumber("KolvoFMC")!==0) c.set("KolvoFMC",0); if(document.getElementById("RegionDostavki")?.value!=="нет") c.select("RegionDostavki","нет"); } },
+             RegionDostavki: (c) => { const v=document.getElementById("RegionDostavki")?.value; if(v&&v!=="нет"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoFMC")===0) c.set("KolvoFMC",1); if(document.getElementById("TarifFMC")?.value==="нет") c.select("TarifFMC",document.getElementById("TarifFMC")?.options[1].value); } },
+             OMNI: (c) => { if(getCheckbox("OMNI")){ if(getNumber("KolvoSotrudnikovOMNI")<3) c.set("KolvoSotrudnikovOMNI",3); if(!getCheckbox("TgVkAvito")) c.set("TgVkAvito",true); if(!getCheckbox("OMNIKnopka")) c.set("OMNIKnopka",true); } else { c.set("KolvoSotrudnikovOMNI",0); c.set("KolvoWA",0); c.set("KolvoWABA",0); c.set("TgVkAvito",false); c.set("OMNIKnopka",false); if(!getCheckbox("VATS")&&!getCheckbox("AnalitikaProdaj")) c.set("AmoBitrix",false); if(!getCheckbox("VATS")&&!getCheckbox("AR")) c.set("UvedomlenieOSobitiyah",false); } },
+             KolvoSotrudnikovOMNI: (c) => { const v=getNumber("KolvoSotrudnikovOMNI"); if(v>0){ if(!getCheckbox("OMNI")) c.set("OMNI",true); if(v<3) c.set("KolvoSotrudnikovOMNI",3); } if(v===0&&getCheckbox("OMNI")) c.set("OMNI",false); },
+             KolvoWA: (c) => { if(getNumber("KolvoWA")>0&&!getCheckbox("OMNI")) c.set("OMNI",true); },
+             KolvoWABA: (c) => { if(getNumber("KolvoWABA")>0&&!getCheckbox("OMNI")) c.set("OMNI",true); },
+             TgVkAvito: (c) => { if(getCheckbox("TgVkAvito")&&!getCheckbox("OMNI")) c.set("OMNI",true); },
+             OMNIKnopka: (c) => { if(getCheckbox("OMNIKnopka")&&!getCheckbox("OMNI")) c.set("OMNI",true); },
+             AR: (c) => { if(getCheckbox("AR")){ if(getNumber("KolvoSaitov")===0) c.set("KolvoSaitov",1); c.select("KolvoPolzovatelskihIstochnikov","50"); c.select("PaketTrafika","10000"); } else { c.set("KolvoSaitov",0); c.select("KolvoPolzovatelskihIstochnikov","0"); c.select("PaketTrafika","0"); c.select("EmailTreking","нет"); c.set("KT",false); c.set("NomeraKT",0); c.set("NomeraKT8800",0); c.select("DlitelnostHraneniyaAR","0"); c.set("KonstruktorOtchetov",false); c.set("AnalitikaProdaj",false); c.set("IntegraciyaSVidjetami",false); c.set("AvtoperezvonPoZayavkam",false); if(!getCheckbox("VATS")&&!getCheckbox("OMNI")) c.set("UvedomlenieOSobitiyah",false); } },
+             KolvoSaitov: (c) => { if(getNumber("KolvoSaitov")>0&&!getCheckbox("AR")) c.set("AR",true); },
+             KolvoPolzovatelskihIstochnikov: (c) => { const v=document.getElementById("KolvoPolzovatelskihIstochnikov")?.value; if(v&&v!=="0"&&!getCheckbox("AR")) c.set("AR",true); },
+             PaketTrafika: (c) => { const v=document.getElementById("PaketTrafika")?.value; if(v&&v!=="0"&&!getCheckbox("AR")) c.set("AR",true); },
+             KT: (c) => { if(getCheckbox("KT")&&!getCheckbox("AR")) c.set("AR",true); if(!getCheckbox("KT")){ c.set("NomeraKT",0); c.set("NomeraKT8800",0); c.select("DlitelnostHraneniyaAR","0"); } },
+             NomeraKT: (c) => { if(getNumber("NomeraKT")>0&&!getCheckbox("KT")) c.set("KT",true); },
+             NomeraKT8800: (c) => { if(getNumber("NomeraKT8800")>0&&!getCheckbox("KT")) c.set("KT",true); },
+             DlitelnostHraneniyaAR: (c) => { const v=document.getElementById("DlitelnostHraneniyaAR")?.value; if(v!=="0"&&!getCheckbox("KT")) c.set("KT",true); if(v==="0"&&getCheckbox("KT")) c.select("DlitelnostHraneniyaAR","1 неделя"); },
+             EmailTreking: (c) => { const v=document.getElementById("EmailTreking")?.value; if(v&&v!=="нет"&&!getCheckbox("AR")) c.set("AR",true); },
+             KonstruktorOtchetov: (c) => { if(getCheckbox("KonstruktorOtchetov")&&!getCheckbox("AR")) c.set("AR",true); },
+             AnalitikaProdaj: (c) => { if(getCheckbox("AnalitikaProdaj")){ if(!getCheckbox("AR")) c.set("AR",true); if(!getCheckbox("AmoBitrix")) c.set("AmoBitrix",true); } else { if(!getCheckbox("OMNI")&&!getCheckbox("VATS")) c.set("AmoBitrix",false); } },
+             IntegraciyaSVidjetami: (c) => { if(getCheckbox("IntegraciyaSVidjetami")&&!getCheckbox("AR")) c.set("AR",true); },
+             IntegraciyaOtraslevie: (c) => { if(getCheckbox("IntegraciyaOtraslevie")&&!getCheckbox("VATS")) c.set("VATS",true); },
+             VneshnieATS: (c) => { if(getCheckbox("VneshnieATS")&&!getCheckbox("VATS")) c.set("VATS",true); },
+             AmoBitrix: (c) => { if(getCheckbox("AmoBitrix")){ if(!getCheckbox("VATS")&&!getCheckbox("OMNI")&&!getCheckbox("AnalitikaProdaj")) c.set("VATS",true); } else { if(getCheckbox("AnalitikaProdaj")) c.set("AnalitikaProdaj",false); } },
+             VezdeKakDoma: (c) => { if(getCheckbox("VezdeKakDoma")&&!getCheckbox("VATS")) c.set("VATS",true); },
+             UvedomlenieOSobitiyah: (c) => { if(getCheckbox("UvedomlenieOSobitiyah")){ if(getCheckbox("SpasenieKommunikatsiy")) c.set("UvedomlenieOSobitiyah",false); else if(!getCheckbox("VATS")&&!getCheckbox("OMNI")&&!getCheckbox("AR")) c.set("VATS",true); } },
+             SpasenieKommunikatsiy: (c) => { if(getCheckbox("SpasenieKommunikatsiy")){ document.getElementById('UvedomlenieOSobitiyah').disabled = true; if(!getCheckbox("VATS")) c.set("VATS",true); if(getCheckbox("UvedomlenieOSobitiyah")) c.set("UvedomlenieOSobitiyah",false); } else { document.getElementById('UvedomlenieOSobitiyah').disabled = false; } },
+             AvtoperezvonPoZayavkam: (c) => { if(getCheckbox("AvtoperezvonPoZayavkam")){ if(!getCheckbox("VATS")) c.set("VATS",true); if(!getCheckbox("AR")) c.set("AR",true); } },
+        };
+        
+        while (cascadeQueue.length && depth < 3) {
             const current = cascadeQueue.shift();
-            const rule = rules[current];
-            if (rule) rule(context);
+            if (rules[current]) rules[current](context);
             depth++;
         }
-        isProcessing = false;
-        manualChanges.clear();
-        updateTotals();
+        isProcessing = false; manualChanges.clear(); updateTotals();
     }
 
     function updateTotals() {
@@ -805,47 +607,77 @@
         const vsego = document.getElementById("NomeraVATSVsego");
         if(vsego) vsego.value = sumAll;
 
+        const formulaMap = {
+             VATS: { cost: () => getCheckbox("VATS") ? 1200 : 0 },
+             VATSPRO: { cost: () => getCheckbox("VATSPRO") ? 2200 : 0 },
+             KolvoSotrudnikovVATS: { limit: () => { const val = getNumber("KolvoSotrudnikovVATS"); const vatspro = getCheckbox("VATSPRO"); return val < 4 ? 0 : (val - 3) * (vatspro ? 200 : 120); } },
+             DlitelnostHraneniyaVATS: { limit: () => { const ar = getSelect("DlitelnostHraneniyaAR"); const vats = getSelect("DlitelnostHraneniyaVATS"); const price = { "1 месяц": 500, "3 месяца": 1000, "6 месяцев": 1500, "1 год": 3000, "2 года": 5000, "4 года": 7000 }; if (!vats || vats === "0") return 0; if (!ar || ar === "0") return price[vats] || 0; if ((price[ar] || 0) > (price[vats] || 0)) return "учтено в KT"; return price[vats] || 0; } },
+             LiniyGrupovogoVizova: { limit: () => { const val = getNumber("LiniyGrupovogoVizova"); if (val < 4) return 0; if (val < 51) return (val - 3) * 190; return "уменьшите до 50"; } },
+             LiniyIshodyashihZvonkov: { limit: () => { const val = getNumber("LiniyIshodyashihZvonkov"); if (val < 31) return 0; if (val < 101) return (val - 30) * 190; return "уменьшите до 100"; } },
+             KolvoSIPTrankov: { cost: () => { const val = getNumber("KolvoSIPTrankov"); return val < 1501 ? val * 400 : "уменьшите до 1500"; } },
+             KanalnostSIPTrankov: { limit: () => { const val = getNumber("KanalnostSIPTrankov"); if (val < 31) return 0; if (val < 61) return 1000; if (val < 91) return 1500; if (val < 181) return 3000; return 0; } },
+             KolvoSIPURI: { cost: () => { const val = getNumber("KolvoSIPURI"); return val < 1501 ? val * 100 : "уменьшите до 1500"; } },
+             KolvoSIPAkkauntov: { cost: () => { const val = getNumber("KolvoSIPAkkauntov"); return val < 1501 ? val * 300 : "уменьшите до 1500"; } },
+             KanalnostSIPAkkauntov: { limit: () => { const val = getNumber("KanalnostSIPAkkauntov"); if (val < 31) return 0; if (val < 61) return 1000; if (val < 91) return 1500; if (val < 181) return 3000; return 0; } },
+             NomeraVATS: { cost: () => getNumber("NomeraVATS") * 300 },
+             NomeraVATS8800: { cost: () => getNumber("NomeraVATS8800") * 590 },
+             KolvoSvoihNomerov: { cost: () => { const val = getNumber("KolvoSvoihNomerov"); if (val < 1) return 0; if (val < 11) return val * 200; return 2000 + ((val - 10) * 100); } },
+             KolvoFMC: { cost: () => { const tarif = document.getElementById("TarifFMC")?.value || ""; const count = getNumber("KolvoFMC"); let price = 0; switch (tarif) { case "200 минут, 1Гб интернета": price = 790; break; case "600 минут, 5Гб интернета": price = 1290; break; case "800 минут, 10Гб интернета": price = 1990; break; case "2000 минут, 20Гб интернета": price = 4490; break; case "15 минут, 0,2Гб интернета": price = 390; break; } return price * count; } },
+             NomeraVATSVsego: { limit: () => { const val = getNumber("NomeraVATSVsego"); return val < 4 ? 0 : (val - 3) * 100; } },
+             OMNI: { cost: () => getCheckbox("OMNI") ? 2600 : 0 },
+             KolvoSotrudnikovOMNI: { limit: () => { const val = getNumber("KolvoSotrudnikovOMNI"); if (val < 4) return 0; if (val < 21) return (val - 3) * 590; if (val < 31) return (val - 3) * 540; if (val < 41) return (val - 3) * 490; if (val < 101) return (val - 3) * 440; if (val < 201) return (val - 3) * 390; if (val < 1001) return (val - 3) * 340; if (val < 10001) return (val - 3) * 290; return "уменьшите до 10000"; } },
+             KolvoWA: { limit: () => getNumber("KolvoWA") * 990 },
+             KolvoWABA: { cost: () => getNumber("KolvoWABA") > 0 ? 4000 : 0, limit: () => getNumber("KolvoWABA") * 5000 },
+             TgVkAvito: { cost: () => getCheckbox("TgVkAvito") ? "вкл" : 0 },
+             OMNIKnopka: { cost: () => getCheckbox("OMNIKnopka") ? "вкл" : 0 },
+             AR: { cost: () => getCheckbox("AR") ? 2000 : 0 },
+             KolvoSaitov: { limit: () => getNumber("KolvoSaitov") ? "вкл" : 0 },
+             KolvoPolzovatelskihIstochnikov: { limit: () => { const val = getNumber("KolvoPolzovatelskihIstochnikov"); if (val === 250) return 1000; if (val === 500) return 2000; if (val === 5000) return 3000; return 0; } },
+             PaketTrafika: { limit: () => { const val = document.getElementById("PaketTrafika")?.value || ""; const num = parseInt(val); if (val === "безлимит") return 50000; if (num === 0 || num === 10000) return 0; if (num === 20000) return 1000; if (num === 50000) return 3500; if (num === 100000) return 7500; if (num === 200000) return 15000; if (num === 500000) return 30000; return 50000; } },
+             KT: { cost: () => getCheckbox("KT") ? 1500 : 0 },
+             NomeraKT: { cost: () => getNumber("NomeraKT") * 300 },
+             NomeraKT8800: { cost: () => getNumber("NomeraKT8800") * 590 },
+             DlitelnostHraneniyaAR: { limit: () => { const values = { "0": 0, "1 месяц": 500, "3 месяца": 1000, "6 месяцев": 1500, "1 год": 3000, "2 года": 5000, "4 года": 7000 }; const vats = document.getElementById("DlitelnostHraneniyaVATS")?.value || ""; const ar = document.getElementById("DlitelnostHraneniyaAR")?.value || ""; if (ar === "0") return 0; const vatsVal = values[vats] ?? 0; const arVal = values[ar] ?? 0; return vatsVal >= arVal ? "учтено в ВАТС" : arVal; } },
+             EmailTreking: { cost: () => document.getElementById("EmailTreking")?.value !== "нет" ? 2000 : 0, limit: () => document.getElementById("EmailTreking")?.value === "больше 100 шт." ? 1000 : 0 },
+             KonstruktorOtchetov: { cost: () => getCheckbox("KonstruktorOtchetov") ? 4000 : 0 },
+             AnalitikaProdaj: { cost: () => getCheckbox("AnalitikaProdaj") ? 3000 : 0 },
+             IntegraciyaSVidjetami: { cost: () => getCheckbox("IntegraciyaSVidjetami") ? 2000 : 0 },
+             AmoBitrix: { cost: () => getCheckbox("AmoBitrix") ? 1500 : 0 },
+             IntegraciyaOtraslevie: { cost: () => getCheckbox("IntegraciyaOtraslevie") ? 2000 : 0 },
+             UvedomlenieOSobitiyah: { cost: () => getCheckbox("UvedomlenieOSobitiyah") ? 800 : 0 },
+             VneshnieATS: { cost: () => getCheckbox("VneshnieATS") ? 3000 : 0 },
+             SpasenieKommunikatsiy: { cost: () => getCheckbox("SpasenieKommunikatsiy") ? 1600 : 0 },
+             AvtoperezvonPoZayavkam: { cost: () => getCheckbox("AvtoperezvonPoZayavkam") ? 1600 : 0 },
+             VezdeKakDoma: { cost: () => getCheckbox("VezdeKakDoma") ? 2000 : 0 }
+        };
+
         Object.entries(formulaMap).forEach(([id, formula]) => {
             const costEl = document.getElementById(`cost-${id}`);
             const limitEl = document.getElementById(`limit-${id}`);
-            
             if(costEl) costEl.innerHTML = '';
             if(limitEl && limitEl !== costEl) limitEl.innerHTML = '';
 
-            let costVal = null;
-            let limitVal = null;
-
-            if (formula.cost) {
-                const val = formula.cost();
-                if (typeof val === "number" && val > 0) costVal = val;
-                else if (val && val !== 0 && typeof val === "string") costVal = val;
-            }
-
-            if (formula.limit) {
-                const val = formula.limit();
-                if (typeof val === "number" && val > 0) limitVal = val;
-                else if (val && val !== 0 && typeof val === "string") limitVal = val;
-            }
+            let costVal = null, limitVal = null;
+            if (formula.cost) { const v = formula.cost(); if (typeof v === "number" && v > 0) costVal = v; else if (v && v !== 0 && typeof v === "string") costVal = v; }
+            if (formula.limit) { const v = formula.limit(); if (typeof v === "number" && v > 0) limitVal = v; else if (v && v !== 0 && typeof v === "string") limitVal = v; }
 
             const createBadge = (val, type) => {
-                const badge = document.createElement('div');
-                badge.className = `price-badge ${type}`;
+                const b = document.createElement('div');
+                b.className = `price-badge ${type}`;
                 const isNum = typeof val === 'number';
-                badge.textContent = isNum ? `${val.toLocaleString('ru-RU')} ₽${type === 'cost' ? ' / мес' : ''}` : val;
-                if(type === 'limit' && isNum) badge.textContent = `+${val.toLocaleString('ru-RU')} ₽ / мес - расширение лимита`;
-                if(String(val).includes("вкл")) badge.textContent = "Включено";
-                if(String(val).includes("уменьшите")) { badge.textContent = val; badge.style.color = "red"; }
-                return badge;
+                b.textContent = isNum ? `${val.toLocaleString('ru-RU')} ₽${type === 'cost' ? ' / мес' : ''}` : val;
+                if(type === 'limit' && isNum) b.textContent = `+${val.toLocaleString('ru-RU')} ₽ / мес - расширение лимита`;
+                if(String(val).includes("вкл")) b.textContent = "Включено";
+                if(String(val).includes("уменьшите")) { b.textContent = val; b.style.color = "red"; }
+                return b;
             };
-            if(costEl && costVal !== null) { costEl.appendChild(createBadge(costVal, 'cost')); }
-            if(limitVal !== null) { if(limitEl && limitEl !== costEl) { limitEl.appendChild(createBadge(limitVal, 'limit')); } else if(costEl) { costEl.appendChild(createBadge(limitVal, 'limit')); } }
+
+            if(costEl && costVal !== null) costEl.appendChild(createBadge(costVal, 'cost'));
+            if(limitVal !== null) { if(limitEl && limitEl !== costEl) limitEl.appendChild(createBadge(limitVal, 'limit')); else if(costEl) costEl.appendChild(createBadge(limitVal, 'limit')); }
         });
 
         let total = 0;
-        Object.entries(formulaMap).forEach(([id, formula]) => {
-            if(formula.cost) { const v = formula.cost(); if(typeof v === 'number') total += v; }
-            if(formula.limit) { const v = formula.limit(); if(typeof v === 'number') total += v; }
-        });
+        Object.entries(formulaMap).forEach(([id, f]) => { if(f.cost){const v=f.cost();if(typeof v==='number')total+=v;} if(f.limit){const v=f.limit();if(typeof v==='number')total+=v;} });
 
         const totalFormatted = total.toLocaleString('ru-RU');
         document.getElementById('total-monthly').textContent = totalFormatted;
@@ -870,16 +702,10 @@
             if (delPrice > 0) {
                 regionPlaceholder.className = 'price-badge cost';
                 regionPlaceholder.textContent = `[+${delPrice.toLocaleString('ru-RU')} ₽ - доставка]`;
-            } else {
-                regionPlaceholder.textContent = '';
-                regionPlaceholder.className = '';
-            }
+            } else { regionPlaceholder.textContent = ''; regionPlaceholder.className = ''; }
         }
 
-        const monthly = total;
-        const minimalNum = nom8800 * 700;
-        const connectionNum = parseVal("NomeraVATS") * 300 + parseVal("KolvoFMC") * 250;
-        const baseSum = monthly + minimalNum + connectionNum;
+        const baseSum = total + (nom8800 * 700) + (parseVal("NomeraVATS") * 300 + parseVal("KolvoFMC") * 250);
         const guarantee = baseSum > 0 ? (baseSum < 4000 ? 4000 : baseSum) : 0;
         document.getElementById('total-guarantee').textContent = guarantee.toLocaleString('ru-RU') + " ₽";
 
@@ -890,13 +716,14 @@
         updateMobileSheet(totalFormatted + " ₽ / мес", minimal + " ₽ / мес", connect + " ₽", delPrice + " ₽", guarantee.toLocaleString('ru-RU') + " ₽");
     }
 
-    // INIT
     if(window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
     }
+    
     document.querySelectorAll('select').forEach(s => updateSelectTrigger(s.id));
     updateTotals();
 </script>
+
 </body>
 </html>

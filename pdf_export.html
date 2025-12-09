@@ -31,7 +31,7 @@
         .print-section { 
             margin-bottom: 20px; 
             page-break-inside: auto; 
-            break-inside: auto;
+            break-inside: avoid;
             border: 1px solid #e0e0e0;
             border-radius: 16px;
             padding: 15px 20px;
@@ -176,7 +176,7 @@
         }
 
         try {
-            // Decode with UTF-8 support
+            // Robust Base64 Decoding for UTF-8
             const json = decodeURIComponent(escape(window.atob(payload)));
             const data = JSON.parse(json);
 
@@ -242,7 +242,7 @@
             
             const setTotal = (id, val, descId, desc) => {
                 const row = document.getElementById('row-' + id.replace('t-', ''));
-                if (val.trim() === '0 ₽' || val.trim() === '0 ₽ / мес') {
+                if (!val || val.trim() === '0 ₽' || val.trim() === '0 ₽ / мес') {
                     row.style.display = 'none';
                 } else {
                     document.getElementById(id).textContent = val;
@@ -269,11 +269,13 @@
                 
                 html2pdf().set(opt).from(element).save().then(() => {
                     document.getElementById('loader').innerText = "PDF сформирован! Проверьте загрузки.";
+                }).catch(err => {
+                     document.getElementById('loader').innerText = "Ошибка сохранения: " + err.message;
                 });
             }, 1000);
 
         } catch (e) {
-            document.getElementById('loader').innerText = "Ошибка: " + e.message;
+            document.getElementById('loader').innerHTML = "Ошибка обработки данных.<br>Попробуйте обновить страницу.";
             console.error(e);
         }
     };
