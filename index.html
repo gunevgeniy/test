@@ -7,8 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
-  <!-- Подключение библиотеки для генерации PDF -->
+  
+  <!-- Библиотека для PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Библиотека Telegram WebApp -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
     :root {
@@ -1769,7 +1772,6 @@
               image:        { type: 'jpeg', quality: 0.98 },
               html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, scrollX: 0, windowWidth: 800 },
               jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-              // REMOVED 'avoid-all' to allow breaks, keep 'css' to respect 'break-inside: avoid'
               pagebreak:    { mode: ['css', 'legacy'] } 
             };
 
