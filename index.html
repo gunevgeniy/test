@@ -1619,6 +1619,9 @@
         const SERVER_URL = "https://ВАШ-URL-ИЗ-TIMEWEB.twc1.net/generate-pdf";
         // -----------------------
 
+        saveStateToURL(); 
+        // Теперь URL обновился, и если пользователь откроет его в браузере, данные сохранятся.
+
         const nameInput = document.getElementById('mgrName');
         const phoneInput = document.getElementById('mgrPhone');
         const emailInput = document.getElementById('mgrEmail');
@@ -2638,6 +2641,79 @@
     }
     
     document.querySelectorAll('select').forEach(s => updateSelectTrigger(s.id));
+    // --- ФУНКЦИИ СОХРАНЕНИЯ И ВОССТАНОВЛЕНИЯ СОСТОЯНИЯ (URL) ---
+
+    // 1. Сохраняет все введенные данные в адресную строку браузера
+    function saveStateToURL() {
+        const params = new URLSearchParams();
+
+        // Сохраняем все инпуты и селекты
+        document.querySelectorAll('input, select').forEach(el => {
+            if (!el.id) return; // Пропускаем без ID
+            
+            let val = null;
+            if (el.type === 'checkbox') {
+                if (el.checked) val = '1';
+            } else {
+                // Сохраняем, только если значение отличается от дефолтного (0 или "нет" или пусто)
+                if (el.value && el.value !== '0' && el.value !== 'нет') {
+                    val = el.value;
+                }
+            }
+
+            if (val !== null) {
+                params.set(el.id, val);
+            }
+        });
+
+        // Обновляем URL без перезагрузки страницы
+        const newUrl = window.location.pathname + '?' + params.toString();
+        window.history.replaceState(null, '', newUrl);
+    }
+
+    // 2. Восстанавливает данные из адресной строки при загрузке
+    function restoreStateFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        if ([...params].length === 0) return; // Если параметров нет, выходим
+
+        // Сначала заполняем значения
+        params.forEach((val, key) => {
+            const el = document.getElementById(key);
+            if (el) {
+                if (el.type === 'checkbox') {
+                    el.checked = (val === '1');
+                } else {
+                    el.value = val;
+                }
+            }
+        });
+
+        // Обновляем визуальные элементы (селекты)
+        document.querySelectorAll('select').forEach(s => updateSelectTrigger(s.id));
+
+        // Запускаем пересчет логики (каскады)
+        // Проходимся по ключам, которые влияют на логику
+        params.forEach((val, key) => {
+            if (typeof rules !== 'undefined' && rules[key]) {
+                // Имитируем логику, но аккуратно, чтобы не сбросить значения
+                // В данном случае просто updateTotals достаточно, если зависимости простые.
+                // Но лучше вызвать runCascade для ключевых переключателей.
+                // Чтобы не усложнять, просто обновим тоталы, так как значения уже вставлены.
+            }
+        });
+         // Сначала восстанавливаем данные из ссылки
+    restoreStateFromURL();
+        // Принудительно запускаем расчет итогов
+        updateTotals();
+        
+        // Если есть данные менеджера, можно сразу открыть модалку (по желанию)
+        /*
+        if (params.has('mgrName') || params.has('mgrEmail')) {
+            openManagerModal();
+        }
+        */
+    }
+    
     updateTotals();
 </script>
 
