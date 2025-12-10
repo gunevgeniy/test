@@ -1332,6 +1332,30 @@
 </div>
 
 <script>
+// --- АВТО-РЕДИРЕКТ (Вставьте это в самом начале скрипта) ---
+    
+    (function() {
+        // ВАЖНО: Впишите сюда юзернейм вашего бота без @
+        const BOT_USERNAME = "RestCalcUIS_bot"; 
+
+        const isTelegramBrowser = navigator.userAgent.includes("Telegram");
+        // Проверяем наличие initData. Если она пустая или undefined — значит это не WebApp
+        const isWebApp = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+
+        // Если открыто во встроенном браузере Telegram, НО это не WebApp (меню)
+        if (isTelegramBrowser && !isWebApp) {
+            
+            // Опционально: Очищаем страницу и пишем статус, чтобы не мелькал контент
+            document.write('<div style="display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;text-align:center;">Перенаправление в бота для работы...</div>');
+            
+            // Мгновенный редирект в бота
+            window.location.href = "https://t.me/" + BOT_USERNAME;
+            
+            // Останавливаем выполнение остальных скриптов
+            throw new Error("Redirecting to bot..."); 
+        }
+    })();
+    // -----------------------------------------------------------
     /* --- UI LOGIC --- */
     
     // Toggle Visibility
@@ -1700,15 +1724,7 @@ async function printKP() {
                 btn.disabled = false;
             }
 
-        } else if (isTelegramBrowser) {
-            // --- СЦЕНАРИЙ 2: НЕПРАВИЛЬНЫЙ (Просто ссылка в чате) ---
-            // Редиректим пользователя в бота, где есть кнопка "Калькулятор"
-            
-            if (confirm("Чтобы получить PDF-файл, нужно открыть калькулятор через меню бота.\n\nПерейти в бота сейчас?")) {
-                window.location.href = `https://t.me/${BOT_USERNAME}`;
-            }
-
-        } else {
+        }  else {
             // --- СЦЕНАРИЙ 3: ОБЫЧНЫЙ БРАУЗЕР (Chrome, Safari, PC) ---
             const isMobile = window.matchMedia('(max-width: 900px)').matches;
             
