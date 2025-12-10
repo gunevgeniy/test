@@ -10,7 +10,6 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
-    /* Стили как в предыдущем рабочем примере */
     :root { --color-primary: #0000aa; --color-primary-light: rgba(0, 0, 170, 0.08); --color-bg: #F0F2F5; --color-card-bg: #FFFFFF; --color-input-bg: #FFFFFF; --color-input-border: #C4C4C4; --color-text-main: #252525; --color-text-secondary: #878787; --color-limit: #e67e22; --radius-card: 20px; --radius-input: 10px; --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05); --font-head: 'Manrope', sans-serif; --font-body: 'Inter', sans-serif; }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: var(--font-body); background-color: var(--color-bg); color: var(--color-text-main); margin: 0; padding: 0; overflow-x: hidden; }
@@ -123,7 +122,6 @@
 <div class="layout-wrapper">
   <!-- Left Column: Options -->
   <div class="main-column">
-    <!-- BLOCK 1: VATS -->
     <section class="card card-group">
       <div class="card-header static"><div class="card-title">Настройки ВАТС и номеров</div></div>
       <div class="option-row"><div class="option-info"><div class="option-name">Виртуальная АТС <span class="info-icon" onclick="openTooltip('tooltip-vats')">i</span></div><div class="option-meta"><span id="cost-VATS"></span><span id="limit-VATS"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VATS" onchange="runCascade('VATS')"><span class="slider"></span></label></div></div>
@@ -198,7 +196,6 @@
     </section>
   </div> 
   
-  <!-- Right Column -->
   <div class="sidebar-column">
     <div class="summary-card">
       <div class="summary-total"><div class="summary-total-label">Ежемесячный платёж</div><div class="summary-total-value"><span id="total-monthly">0</span> <span class="summary-currency">₽ / мес</span></div></div>
@@ -272,51 +269,42 @@
     function toggleSheet() { isSheetOpen = !isSheetOpen; const c = document.querySelector('.sheet-content'); c.classList.toggle('open', isSheetOpen); document.querySelector('.sheet-icon').style.transform = isSheetOpen ? "rotate(180deg)" : "rotate(0deg)"; }
     function updateMobileSheet(t, m, c, d, g) { document.getElementById('mobile-total').textContent = t; document.getElementById('mobile-minimal').textContent = m; document.getElementById('mobile-connection').textContent = c; document.getElementById('mobile-delivery').textContent = d; document.getElementById('mobile-guarantee').textContent = g; }
 
-    function closeManagerModal(e, f) { 
-        if(f || e.target.id === 'managerModal') {
-            document.getElementById('managerModal').classList.remove('open'); 
-            // !!! ВАЖНО: При закрытии модалки восстанавливаем кнопку, чтобы она не была просто ссылкой
-            const form = document.querySelector('#managerModal .manager-form');
-            const link = form.querySelector('.btn-manager-print[target="_blank"]');
-            if (link) {
-                 const newButton = document.createElement('button');
-                 newButton.className = link.className.replace(' btn-manager-print', '');
-                 newButton.classList.add('btn-manager-print');
-                 newButton.textContent = link.textContent;
-                 newButton.onclick = printKP; // Восстанавливаем функцию
-                 form.replaceChild(newButton, link);
-            }
+    function openManagerModal() { 
+        // Перед открытием модалки, восстанавливаем кнопку, чтобы потом вызвать printKP
+        const form = document.querySelector('#managerModal .manager-form');
+        const currentLink = form.querySelector('.btn-manager-print[target="_blank"]');
+        
+        if(currentLink) {
+            const newButton = document.createElement('button');
+            newButton.className = currentLink.className.replace(' btn-manager-print', '');
+            newButton.classList.add('btn-manager-print');
+            newButton.textContent = currentLink.textContent;
+            newButton.onclick = openManagerModal; // Восстанавливаем функцию, чтобы она снова вызывала модалку
+            form.replaceChild(newButton, currentLink);
         }
+        document.getElementById('managerModal').classList.add('open'); 
     }
     
-    function openManagerModal() { 
-      // Перед открытием модалки, восстанавливаем кнопку, чтобы потом вызвать printKP
-      const form = document.querySelector('#managerModal .manager-form');
-      const currentLink = form.querySelector('.btn-manager-print[target="_blank"]') || form.querySelector('.btn-manager-print');
-      
-      if(currentLink && currentLink.tagName.toLowerCase() === 'a') {
-          const newButton = document.createElement('button');
-          newButton.className = currentLink.className.replace(' btn-manager-print', '');
-          newButton.classList.add('btn-manager-print');
-          newButton.textContent = currentLink.textContent;
-          newButton.onclick = printKP; // Восстанавливаем функцию
-          form.replaceChild(newButton, currentLink);
-      }
-      document.getElementById('managerModal').classList.add('open');
+    function closeManagerModal(e, f) { 
+        if(f || e.target.id === 'managerModal') {
+             // При закрытии модалки ничего не делаем, переход будет по клику на кнопку в модальном окне
+             document.getElementById('managerModal').classList.remove('open'); 
+        }
     }
     
     function formatName(i) { i.value = i.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase()); }
     function formatPhone(i) { let v = i.value.replace(/\D/g, ''); if(v.length){ if(v[0]==='8'||v[0]==='7') v=v.substring(1); let f='+7 '; if(v.length>0) f+='('+v.substring(0,3); if(v.length>=4) f+=') '+v.substring(3,6); if(v.length>=7) f+='-'+v.substring(6,8); if(v.length>=9) f+='-'+v.substring(8,10); i.value = f; } else i.value=''; }
     function validateEmail(i) { const r = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/; if(!r.test(i.value) && i.value!=="") { i.classList.add('invalid'); return false; } i.classList.remove('invalid'); return true; }
 
-    /* ФУНКЦИЯ ПЕЧАТИ (ОТКРЫТИЕ ВНЕШНЕЙ ССЫЛКИ) */
+    /* ФУНКЦИЯ ПЕЧАТИ (ПЕРЕХОД ПО ССЫЛКЕ) */
     function printKP() {
         const nameInput = document.getElementById('mgrName');
         const phoneInput = document.getElementById('mgrPhone');
         const emailInput = document.getElementById('mgrEmail');
         
         if (emailInput.value !== "" && !validateEmail(emailInput)) { alert("Введите корректный Email"); return; }
-
+        
+        // 1. Сбор данных
         const managerData = { name: nameInput.value.trim(), phone: phoneInput.value.trim(), email: emailInput.value.trim() };
         const sectionsData = [];
         
@@ -407,24 +395,33 @@
         const json = JSON.stringify({ m: managerData, s: sectionsData, t: totalsData });
         const payload = encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
         
-        // --- ПЕРЕХОД НА СТРАНИЦУ ЭКСПОРТА ---
+        // --- ДИНАМИЧЕСКАЯ ССЫЛКА НА ЭКСПОРТ (ВАШ АКТУАЛЬНЫЙ АДРЕС) ---
         const exportUrl = 'https://jonathan-soulmate.github.io/pdf_export/pdf_export.html?payload=' + payload;
 
-        // Находим кнопку/ссылку и меняем ее href. Она уже находится в модалке и готова к клику.
-        const printLink = document.querySelector('#managerModal .btn-manager-print');
-        if (printLink) {
-             printLink.href = exportUrl;
-             printLink.target = "_blank"; // Force new tab/browser
-             printLink.rel = "noopener noreferrer"; // Good practice
-             
-             // Имитируем клик, чтобы на некоторых Android WebView сработало нативное открытие
-             printLink.click();
+        // Находим кнопку, которую мы кликнули (она button)
+        const printButton = document.querySelector('#managerModal .btn-manager-print');
+        
+        // Превращаем ее в ССЫЛКУ и сразу же имитируем клик
+        if (printButton) {
+            const newLink = document.createElement('a');
+            newLink.className = printButton.className;
+            newLink.textContent = printButton.textContent;
+            newLink.href = exportUrl;
+            newLink.target = "_blank"; // Cистемный браузер
+            newLink.rel = "noopener noreferrer"; // Хорошая практика безопасности
+            
+            // Замена кнопки на ссылку
+            printButton.parentNode.replaceChild(newLink, printButton);
+            
+            // Имитируем клик. Это самый "грязный" но работающий метод для обхода TWA.
+            newLink.click();
         }
         
         document.getElementById('managerModal').classList.remove('open');
     }
+    /* PRINT LOGIC END */
 
-    // Инициализация калькулятора (остальной код)
+    // --- CALCULATOR LOGIC (SAME AS BEFORE) ---
     function resetForm() { document.querySelectorAll('input:not(:disabled):not([id^="mgr"])').forEach(i=>i.value=0); document.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=false); document.querySelectorAll('select').forEach(s=>{s.selectedIndex=0;updateSelectTrigger(s.id)}); const v=document.getElementById("NomeraVATSVsego"); if(v)v.value=0; if(typeof manualChanges!=='undefined')manualChanges.clear(); updateTotals(); }
     function getCheckbox(id) { return document.getElementById(id)?.checked ?? false; }
     function getNumber(id) { const v=parseFloat(document.getElementById(id)?.value??0); return isNaN(v)?0:v; }
@@ -434,7 +431,6 @@
     const manualChanges = new Set();
     let cascadeQueue = [];
     let isProcessing = false;
-
     function runCascade(startField) {
         if (isProcessing) { manualChanges.add(startField); return; }
         cascadeQueue = [startField]; isProcessing = true; let depth = 0;
@@ -451,7 +447,7 @@
              LiniyIshodyashihZvonkov: (c) => { const v=getNumber("LiniyIshodyashihZvonkov"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v>=0&&v<30&&getCheckbox("VATS")) c.set("LiniyIshodyashihZvonkov",30); },
              KolvoSIPTrankov: (c) => { const v=getNumber("KolvoSIPTrankov"); const k=document.getElementById("KanalnostSIPTrankov")?.value; if(v>0){ if(!getCheckbox("VATS")) c.set("VATS",true); if(parseInt(k,10)<30) c.select("KanalnostSIPTrankov","30"); } if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); if(v===0&&k!=="0") c.select("KanalnostSIPTrankov","0"); },
              KanalnostSIPTrankov: (c) => { const v=document.getElementById("KanalnostSIPTrankov")?.value; if(v!=="0"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoSIPTrankov")===0) c.set("KolvoSIPTrankov",1); } else { if(getNumber("KolvoSIPTrankov")!==0) c.set("KolvoSIPTrankov",0); } },
-             KolvoSIPURI: (c) => { const v=getNumber("KolvoSIPURI"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPTrankov")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); },
+             KolvoSIPURI: (c) => { const v=getNumber("KolvoSIPURI"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); },
              KolvoSIPAkkauntov: (c) => { const v=getNumber("KolvoSIPAkkauntov"); const k=document.getElementById("KanalnostSIPAkkauntov")?.value; if(v>0){ if(!getCheckbox("VATS")) c.set("VATS",true); if(parseInt(k,10)<30) c.select("KanalnostSIPAkkauntov","30"); } if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPTrankov")===0&&getCheckbox("VATS")) c.set("VATS",false); if(v===0&&k!=="0") c.select("KanalnostSIPAkkauntov","0"); },
              KanalnostSIPAkkauntov: (c) => { const v=document.getElementById("KanalnostSIPAkkauntov")?.value; if(v!=="0"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoSIPAkkauntov")===0) c.set("KolvoSIPAkkauntov",1); } else { if(getNumber("KolvoSIPAkkauntov")!==0) c.set("KolvoSIPAkkauntov",0); } },
              NomeraVATS: (c) => { if(getNumber("NomeraVATS")>0&&!getCheckbox("VATS")) c.set("VATS",true); },
@@ -604,6 +600,12 @@
         window.Telegram.WebApp.expand();
     }
     document.querySelectorAll('select').forEach(s => updateSelectTrigger(s.id));
+    document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+      input.addEventListener("focus", function() { this.select(); });
+      if (!input.id.startsWith("mgr")) {
+        input.addEventListener("blur", () => { if (input.value === "") input.value = "0"; });
+      }
+    });
     updateTotals();
 </script>
 </body>
