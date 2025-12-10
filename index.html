@@ -2,6 +2,10 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+    <!-- ЗАПРЕТ ИНДЕКСАЦИИ -->
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="yandex" content="noindex, nofollow">
+  <!-- /ЗАПРЕТ ИНДЕКСАЦИИ -->
   <title>Калькулятор стоимости сервиса UIS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -469,6 +473,19 @@
     }
     .tooltip-content-hidden { display: none; }
   </style>
+  <!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105781169', 'ym');
+
+    ym(105781169, 'init', {ssr:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/105781169" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
 </head>
 <body>
 
@@ -1606,6 +1623,13 @@
     }
 
     async function printKP() {
+        // --- ОТПРАВКА ЦЕЛИ В МЕТРИКУ ---
+        // Замените XXXXXXXX на ваш номер счетчика
+        if (typeof ym === 'function') {
+            ym(105781169,'reachGoal','print_kp');
+        }
+        // ------------------------------
+
         // --- ВАШИ НАСТРОЙКИ ---
         const SERVER_URL = "https://gunevgeniy-uis-pdf-server-eeac.twc1.net/generate-pdf";
         // -----------------------
@@ -1802,8 +1826,8 @@
             // 1. Показываем красивое уведомление
             showToast(
                 "loading",
-                "Формирование файла...", 
-                "Если скачивание не началось — значит браузер блокирует его.<br>Нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.", 
+                "КП сформировано.", 
+                "Если скачивание PDF файла не началось — значит приложение блокирует его.<br>Нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.", 
                 0 // 0 = НЕ СКРЫВАТЬ АВТОМАТИЧЕСКИ
             );
 
