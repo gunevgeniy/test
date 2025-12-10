@@ -421,10 +421,52 @@
       .card { padding: 16px; }
     }
     .tooltip-content-hidden { display: none; }
+    /* Стили для просмотра КП в браузере Телеграма без скачивания */
+    .preview-mode body { background: white; overflow: auto; }
+    .preview-mode .layout-wrapper, 
+    .preview-mode .bg-cloud, 
+    .preview-mode .bottom-sheet, 
+    .preview-mode .expert-toggle-btn { display: none !important; }
+    
+    .preview-mode #print-area { 
+        display: block !important; 
+        padding: 20px 15px !important; /* Отступы для телефона */
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    /* Кнопка "Назад" для режима просмотра */
+    .preview-controls {
+        display: none;
+        padding: 15px;
+        background: #f0f2f5;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .preview-mode .preview-controls { display: block; }
+    
+    .btn-back-edit {
+        padding: 10px 20px;
+        background: white;
+        border: 1px solid var(--color-primary);
+        color: var(--color-primary);
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
   </style>
 </head>
 <body>
-
+<!-- Кнопка назад для режима просмотра в Telegram -->
+<div id="preview-controls" class="preview-controls">
+    <p style="font-size: 13px; color: #666; margin-bottom: 10px;">
+        Это предварительный просмотр.<br>
+        Чтобы скачать PDF: нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.
+    </p>
+    <button class="btn-back-edit" onclick="exitPreviewMode()">← Вернуться к редактированию</button>
+</div>
 <div class="bg-cloud"></div>
 
 <div class="layout-wrapper">
@@ -1332,31 +1374,7 @@
 </div>
 
 <script>
-// --- АВТО-РЕДИРЕКТ (Вставьте это в самом начале скрипта) ---
-    
-    (function() {
-        // ВАЖНО: Впишите сюда юзернейм вашего бота без @
-        const BOT_USERNAME = "RestCalcUIS_bot"; 
-
-        const isTelegramBrowser = navigator.userAgent.includes("Telegram");
-        // Проверяем наличие initData. Если она пустая или undefined — значит это не WebApp
-        const isWebApp = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
-
-        // Если открыто во встроенном браузере Telegram, НО это не WebApp (меню)
-        if (isTelegramBrowser && !isWebApp) {
-            
-            // Опционально: Очищаем страницу и пишем статус, чтобы не мелькал контент
-            document.write('<div style="display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;text-align:center;">Перенаправление в бота для работы...</div>');
-            
-            // Мгновенный редирект в бота
-            window.location.href = "https://t.me/" + BOT_USERNAME;
-            
-            // Останавливаем выполнение остальных скриптов
-            throw new Error("Redirecting to bot..."); 
-        }
-    })();
-    // -----------------------------------------------------------
-    /* --- UI LOGIC --- */
+/* --- UI LOGIC --- */
     
     // Toggle Visibility
     function toggleExpert() {
@@ -1525,15 +1543,17 @@
         }
     }
 
-async function printKP() {
-        // --- НАСТРОЙКИ ---
-        // Вставьте сюда юзернейм вашего бота (без @)
-        // Это нужно, чтобы перекинуть пользователя, если он открыл ссылку не там
-        const BOT_USERNAME = "RestCalcUIS_bot"; 
-        
-        // Вставьте ваш URL сервера Timeweb
-        const SERVER_URL = "https://gunevgeniy-uis-pdf-server-eeac.twc1.net/generate-pdf";
-        // ------------------
+// Функция выхода из режима просмотра
+    function exitPreviewMode() {
+        document.body.classList.remove('preview-mode');
+        window.scrollTo(0, 0);
+    }
+
+    async function printKP() {
+        // --- ВАШИ НАСТРОЙКИ ---
+        // Вставьте URL вашего сервера Timeweb Apps
+        const SERVER_URL = "https://ВАШ-URL-ИЗ-TIMEWEB.twc1.net/generate-pdf";
+        // -----------------------
 
         const nameInput = document.getElementById('mgrName');
         const phoneInput = document.getElementById('mgrPhone');
@@ -1558,7 +1578,7 @@ async function printKP() {
             mgrBlock.style.display = 'none';
         }
 
-        // --- ГЕНЕРАЦИЯ ТАБЛИЦЫ (Ваш стандартный код) ---
+        // --- ГЕНЕРАЦИЯ ТАБЛИЦЫ (Ваш стандартный код без изменений) ---
         const container = document.getElementById('print-sections-container');
         container.innerHTML = ''; 
         const sections = document.querySelectorAll('.card');
@@ -1667,27 +1687,27 @@ async function printKP() {
             else row.style.display = 'flex';
         });
 
+        // Закрываем модалку менеджера
         document.getElementById('managerModal').classList.remove('open');
 
-
         // ===============================================
-        //  ФИНАЛЬНАЯ ЛОГИКА ОПРЕДЕЛЕНИЯ И РЕДИРЕКТА
+        //  НОВАЯ ЛОГИКА РАСПРЕДЕЛЕНИЯ
         // ===============================================
 
-        // 1. Проверяем, есть ли данные WebApp (значит открыто правильно, через кнопку)
+        // 1. Проверяем WebApp (кнопка Меню)
         const isWebApp = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData && window.Telegram.WebApp.initData.length > 0);
         
-        // 2. Проверяем User Agent на наличие слова Telegram (встроенный браузер)
+        // 2. Проверяем просто встроенный браузер Telegram
         const isTelegramBrowser = navigator.userAgent.includes("Telegram");
 
         if (isWebApp) {
-            // --- СЦЕНАРИЙ 1: ПРАВИЛЬНЫЙ (Через меню бота) ---
+            // --- КЕЙС 1: WebApp -> Шлем в бота ---
             const tg = window.Telegram.WebApp;
             tg.ready();
             const userId = tg.initDataUnsafe?.user?.id;
 
             if (!userId) {
-                alert("Ошибка авторизации WebApp. Попробуйте перезапустить бота.");
+                alert("Ошибка авторизации. Перезапустите бота.");
                 return;
             }
 
@@ -1711,24 +1731,36 @@ async function printKP() {
                 });
 
                 if (response.ok) {
-                    alert("КП успешно отправлено вам в личные сообщения от бота!");
+                    alert("КП отправлено в чат!");
                     tg.close();
                 } else {
-                    alert("Ошибка при отправке на сервер.");
+                    alert("Ошибка отправки.");
                 }
             } catch (e) {
                 console.error(e);
-                alert("Произошла ошибка сети.");
+                alert("Ошибка сети.");
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
             }
 
-        }  else {
-            // --- СЦЕНАРИЙ 3: ОБЫЧНЫЙ БРАУЗЕР (Chrome, Safari, PC) ---
+        } else if (isTelegramBrowser) {
+            // --- КЕЙС 2: Ссылка в чате Телеграм -> Показываем HTML, не качаем ---
+            
+            // Включаем "Режим просмотра" (CSS скроет калькулятор и покажет #print-area)
+            document.body.classList.add('preview-mode');
+            window.scrollTo(0, 0);
+
+            // Показываем подсказку пользователю
+            alert("Коммерческое предложение сформировано.\n\nЧтобы скачать PDF, нажмите на три точки (•••) в правом верхнем углу и выберите «Открыть в браузере».");
+
+        } else {
+            // --- КЕЙС 3: Обычный браузер (Mobile/Desktop) -> Качаем/Печатаем ---
+            
             const isMobile = window.matchMedia('(max-width: 900px)').matches;
             
             if (isMobile) {
+                // Мобильный Chrome/Safari - качаем PDF
                 const element = document.getElementById('print-area');
                 document.body.classList.add('pdf-mode');
                 window.scrollTo(0, 0);
@@ -1748,6 +1780,7 @@ async function printKP() {
                     });
                 }, 100);
             } else {
+                // Десктоп - открываем окно печати
                 setTimeout(() => {
                     window.print();
                 }, 300);
