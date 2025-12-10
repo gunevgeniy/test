@@ -323,22 +323,6 @@
         background: white;
     }
 
-    /* TELEGRAM VIEW MODE STYLE (Added per request) */
-    .telegram-view body { background: white; color: black; overflow-y: auto; }
-    .telegram-view .layout-wrapper,
-    .telegram-view .bg-cloud,
-    .telegram-view .bottom-sheet,
-    .telegram-view .modal-overlay,
-    .telegram-view .expert-toggle-btn { display: none !important; }
-
-    .telegram-view #print-area {
-        display: block !important;
-        padding: 20px 15px !important;
-        background: white;
-        min-height: 100vh;
-        width: 100% !important;
-    }
-
     /* Print Layout Shared Styles */
     .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 3px solid var(--color-primary); padding-bottom: 20px; }
     .print-logo { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 32px; color: var(--color-primary); }
@@ -1206,7 +1190,8 @@
             <span id="mobile-guarantee">0</span>
         </div>
         <button class="sheet-reset" onclick="resetForm(); toggleSheet()">Стереть расчет</button>
-        <button class="btn-manager-print" style="background:#0000aa; color:white; margin-top:10px;" onclick="openManagerModal()">Печать КП</button>
+        <!-- REPLACED BUTTON WITH TEXT FOR MOBILE/TELEGRAM COMPATIBILITY -->
+        <div style="text-align:center; font-size:12px; color:#888; margin-top:15px;">Для скачивания PDF перейдите в десктопную версию браузера.</div>
     </div>
 </div>
 
@@ -1772,24 +1757,7 @@
         // Simple heuristic for Telegram WebApp environment
         const isTelegram = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) || navigator.userAgent.includes('Telegram');
 
-        if (isTelegram) {
-            // TELEGRAM VIEW MODE
-            document.body.classList.add('telegram-view');
-            window.scrollTo(0, 0);
-            
-            // Add a back button if not present
-            if(!document.getElementById('tg-back-btn')) {
-                const btn = document.createElement('button');
-                btn.id = 'tg-back-btn';
-                btn.innerText = '← Вернуться к расчету';
-                btn.style.cssText = 'margin-bottom: 20px; padding: 14px; background: var(--color-primary); color: white; border: none; border-radius: 12px; font-weight: bold; width: 100%; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
-                btn.onclick = function() {
-                    document.body.classList.remove('telegram-view');
-                };
-                const printArea = document.getElementById('print-area');
-                printArea.insertBefore(btn, printArea.firstChild);
-            }
-        } else if (isMobile) {
+        if (isMobile || isTelegram) {
             // Use html2pdf
             const element = document.getElementById('print-area');
             // Add specific class to force print styles visible on screen for capture
@@ -2547,7 +2515,7 @@
                 const isNum = typeof val === 'number';
                 badge.textContent = isNum ? `${val.toLocaleString('ru-RU')} ₽${type === 'cost' ? ' / мес' : ''}` : val;
                 
-                // --- NEW FORMAT FOR LIMIT (REQ 1) ---
+                // --- NEW FORMAT FOR LIMIT ---
                 if(type === 'limit' && isNum) badge.textContent = `+${val.toLocaleString('ru-RU')} ₽ / мес`;
                 
                 if(String(val).includes("вкл")) badge.textContent = "Включено";
@@ -2604,7 +2572,7 @@
         if (regionPlaceholder) {
             if (delPrice > 0) {
                 regionPlaceholder.className = 'price-badge cost';
-                // --- UPDATED REGION FORMAT (REQ 3) ---
+                // --- UPDATED REGION FORMAT ---
                 regionPlaceholder.textContent = `+${delPrice.toLocaleString('ru-RU')} ₽ - доставка`;
             } else {
                 regionPlaceholder.textContent = '';
