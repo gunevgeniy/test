@@ -10,7 +10,7 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
-    /* ... (СТИЛИ ИЗ ПРЕДЫДУЩЕГО ПРИМЕРА ОСТАВЛЯЕМ БЕЗ ИЗМЕНЕНИЙ) ... */
+    /* Стили как в предыдущем рабочем примере */
     :root { --color-primary: #0000aa; --color-primary-light: rgba(0, 0, 170, 0.08); --color-bg: #F0F2F5; --color-card-bg: #FFFFFF; --color-input-bg: #FFFFFF; --color-input-border: #C4C4C4; --color-text-main: #252525; --color-text-secondary: #878787; --color-limit: #e67e22; --radius-card: 20px; --radius-input: 10px; --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05); --font-head: 'Manrope', sans-serif; --font-body: 'Inter', sans-serif; }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: var(--font-body); background-color: var(--color-bg); color: var(--color-text-main); margin: 0; padding: 0; overflow-x: hidden; }
@@ -114,6 +114,7 @@
       .card { padding: 16px; }
     }
     .tooltip-content-hidden { display: none; }
+    .hidden-print-area { display: none; }
   </style>
 </head>
 <body>
@@ -121,13 +122,9 @@
 <div class="bg-cloud"></div>
 
 <div class="layout-wrapper">
-  <!-- (Вставьте весь HTML калькулятора, он не изменился) -->
-  <!-- ... Контент карточек, блоков и т.д. ... -->
-  <!-- !!! Для краткости я использую тот же HTML, что и в предыдущих ответах, только JS меняется !!! -->
-  
+  <!-- Left Column: Options -->
   <div class="main-column">
-    <!-- BLOCK 1, 2, 3, 4 -->
-     <section class="card card-group">
+    <section class="card card-group">
       <div class="card-header static"><div class="card-title">Настройки ВАТС и номеров</div></div>
       <div class="option-row"><div class="option-info"><div class="option-name">Виртуальная АТС <span class="info-icon" onclick="openTooltip('tooltip-vats')">i</span></div><div class="option-meta"><span id="cost-VATS"></span><span id="limit-VATS"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VATS" onchange="runCascade('VATS')"><span class="slider"></span></label></div></div>
       <div class="option-row"><div class="option-info"><div class="option-name">ВАТС Pro (максимум возможностей) <span class="info-icon" onclick="openTooltip('tooltip-vatspro')">i</span></div><div class="option-meta"><span id="cost-VATSPRO"></span><span id="limit-VATSPRO"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VATSPRO" onchange="runCascade('VATSPRO')"><span class="slider"></span></label></div></div>
@@ -152,7 +149,7 @@
       <div style="text-align:center;"><div class="expert-toggle-btn" onclick="toggleExpert()"><span>Дополнительные опции ВАТС</span><div class="toggle-icon"></div></div></div>
       <div id="block-expert" class="expert-block card-group" style="display: none;">
           <div class="option-row"><div class="option-info"><div class="option-name">Кол-во линий группового вызова</div><div class="option-meta"><span id="cost-LiniyGrupovogoVizova"></span><span id="limit-LiniyGrupovogoVizova"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('LiniyGrupovogoVizova', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="LiniyGrupovogoVizova" value="0" onchange="runCascade('LiniyGrupovogoVizova')"><button class="stepper-btn" onclick="stepInput('LiniyGrupovogoVizova', 1)">+</button></div></div></div>
-          <div class="option-row"><div class="option-info"><div class="option-name">Кол-во линий исходящих звонков</div><div class="option-meta"><span id="cost-LiniyIshodyashihZvonkov"></span><span id="limit-LiniyIshodyashihZvonkov"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('LiniyIshodyashihZvonkov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="LiniyIshodyashihZvonkov" value="0" onchange="runCascade('LiniyIshodyashihZvonkov')"><button class="stepper-btn" onclick="stepInput('LiniyIshodyashihZvonkov', 1)">+</button></div></div></div>
+           <div class="option-row"><div class="option-info"><div class="option-name">Кол-во линий исходящих звонков</div><div class="option-meta"><span id="cost-LiniyIshodyashihZvonkov"></span><span id="limit-LiniyIshodyashihZvonkov"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('LiniyIshodyashihZvonkov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="LiniyIshodyashihZvonkov" value="0" onchange="runCascade('LiniyIshodyashihZvonkov')"><button class="stepper-btn" onclick="stepInput('LiniyIshodyashihZvonkov', 1)">+</button></div></div></div>
           <div class="option-row"><div class="option-info"><div class="option-name">Кол-во SIP-транков</div><div class="option-meta"><span id="cost-KolvoSIPTrankov"></span><span id="limit-KolvoSIPTrankov"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSIPTrankov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSIPTrankov" value="0" onchange="runCascade('KolvoSIPTrankov')"><button class="stepper-btn" onclick="stepInput('KolvoSIPTrankov', 1)">+</button></div></div></div>
           <div class="option-row"><div class="option-info"><div class="option-name">Канальность SIP-транков</div><div class="option-meta"><span id="cost-KanalnostSIPTrankov"></span><span id="limit-KanalnostSIPTrankov"></span></div></div><div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('KanalnostSIPTrankov', 'Канальность SIP')">0</div><select id="KanalnostSIPTrankov" class="hidden-native-select" onchange="runCascade('KanalnostSIPTrankov')"><option value="0">0</option><option value="30">30</option><option value="60">60</option><option value="90">90</option><option value="180">180</option></select></div></div>
           <div class="option-row"><div class="option-info"><div class="option-name">Кол-во SIPURI</div><div class="option-meta"><span id="cost-KolvoSIPURI"></span><span id="limit-KolvoSIPURI"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSIPURI', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSIPURI" value="0" onchange="runCascade('KolvoSIPURI')"><button class="stepper-btn" onclick="stepInput('KolvoSIPURI', 1)">+</button></div></div></div>
@@ -161,8 +158,7 @@
       </div>
     </section>
 
-    <!-- BLOCK 2, 3, 4 (КОПИРУЕМ БЕЗ ИЗМЕНЕНИЙ, ОНИ ВАЖНЫ ДЛЯ СБОРА ДАННЫХ) -->
-     <section class="card card-group">
+    <section class="card card-group">
         <div class="card-header static"><div class="card-title">ОМНИ Чаты</div></div>
         <div class="option-row"><div class="option-info"><div class="option-name">ОМНИ Чаты</div><div class="option-meta"><span id="cost-OMNI"></span><span id="limit-OMNI"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="OMNI" onchange="runCascade('OMNI')"><span class="slider"></span></label></div></div>
         <div class="option-row"><div class="option-info"><div class="option-name">Кол-во сотрудников ОМНИ Чаты</div><div class="option-meta"><span id="cost-KolvoSotrudnikovOMNI"></span><span id="limit-KolvoSotrudnikovOMNI"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSotrudnikovOMNI', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSotrudnikovOMNI" value="0" onchange="runCascade('KolvoSotrudnikovOMNI')"><button class="stepper-btn" onclick="stepInput('KolvoSotrudnikovOMNI', 1)">+</button></div></div></div>
@@ -229,7 +225,6 @@
     </div>
 </div>
 
-<!-- INFO MODALS, ETC - ОСТАВЛЯЕМ БЕЗ ИЗМЕНЕНИЙ (ВСТАВЬТЕ ИЗ ПРОШЛОГО ОТВЕТА) -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)"><div class="modal-content"><span class="modal-close" onclick="closeModal(event, true)">&times;</span><div class="modal-text" id="modalText"></div></div></div>
 <div class="modal-overlay" id="managerModal" onclick="closeManagerModal(event)"><div class="modal-content"><span class="modal-close" onclick="closeManagerModal(event, true)">&times;</span><span class="modal-title">Контактные данные</span><div class="manager-form"><div class="form-group"><label>ФИО Менеджера</label><input type="text" id="mgrName" placeholder="Иванов Иван Иванович" oninput="formatName(this)"></div><div class="form-group"><label>Телефон</label><input type="text" id="mgrPhone" placeholder="+7 (999) 999-99-99" oninput="formatPhone(this)"></div><div class="form-group"><label>Email</label><input type="email" id="mgrEmail" placeholder="manager@uiscom.ru" onblur="validateEmail(this)" oninput="this.classList.remove('invalid'); this.value = this.value.replace(/[^a-zA-Z0-9@._-]/g, '');"></div><button class="btn-manager-print" onclick="printKP()">Сформировать и напечатать</button></div></div></div>
 <div class="modal-overlay" id="selectModalOverlay" onclick="closeSelectModal(event)"><div class="modal-content"><span class="modal-close" onclick="closeSelectModal(event, true)">&times;</span><span class="modal-title" id="selectModalTitle">Выбор</span><div class="modal-options-list" id="selectModalOptions"></div></div></div>
@@ -262,33 +257,38 @@
 
 <script>
     // --- JS UTILS ---
-    function toggleExpert(){const b=document.getElementById('block-expert');b.style.display=b.style.display==="none"?"block":"none";document.querySelector('.expert-toggle-btn').classList.toggle('active',b.style.display==="none");}
-    function toggleAnalytics(){const b=document.getElementById('block-ar');b.style.display=b.style.display==="none"?"block":"none";document.querySelector('.card-header.collapsed,.card-header:not(.static)')?.classList.toggle('collapsed',b.style.display==="none");}
-    function stepInput(id,d){const i=document.getElementById(id);if(i.disabled)return;let v=parseInt(i.value)||0;v=Math.max(0,v+d);i.value=v;runCascade(id);}
-    function openTooltip(cid){document.getElementById('modalText').innerHTML=document.getElementById(cid).innerHTML;document.getElementById('modalOverlay').classList.add('open');}
-    function closeModal(e,f){if(f||e.target.id==='modalOverlay')document.getElementById('modalOverlay').classList.remove('open');}
-    let cSelId=null;
-    function openSelectModal(sid,t){cSelId=sid;const opts=Array.from(document.getElementById(sid).options);const c=document.getElementById('selectModalOptions');document.getElementById('selectModalTitle').textContent=t||"Выбор";c.innerHTML='';opts.forEach(o=>{const i=document.createElement('div');i.className='modal-option-item';if(o.selected)i.classList.add('selected');i.textContent=o.text;i.onclick=()=>selectOptionInModal(o.value);c.appendChild(i);});document.getElementById('selectModalOverlay').classList.add('open');}
-    function selectOptionInModal(v){document.getElementById(cSelId).value=v;document.getElementById('selectModalOverlay').classList.remove('open');updateSelectTrigger(cSelId);runCascade(cSelId);}
-    function closeSelectModal(e,f){if(f||e.target.id==='selectModalOverlay')document.getElementById('selectModalOverlay').classList.remove('open');}
-    function updateSelectTrigger(id){const s=document.getElementById(id);const t=s.parentElement.querySelector('.custom-select-trigger');if(t)t.textContent=s.options[s.selectedIndex].text;}
-    let isSheetOpen=false;
-    function toggleSheet(){isSheetOpen=!isSheetOpen;document.querySelector('.sheet-content').classList.toggle('open',isSheetOpen);document.querySelector('.sheet-icon').style.transform=isSheetOpen?"rotate(180deg)":"rotate(0deg)";}
-    function updateMobileSheet(t,m,c,d,g){document.getElementById('mobile-total').textContent=t;document.getElementById('mobile-minimal').textContent=m;document.getElementById('mobile-connection').textContent=c;document.getElementById('mobile-delivery').textContent=d;document.getElementById('mobile-guarantee').textContent=g;}
-    function openManagerModal(){document.getElementById('managerModal').classList.add('open');}
-    function closeManagerModal(e,f){if(f||e.target.id==='managerModal')document.getElementById('managerModal').classList.remove('open');}
-    function formatName(i){i.value=i.value.replace(/(?:^|\s)\S/g,l=>l.toUpperCase());}
-    function formatPhone(i){let v=i.value.replace(/\D/g,'');if(v.length){if(v[0]==='8'||v[0]==='7')v=v.substring(1);let f='+7 ';if(v.length>0)f+='('+v.substring(0,3);if(v.length>=4)f+=') '+v.substring(3,6);if(v.length>=7)f+='-'+v.substring(6,8);if(v.length>=9)f+='-'+v.substring(8,10);i.value=f;}else i.value='';}
-    function validateEmail(i){const r=/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/;if(!r.test(i.value)&&i.value!==""){i.classList.add('invalid');return false;}i.classList.remove('invalid');return true;}
+    function toggleExpert() { const b = document.getElementById('block-expert'); b.style.display = b.style.display === "none" ? "block" : "none"; document.querySelector('.expert-toggle-btn').classList.toggle('active', b.style.display === "none"); }
+    function toggleAnalytics() { const b = document.getElementById('block-ar'); b.style.display = b.style.display === "none" ? "block" : "none"; document.querySelector('.card-header.collapsed, .card-header:not(.static)')?.classList.toggle('collapsed', b.style.display === "none"); }
+    function stepInput(id, delta) { const i = document.getElementById(id); if(i.disabled) return; let v = parseInt(i.value)||0; v = Math.max(0, v+delta); i.value = v; runCascade(id); }
+    function openTooltip(cid) { document.getElementById('modalText').innerHTML = document.getElementById(cid).innerHTML; document.getElementById('modalOverlay').classList.add('open'); }
+    function closeModal(e, f) { if (f || e.target.id === 'modalOverlay') document.getElementById('modalOverlay').classList.remove('open'); }
+    let cSelId = null;
+    function openSelectModal(sid, t) { cSelId = sid; const opts = Array.from(document.getElementById(sid).options); const c = document.getElementById('selectModalOptions'); document.getElementById('selectModalTitle').textContent = t || "Выбор"; c.innerHTML = ''; opts.forEach(o => { const i = document.createElement('div'); i.className = 'modal-option-item'; if(o.selected) i.classList.add('selected'); i.textContent = o.text; i.onclick = () => selectOptionInModal(o.value); c.appendChild(i); }); document.getElementById('selectModalOverlay').classList.add('open'); }
+    function selectOptionInModal(v) { document.getElementById(cSelId).value = v; document.getElementById('selectModalOverlay').classList.remove('open'); updateSelectTrigger(cSelId); runCascade(cSelId); }
+    function closeSelectModal(e, f) { if(f || e.target.id === 'selectModalOverlay') document.getElementById('selectModalOverlay').classList.remove('open'); }
+    function updateSelectTrigger(id) { const s = document.getElementById(id); const t = s.parentElement.querySelector('.custom-select-trigger'); if(t) t.textContent = s.options[s.selectedIndex].text; }
+    
+    let isSheetOpen = false;
+    function toggleSheet() { isSheetOpen = !isSheetOpen; const c = document.querySelector('.sheet-content'); c.classList.toggle('open', isSheetOpen); document.querySelector('.sheet-icon').style.transform = isSheetOpen ? "rotate(180deg)" : "rotate(0deg)"; }
+    function updateMobileSheet(t, m, c, d, g) { document.getElementById('mobile-total').textContent = t; document.getElementById('mobile-minimal').textContent = m; document.getElementById('mobile-connection').textContent = c; document.getElementById('mobile-delivery').textContent = d; document.getElementById('mobile-guarantee').textContent = g; }
 
-    // --- MAIN EXPORT FUNCTION ---
-    function printKP() {
+    function openManagerModal() { 
+      // Перед открытием модалки, готовим данные для перехода и привязываем к ссылке
+      preparePrintLink();
+      document.getElementById('managerModal').classList.add('open'); 
+    }
+    function closeManagerModal(e, f) { if(f || e.target.id === 'managerModal') document.getElementById('managerModal').classList.remove('open'); }
+    function formatName(i) { i.value = i.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase()); }
+    function formatPhone(i) { let v = i.value.replace(/\D/g, ''); if(v.length){ if(v[0]==='8'||v[0]==='7') v=v.substring(1); let f='+7 '; if(v.length>0) f+='('+v.substring(0,3); if(v.length>=4) f+=') '+v.substring(3,6); if(v.length>=7) f+='-'+v.substring(6,8); if(v.length>=9) f+='-'+v.substring(8,10); i.value = f; } else i.value=''; }
+    function validateEmail(i) { const r = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/; if(!r.test(i.value) && i.value!=="") { i.classList.add('invalid'); return false; } i.classList.remove('invalid'); return true; }
+
+    /* ФУНКЦИЯ ПЕЧАТИ (ПЕРЕХОД ПО ССЫЛКЕ) */
+    function preparePrintLink() {
         const nameInput = document.getElementById('mgrName');
         const phoneInput = document.getElementById('mgrPhone');
         const emailInput = document.getElementById('mgrEmail');
         
-        if (emailInput.value !== "" && !validateEmail(emailInput)) { alert("Введите корректный Email"); return; }
-
+        // 1. Сбор данных
         const managerData = { name: nameInput.value.trim(), phone: phoneInput.value.trim(), email: emailInput.value.trim() };
         const sectionsData = [];
         
@@ -333,6 +333,7 @@
                         const m = icon.getAttribute('onclick').match(/'([^']+)'/);
                         if (m && m[1]) descText = document.getElementById(m[1]).innerHTML;
                     }
+                    
                     let costValues = [];
                     if(isUnlimited) costValues.push("безлимитно");
                     else row.querySelectorAll('.price-badge').forEach(b => costValues.push(b.textContent));
@@ -363,10 +364,9 @@
             if (rowsData.length > 0) sectionsData.push({ title: titleText, rows: rowsData });
         });
 
-        // Use short keys to reduce URL length
         const totalsData = {
-            m: document.getElementById('total-monthly').textContent + " ₽ / мес",
-            min: document.getElementById('total-minimal').textContent,
+            m: document.getElementById('total-monthly').textContent + " ₽ / мес", 
+            min: document.getElementById('total-minimal').textContent, 
             minD: document.getElementById('tooltip-min8800').innerHTML,
             conn: document.getElementById('total-connection').textContent,
             connD: document.getElementById('tooltip-connect').innerHTML,
@@ -378,28 +378,47 @@
 
         const json = JSON.stringify({ m: managerData, s: sectionsData, t: totalsData });
         const payload = encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
+        
+        // --- ДИНАМИЧЕСКАЯ ССЫЛКА НА ЭКСПОРТ ---
         const exportUrl = 'https://jonathan-soulmate.github.io/pdf_export/pdf_export.html?payload=' + payload;
 
-        // Try Telegram API first
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-             window.Telegram.WebApp.openLink(exportUrl, {try_instant_view: false});
-        } else {
-             window.open(exportUrl, '_blank');
+        // Находим кнопку "Сформировать и напечатать" в модальном окне
+        const printButton = document.querySelector('#managerModal .btn-manager-print');
+        
+        // Меняем её на ссылку, чтобы задействовать нативное поведение браузера/системы
+        if(printButton) {
+            const newLink = document.createElement('a');
+            newLink.className = printButton.className;
+            newLink.textContent = printButton.textContent;
+            newLink.href = exportUrl;
+            newLink.target = "_blank";
+            newLink.rel = "noopener";
+            newLink.onclick = () => {
+                // Маленькая задержка, чтобы модалка успела закрыться перед переходом
+                setTimeout(() => {
+                    document.getElementById('managerModal').classList.remove('open');
+                }, 10);
+            };
+            printButton.parentNode.replaceChild(newLink, printButton);
         }
         
+        // Закрываем модалку, но не переходим, переход будет по клику на ссылку.
+        // Это нужно, чтобы пользователь кликнул на ссылку, а не на кнопку
+        // Скрипт просто готовит ссылку.
         document.getElementById('managerModal').classList.remove('open');
     }
 
-    // --- CALCULATOR LOGIC (SAME AS BEFORE) ---
+    // Инициализация калькулятора (остальной код)
     function resetForm() { document.querySelectorAll('input:not(:disabled):not([id^="mgr"])').forEach(i=>i.value=0); document.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=false); document.querySelectorAll('select').forEach(s=>{s.selectedIndex=0;updateSelectTrigger(s.id)}); const v=document.getElementById("NomeraVATSVsego"); if(v)v.value=0; if(typeof manualChanges!=='undefined')manualChanges.clear(); updateTotals(); }
     function getCheckbox(id) { return document.getElementById(id)?.checked ?? false; }
     function getNumber(id) { const v=parseFloat(document.getElementById(id)?.value??0); return isNaN(v)?0:v; }
     function getSelect(id) { return document.getElementById(id)?.value??""; }
     function parseVal(id) { const e=document.getElementById(id); if(!e)return 0; const v=parseFloat((e.value||e.textContent).replace(/[^\d.]/g,'')); return isNaN(v)?0:v; }
-    
+
     const manualChanges = new Set();
     let cascadeQueue = [];
     let isProcessing = false;
+
     function runCascade(startField) {
         if (isProcessing) { manualChanges.add(startField); return; }
         cascadeQueue = [startField]; isProcessing = true; let depth = 0;
@@ -447,10 +466,11 @@
              VneshnieATS: (c) => { if(getCheckbox("VneshnieATS")&&!getCheckbox("VATS")) c.set("VATS",true); },
              AmoBitrix: (c) => { if(getCheckbox("AmoBitrix")){ if(!getCheckbox("VATS")&&!getCheckbox("OMNI")&&!getCheckbox("AnalitikaProdaj")) c.set("VATS",true); } else { if(getCheckbox("AnalitikaProdaj")) c.set("AnalitikaProdaj",false); } },
              VezdeKakDoma: (c) => { if(getCheckbox("VezdeKakDoma")&&!getCheckbox("VATS")) c.set("VATS",true); },
-             UvedomlenieOSobitiyah: (c) => { if(getCheckbox("UvedomlenieOSobitiyah")){ if(getCheckbox("SpasenieKommunikatsiy")) c.set("UvedomlenieOSobitiyah",false); else if(!getCheckbox("VATS")&&!getCheckbox("OMNI")&&!getCheckbox("AR")) c.set("VATS",true); } },
+             UvedomlenieOSobitiyah: (c) => { if(getCheckbox("UvedomlenieOSobitiyah")){ if(getCheckbox("SpasenieKommunikatsiy")) c.set("UvedomlenieOSobitiyah",false); else if(!getCheckbox("VATS")&&!getCheckbox("OMNI")&&!getCheckbox("AR")) c.set("VedomlenieOSobitiyah",false); } },
              SpasenieKommunikatsiy: (c) => { if(getCheckbox("SpasenieKommunikatsiy")){ document.getElementById('UvedomlenieOSobitiyah').disabled = true; if(!getCheckbox("VATS")) c.set("VATS",true); if(getCheckbox("UvedomlenieOSobitiyah")) c.set("UvedomlenieOSobitiyah",false); } else { document.getElementById('UvedomlenieOSobitiyah').disabled = false; } },
              AvtoperezvonPoZayavkam: (c) => { if(getCheckbox("AvtoperezvonPoZayavkam")){ if(!getCheckbox("VATS")) c.set("VATS",true); if(!getCheckbox("AR")) c.set("AR",true); } },
         };
+        
         while (cascadeQueue.length && depth < 3) {
             const current = cascadeQueue.shift();
             if (rules[current]) rules[current](context);
@@ -464,7 +484,7 @@
         const vsego = document.getElementById("NomeraVATSVsego");
         if(vsego) vsego.value = sumAll;
 
-        const formulaMap = {
+        const formulaMap = { /* ... (Формулы те же) ... */
              VATS: { cost: () => getCheckbox("VATS") ? 1200 : 0 },
              VATSPRO: { cost: () => getCheckbox("VATSPRO") ? 2200 : 0 },
              KolvoSotrudnikovVATS: { limit: () => { const val = getNumber("KolvoSotrudnikovVATS"); const vatspro = getCheckbox("VATSPRO"); return val < 4 ? 0 : (val - 3) * (vatspro ? 200 : 120); } },
