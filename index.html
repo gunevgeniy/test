@@ -10,6 +10,7 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
+    /* Стили остаются без изменений (для экономии места в ответе они свернуты, используйте стили из прошлого рабочего варианта) */
     :root { --color-primary: #0000aa; --color-primary-light: rgba(0, 0, 170, 0.08); --color-bg: #F0F2F5; --color-card-bg: #FFFFFF; --color-input-bg: #FFFFFF; --color-input-border: #C4C4C4; --color-text-main: #252525; --color-text-secondary: #878787; --color-limit: #e67e22; --radius-card: 20px; --radius-input: 10px; --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05); --font-head: 'Manrope', sans-serif; --font-body: 'Inter', sans-serif; }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: var(--font-body); background-color: var(--color-bg); color: var(--color-text-main); margin: 0; padding: 0; overflow-x: hidden; }
@@ -299,7 +300,7 @@
         </div>
     </section>
 
-    <!-- BLOCK 4: Integrations -->
+    <!-- BLOCK 4 -->
      <section class="card card-group">
         <div class="card-header static"><div class="card-title">Интеграции и доп. опции</div></div>
         <div class="option-row"><div class="option-info"><div class="option-name">Интеграция с amoCRM или Битрикс 24</div><div class="option-meta"><span id="cost-AmoBitrix"></span><span id="limit-AmoBitrix"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="AmoBitrix" onchange="runCascade('AmoBitrix')"><span class="slider"></span></label></div></div>
@@ -351,6 +352,7 @@
 <div class="modal-overlay" id="selectModalOverlay" onclick="closeSelectModal(event)"><div class="modal-content"><span class="modal-close" onclick="closeSelectModal(event, true)">&times;</span><span class="modal-title" id="selectModalTitle">Выбор</span><div class="modal-options-list" id="selectModalOptions"></div></div></div>
 
 <div class="tooltip-content-hidden">
+    <!-- Тултипы из прошлого примера (сокращено для примера, используйте полный текст) -->
     <div id="tooltip-vats">Базовый функционал сценариев:<br>- инф. сообщение<br>- меню<br>- переадресация на сотрудника и группу<br>- распределение по графикам<br>- распределение на персонального менеджера из CRM<br><br>Распределение звонков:<br>- по приоритету<br>- одновременно<br><br>До 3 номеров у сотрудника (сип/личный/FMC).<br>Управление АОНами.<br>Оценка разговора.</div>
     <div id="tooltip-vatspro">ВСЕ функции сценариев и распределения звонков:<br>- на последнего менеджера<br>- по спискам АОНов<br>- по данным из CRM<br>- по регионам/номеру/сегментам и пр.<br>- по процентам<br>- уравнивание по кол-ву или длительности<br>- не звонить ранее, чем через<br>- коллаут<br>- коллбек<br><br>Доп. функции:<br>- управление АОНами<br>- опции разговора<br>- тренер<br><br>- до 6 номеров у сотрудника<br>- SIPURI - канальность 2</div>
     <div id="tooltip-8800">700р. - мин. счет, расходуется на звонки</div>
@@ -369,7 +371,7 @@
     <div id="tooltip-save">- Автоматический перезвон по пропущенным<br>- Автотегирование<br>- Уведомления по E-mail и SMS (SMS — 3.7 руб/шт)<br>- Дашборд с аналитикой по звонкам</div>
     <div id="tooltip-home">Автоматический выбор номера при исходящих звонках</div>
     <div id="tooltip-min8800">Расходуется на звонки с номерами 8-800</div>
-    <div id="tooltip-guarantee">Будет "заморожен" на счете как гарантия оплаты и возвращен или учтен при закрытии договора.</div>
+    <div id="tooltip-guarantee">Будет "заморожен" на счете как гарантия оплаты и возвращен или учтен при закрытии договора. <br>Максимальный порог кредитного лимита: <b>${maxLimit.toLocaleString('ru-RU')} руб.</b></div>
     <div id="tooltip-widget">Интеграция аналитики рекламы с виджетами клиента</div>
     <div id="tooltip-connect">Разово за подключаемые номера и/или FMC-сим карты</div>
     <div id="tooltip-delivery">Разово за один адрес</div>
@@ -377,7 +379,7 @@
 </div>
 
 <script>
-    // --- UI Helpers ---
+    // --- JS ЛОГИКА КАЛЬКУЛЯТОРА ---
     function toggleExpert() { const b = document.getElementById('block-expert'); b.style.display = b.style.display === "none" ? "block" : "none"; document.querySelector('.expert-toggle-btn').classList.toggle('active', b.style.display === "none"); }
     function toggleAnalytics() { const b = document.getElementById('block-ar'); b.style.display = b.style.display === "none" ? "block" : "none"; document.querySelector('.card-header.collapsed, .card-header:not(.static)')?.classList.toggle('collapsed', b.style.display === "none"); }
     function stepInput(id, delta) { const i = document.getElementById(id); if(i.disabled) return; let v = parseInt(i.value)||0; v = Math.max(0, v+delta); i.value = v; runCascade(id); }
@@ -392,14 +394,14 @@
     let isSheetOpen = false;
     function toggleSheet() { isSheetOpen = !isSheetOpen; const c = document.querySelector('.sheet-content'); c.classList.toggle('open', isSheetOpen); document.querySelector('.sheet-icon').style.transform = isSheetOpen ? "rotate(180deg)" : "rotate(0deg)"; }
     function updateMobileSheet(t, m, c, d, g) { document.getElementById('mobile-total').textContent = t; document.getElementById('mobile-minimal').textContent = m; document.getElementById('mobile-connection').textContent = c; document.getElementById('mobile-delivery').textContent = d; document.getElementById('mobile-guarantee').textContent = g; }
-
+    
     function openManagerModal() { document.getElementById('managerModal').classList.add('open'); }
     function closeManagerModal(e, f) { if(f || e.target.id === 'managerModal') document.getElementById('managerModal').classList.remove('open'); }
     function formatName(i) { i.value = i.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase()); }
     function formatPhone(i) { let v = i.value.replace(/\D/g, ''); if(v.length){ if(v[0]==='8'||v[0]==='7') v=v.substring(1); let f='+7 '; if(v.length>0) f+='('+v.substring(0,3); if(v.length>=4) f+=') '+v.substring(3,6); if(v.length>=7) f+='-'+v.substring(6,8); if(v.length>=9) f+='-'+v.substring(8,10); i.value = f; } else i.value=''; }
     function validateEmail(i) { const r = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/; if(!r.test(i.value) && i.value!=="") { i.classList.add('invalid'); return false; } i.classList.remove('invalid'); return true; }
 
-    /* PRINT LOGIC START - ANCHOR CLICK */
+    /* ФУНКЦИЯ ПЕЧАТИ (ОТКРЫТИЕ ВНЕШНЕЙ ССЫЛКИ) */
     function printKP() {
         const nameInput = document.getElementById('mgrName');
         const phoneInput = document.getElementById('mgrPhone');
@@ -495,26 +497,32 @@
         };
 
         const json = JSON.stringify({ manager: managerData, sections: sectionsData, totals: totalsData });
+        // Кодируем в Base64 с поддержкой UTF-8
         const payload = encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
-        const exportUrl = 'https://jonathan-soulmate.github.io/pdf_export/pdf_export.html?payload=' + payload;
+        
+        // --- ПЕРЕХОД НА СТРАНИЦУ ЭКСПОРТА ---
+        const exportUrl = 'https://gunevgeniy.github.io/uis-calculator/pdf_export.html?payload=' + payload;
 
-        // Creating an Anchor element and clicking it
-        // This is the most reliable way to force external browser in Telegram WebView
-        const link = document.createElement('a');
-        link.href = exportUrl;
-        link.target = "_blank";
-        link.rel = "noopener";
-        // Append to body to ensure it's in the DOM
-        document.body.appendChild(link);
-        link.click();
-        // Clean up
-        setTimeout(() => document.body.removeChild(link), 100);
+        // Метод 1: Telegram WebApp API (если доступен)
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+             window.Telegram.WebApp.openLink(exportUrl, {try_instant_view: false});
+        } 
+        // Метод 2: Fallback для обычных браузеров или если API недоступен
+        else {
+             // Используем трюк с программным кликом по ссылке
+             const link = document.createElement('a');
+             link.href = exportUrl;
+             link.target = "_blank";
+             link.rel = "noopener";
+             document.body.appendChild(link);
+             link.click();
+             setTimeout(() => document.body.removeChild(link), 100);
+        }
         
         document.getElementById('managerModal').classList.remove('open');
     }
-    /* PRINT LOGIC END */
 
-    /* CALCULATOR LOGIC */
+    // Инициализация калькулятора
     function resetForm() { document.querySelectorAll('input:not(:disabled):not([id^="mgr"])').forEach(i=>i.value=0); document.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=false); document.querySelectorAll('select').forEach(s=>{s.selectedIndex=0;updateSelectTrigger(s.id)}); const v=document.getElementById("NomeraVATSVsego"); if(v)v.value=0; if(typeof manualChanges!=='undefined')manualChanges.clear(); updateTotals(); }
     function getCheckbox(id) { return document.getElementById(id)?.checked ?? false; }
     function getNumber(id) { const v=parseFloat(document.getElementById(id)?.value??0); return isNaN(v)?0:v; }
@@ -532,7 +540,6 @@
             set: (id, value) => { const el = document.getElementById(id); if (!el) return; const current = el.type === "checkbox" ? el.checked : el.value; if (current == value || manualChanges.has(id)) return; if (el.type === "checkbox") el.checked = value; else el.value = value; cascadeQueue.push(id); },
             select: (id, value) => { const el = document.getElementById(id); if (!el || el.value === value || manualChanges.has(id)) return; el.value = value; updateSelectTrigger(id); cascadeQueue.push(id); }
         };
-        // Logic Rules (Condensed)
         const rules = {
              VATS: (c) => { if(getCheckbox("VATS")){ c.select("DlitelnostHraneniyaVATS","1 неделя"); if(getNumber("KolvoSotrudnikovVATS")<3)c.set("KolvoSotrudnikovVATS",3); if(getNumber("LiniyGrupovogoVizova")<3)c.set("LiniyGrupovogoVizova",3); if(getNumber("LiniyIshodyashihZvonkov")<30)c.set("LiniyIshodyashihZvonkov",30); } else { c.set("KolvoSotrudnikovVATS",0); c.set("LiniyGrupovogoVizova",0); c.set("LiniyIshodyashihZvonkov",0); c.set("KolvoSIPTrankov",0); c.set("KolvoSIPURI",0); c.set("KolvoSIPAkkauntov",0); c.set("NomeraVATS",0); c.set("NomeraVATS8800",0); c.set("KolvoSvoihNomerov",0); c.set("KolvoFMC",0); c.set("VATSPRO",false); c.select("DlitelnostHraneniyaVATS",0); c.select("KanalnostSIPTrankov",0); c.select("KanalnostSIPAkkauntov",0); c.select("TarifFMC","нет"); c.select("RegionDostavki","нет"); c.set("VneshnieATS",false); c.set("SpasenieKommunikatsiy",false); c.set("AvtoperezvonPoZayavkam",false); c.set("VezdeKakDoma",false); if(!getCheckbox("OMNI")&&!getCheckbox("AnalitikaProdaj")) c.set("AmoBitrix",false); c.set("IntegraciyaOtraslevie",false); if(getCheckbox("UvedomlenieOSobitiyah")&&!getCheckbox("OMNI")&&!getCheckbox("AR")) c.set("UvedomlenieOSobitiyah",false); } },
              VATSPRO: (c) => { if(getCheckbox("VATSPRO")&&!getCheckbox("VATS")) c.set("VATS",true); },
@@ -655,7 +662,6 @@
                 if(String(val).includes("уменьшите")) { b.textContent = val; b.style.color = "red"; }
                 return b;
             };
-
             if(costEl && costVal !== null) costEl.appendChild(createBadge(costVal, 'cost'));
             if(limitVal !== null) { if(limitEl && limitEl !== costEl) limitEl.appendChild(createBadge(limitVal, 'limit')); else if(costEl) costEl.appendChild(createBadge(limitVal, 'limit')); }
         });
@@ -704,7 +710,6 @@
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
     }
-    
     document.querySelectorAll('select').forEach(s => updateSelectTrigger(s.id));
     updateTotals();
 </script>
