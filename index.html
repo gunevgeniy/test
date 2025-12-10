@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
   <!-- Подключение библиотеки для генерации PDF -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   
   <style>
@@ -1190,8 +1191,7 @@
             <span id="mobile-guarantee">0</span>
         </div>
         <button class="sheet-reset" onclick="resetForm(); toggleSheet()">Стереть расчет</button>
-        <!-- REPLACED BUTTON WITH TEXT FOR MOBILE/TELEGRAM COMPATIBILITY -->
-        <div style="text-align:center; font-size:12px; color:#888; margin-top:15px;">Для скачивания PDF перейдите в десктопную версию браузера.</div>
+        <button class="btn-manager-print" style="background:#0000aa; color:white; margin-top:10px;" onclick="openManagerModal()">Печать КП</button>
     </div>
 </div>
 
@@ -1501,25 +1501,23 @@
         }
     }
 
-    function printKP() {
+async function printKP() {
         const nameInput = document.getElementById('mgrName');
         const phoneInput = document.getElementById('mgrPhone');
         const emailInput = document.getElementById('mgrEmail');
         
-        // Final Validation
+        // Валидация
         if (emailInput.value !== "" && !validateEmail(emailInput)) {
             alert("Пожалуйста, введите корректный Email");
             return;
         }
 
-        // 1. Gather Manager Data
+        // 1. Сбор данных менеджера
         const name = nameInput.value.trim();
         const phone = phoneInput.value.trim();
         const email = emailInput.value.trim();
         
-        // Update Print Block
         const mgrBlock = document.getElementById('print-manager-block');
-        // Hide manager block if all fields are empty
         if (name || phone || email) {
             mgrBlock.style.display = 'block';
             document.getElementById('print-mgr-name').textContent = name || '';
@@ -1529,23 +1527,22 @@
             mgrBlock.style.display = 'none';
         }
 
-        // 2. Generate Options Table Grouped by Sections (Cards)
+        // 2. Генерация таблицы (ваша логика осталась прежней)
         const container = document.getElementById('print-sections-container');
-        container.innerHTML = ''; // Clear previous
+        container.innerHTML = ''; 
         
         const sections = document.querySelectorAll('.card');
         
         sections.forEach(card => {
+            // ... ВАШ КОД ГЕНЕРАЦИИ ТАБЛИЦЫ (БЕЗ ИЗМЕНЕНИЙ) ...
+            // Вставьте сюда ту же логику перебора (loop), что была у вас в оригинале
+            // Для краткости я не дублирую здесь 100 строк цикла forEach, 
+            // просто убедитесь, что таблица строится так же, как и раньше.
             const titleEl = card.querySelector('.card-title');
             if (!titleEl) return;
-            
             const titleText = titleEl.textContent.trim();
             const optionRows = card.querySelectorAll('.option-row');
-            
-            // Build rows for this section
             const tableRows = [];
-            
-            // Logic for merging FMC fields
             let pendingFMC = null;
 
             optionRows.forEach(row => {
@@ -1553,26 +1550,15 @@
                 const number = row.querySelector('input[type="number"], input.stepper-input');
                 const select = row.querySelector('select');
                 const readonly = row.querySelector('#NomeraVATSVsego');
-
                 let isActive = false;
                 let valueText = "";
                 
-                // Determine active state and value text
-                if (checkbox && checkbox.checked) {
-                    isActive = true;
-                    valueText = "Включено";
-                } else if (number) {
+                if (checkbox && checkbox.checked) { isActive = true; valueText = "Включено"; } 
+                else if (number) {
                     const numVal = parseInt(number.value) || 0;
-                    
-                    // Logic for specific fields thresholds
-                    if (number.id === 'LiniyGrupovogoVizova') {
-                        if (numVal > 3) isActive = true;
-                    } else if (number.id === 'LiniyIshodyashihZvonkov') {
-                        if (numVal > 30) isActive = true;
-                    } else if (numVal > 0) {
-                        isActive = true;
-                    }
-                    
+                    if (number.id === 'LiniyGrupovogoVizova') { if (numVal > 3) isActive = true; } 
+                    else if (number.id === 'LiniyIshodyashihZvonkov') { if (numVal > 30) isActive = true; } 
+                    else if (numVal > 0) { isActive = true; }
                     if (isActive) valueText = number.value + " шт.";
                 } else if (select && select.value !== "0" && select.value !== "нет") {
                     isActive = true;
@@ -1582,11 +1568,9 @@
                     valueText = readonly.value + " шт.";
                 }
 
-                // If active, process data
                 if (isActive) {
                     const nameEl = row.querySelector('.option-name');
                     let nameText = nameEl.innerText.replace('i', '').trim();
-                    
                     const infoIcon = row.querySelector('.info-icon');
                     let descText = "";
                     if (infoIcon) {
@@ -1595,196 +1579,159 @@
                             const match = onClickAttr.match(/'([^']+)'/);
                             if (match && match[1]) {
                                 const tooltipContent = document.getElementById(match[1]);
-                                // FIX: Use innerHTML to preserve <br> tags
                                 if (tooltipContent) descText = tooltipContent.innerHTML;
                             }
                         }
                     }
-
-                    // Cost Badges
                     const metaBadges = row.querySelectorAll('.price-badge');
                     let costHtml = "";
-                    metaBadges.forEach(badge => {
-                        costHtml += `<div>${badge.textContent}</div>`;
-                    });
+                    metaBadges.forEach(badge => { costHtml += `<div>${badge.textContent}</div>`; });
 
-                    // Special Overrides for "Unlimited"
                     if (checkbox && (checkbox.id === 'TgVkAvito' || checkbox.id === 'OMNIKnopka') || (number && number.id === 'KolvoSaitov')) {
                          costHtml = `<div class="price-badge">безлимитно</div>`;
                     }
-
-                    // Special Handling for Region Display
                     if (select && select.id === "RegionDostavki") {
                         const regCost = document.getElementById('cost-RegionDostavki-placeholder');
                         let costDisplay = "";
                         if(regCost && regCost.textContent) costDisplay = `<div>${regCost.textContent}</div>`;
-                        
-                        tableRows.push(`
-                        <tr>
-                            <td style="width:70%">
-                                <div class="print-row-name">${nameText}</div>
-                                <div style="margin-top:4px; font-weight:400; color:#555; font-size:11px;">${valueText}</div>
-                                ${descText ? `<div class="print-row-desc">${descText}</div>` : ''}
-                            </td>
-                            <td style="width:30%">
-                                <div class="print-row-value">${costDisplay}</div>
-                            </td>
-                        </tr>
-                        `);
-                        return; // Done with this row
+                        tableRows.push(`<tr><td style="width:70%"><div class="print-row-name">${nameText}</div><div style="margin-top:4px; font-weight:400; color:#555; font-size:11px;">${valueText}</div>${descText ? `<div class="print-row-desc">${descText}</div>` : ''}</td><td style="width:30%"><div class="print-row-value">${costDisplay}</div></td></tr>`);
+                        return;
                     }
-
-                    // Special Handling for FMC Merging
                     if (number && number.id === 'KolvoFMC') {
                          const fmcCost = row.closest('.fmc-subgroup')?.querySelector('.fmc-cost-row .price-badge');
                          let finalFmcCost = "";
                          if(fmcCost) finalFmcCost = `<div>${fmcCost.textContent}</div>`;
-                         
-                         pendingFMC = {
-                             name: nameText,
-                             val: valueText,
-                             cost: finalFmcCost,
-                             desc: descText
-                         };
-                         return; // Wait for Tariff row
+                         pendingFMC = { name: nameText, val: valueText, cost: finalFmcCost, desc: descText };
+                         return;
                     }
-
                     if (select && select.id === 'TarifFMC') {
                         if (pendingFMC) {
-                            // Merge with pending Sim Card data
-                            tableRows.push(`
-                            <tr>
-                                <td style="width:70%">
-                                    <div class="print-row-name">${pendingFMC.name} <span style="font-weight:400; color:#555;">(${pendingFMC.val})</span></div>
-                                    <div class="print-row-name" style="margin-top:6px;">${nameText} <span style="font-weight:400; color:#555;">(${valueText})</span></div>
-                                </td>
-                                <td style="width:30%; vertical-align:middle;">
-                                    <div class="print-row-value">${pendingFMC.cost}</div>
-                                </td>
-                            </tr>
-                            `);
+                            tableRows.push(`<tr><td style="width:70%"><div class="print-row-name">${pendingFMC.name} <span style="font-weight:400; color:#555;">(${pendingFMC.val})</span></div><div class="print-row-name" style="margin-top:6px;">${nameText} <span style="font-weight:400; color:#555;">(${valueText})</span></div></td><td style="width:30%; vertical-align:middle;"><div class="print-row-value">${pendingFMC.cost}</div></td></tr>`);
                             pendingFMC = null;
                         } else {
-                            // Just tariff without sim cards? (Shouldn't happen by logic, but print regular)
-                             tableRows.push(`
-                                <tr>
-                                    <td style="width:70%">
-                                        <div class="print-row-name">${nameText} <span style="font-weight:400; color:#555;">(${valueText})</span></div>
-                                    </td>
-                                    <td style="width:30%">
-                                        <div class="print-row-value">${costHtml}</div>
-                                    </td>
-                                </tr>
-                            `);
+                             tableRows.push(`<tr><td style="width:70%"><div class="print-row-name">${nameText} <span style="font-weight:400; color:#555;">(${valueText})</span></div></td><td style="width:30%"><div class="print-row-value">${costHtml}</div></td></tr>`);
                         }
                         return;
                     }
-
-                    // Standard Row
-                    tableRows.push(`
-                        <tr>
-                            <td style="width:70%">
-                                <div class="print-row-name">${nameText} <span style="font-weight:400; color:#555;">(${valueText})</span></div>
-                                ${descText ? `<div class="print-row-desc">${descText}</div>` : ''}
-                            </td>
-                            <td style="width:30%">
-                                <div class="print-row-value">${costHtml}</div>
-                            </td>
-                        </tr>
-                    `);
+                    tableRows.push(`<tr><td style="width:70%"><div class="print-row-name">${nameText} <span style="font-weight:400; color:#555;">(${valueText})</span></div>${descText ? `<div class="print-row-desc">${descText}</div>` : ''}</td><td style="width:30%"><div class="print-row-value">${costHtml}</div></td></tr>`);
                 }
             });
-
-            // If FMC sim cards exist but no tariff row was found (active), dump the pending row
             if (pendingFMC) {
-                 tableRows.push(`
-                    <tr>
-                        <td style="width:70%">
-                            <div class="print-row-name">${pendingFMC.name} <span style="font-weight:400; color:#555;">(${pendingFMC.val})</span></div>
-                        </td>
-                        <td style="width:30%">
-                            <div class="print-row-value">${pendingFMC.cost}</div>
-                        </td>
-                    </tr>
-                `);
+                 tableRows.push(`<tr><td style="width:70%"><div class="print-row-name">${pendingFMC.name} <span style="font-weight:400; color:#555;">(${pendingFMC.val})</span></div></td><td style="width:30%"><div class="print-row-value">${pendingFMC.cost}</div></td></tr>`);
             }
-
-            // If we found active rows in this card, create the section
             if (tableRows.length > 0) {
                 const sectionDiv = document.createElement('div');
                 sectionDiv.className = 'print-section';
-                sectionDiv.innerHTML = `
-                    <div class="print-section-title">${titleText}</div>
-                    <table class="print-table">
-                        <tbody>${tableRows.join('')}</tbody>
-                    </table>
-                `;
+                sectionDiv.innerHTML = `<div class="print-section-title">${titleText}</div><table class="print-table"><tbody>${tableRows.join('')}</tbody></table>`;
                 container.appendChild(sectionDiv);
             }
         });
+        // --- КОНЕЦ ГЕНЕРАЦИИ ТАБЛИЦЫ ---
 
-        // 3. Update Totals
-        // FIXED FORMATTING
+        // 3. Обновление итогов
         document.getElementById('print-total-monthly').textContent = document.getElementById('total-monthly').textContent + " ₽ / мес";
         document.getElementById('print-total-minimal').textContent = document.getElementById('total-minimal').textContent;
         document.getElementById('print-total-connection').textContent = document.getElementById('total-connection').textContent;
         document.getElementById('print-total-delivery').textContent = document.getElementById('total-delivery').textContent;
         document.getElementById('print-total-guarantee').textContent = document.getElementById('total-guarantee').textContent;
         
-        // Close modal and print
-        document.getElementById('managerModal').classList.remove('open');
-        
-        // HIDE ZERO TOTALS
-        const totalsToCheck = [
-            'print-total-minimal',
-            'print-total-connection',
-            'print-total-delivery',
-            'print-total-guarantee'
-        ];
-        
-        totalsToCheck.forEach(id => {
+        // Скрытие нулевых итогов
+        ['print-total-minimal', 'print-total-connection', 'print-total-delivery', 'print-total-guarantee'].forEach(id => {
             const el = document.getElementById(id);
             const row = el.closest('.print-total-row');
-            if(el.textContent.trim() === "0 ₽" || el.textContent.trim() === "0 ₽ / мес") {
-                row.style.display = 'none';
-            } else {
-                row.style.display = 'flex';
-            }
+            if(el.textContent.trim() === "0 ₽" || el.textContent.trim() === "0 ₽ / мес") row.style.display = 'none';
+            else row.style.display = 'flex';
         });
 
-        // DETECT ENVIRONMENT FOR PDF GENERATION
-        const isMobile = window.matchMedia('(max-width: 900px)').matches;
-        // Simple heuristic for Telegram WebApp environment
-        const isTelegram = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) || navigator.userAgent.includes('Telegram');
+        // Закрываем модалку
+        document.getElementById('managerModal').classList.remove('open');
 
-        if (isMobile || isTelegram) {
-            // Use html2pdf
-            const element = document.getElementById('print-area');
-            // Add specific class to force print styles visible on screen for capture
-            document.body.classList.add('pdf-mode');
-            window.scrollTo(0, 0); // Scroll to top for correct canvas rendering
-            
-            const opt = {
-              margin:       5, // top, left, bottom, right in mm
-              filename:     'KP_UIS.pdf',
-              image:        { type: 'jpeg', quality: 0.98 },
-              html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, scrollX: 0, windowWidth: 800 },
-              jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-              // REMOVED 'avoid-all' to allow breaks, keep 'css' to respect 'break-inside: avoid'
-              pagebreak:    { mode: ['css', 'legacy'] } 
-            };
+        // ===============================================
+        // ЛОГИКА ОПРЕДЕЛЕНИЯ TELEGRAM
+        // ===============================================
+        const isTelegram = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData);
 
-            // Small delay to ensure render
-            setTimeout(() => {
-                html2pdf().set(opt).from(element).save().then(function(){
-                    document.body.classList.remove('pdf-mode');
+        if (isTelegram) {
+            // МЫ В ТЕЛЕГРАМЕ
+            const tg = window.Telegram.WebApp;
+            // Убедимся, что приложение готово
+            tg.ready();
+
+            const userId = tg.initDataUnsafe?.user?.id;
+
+            if (!userId) {
+                alert("Ошибка: Не удалось определить ID пользователя Telegram. Запустите сайт через бота.");
+                return;
+            }
+
+            // Показываем пользователю, что идет отправка
+            const btn = document.querySelector('.btn-manager-print');
+            const originalText = btn.textContent;
+            btn.textContent = "Отправка в чат...";
+            btn.disabled = true;
+
+            try {
+                // Собираем HTML для печати и стили
+                const printContent = document.getElementById('print-area').innerHTML;
+                const styles = document.querySelector('style').innerHTML;
+
+                // URL вашего сервера на Render (замените ПОСЛЕ деплоя)
+                const SERVER_URL = "https://uis-pdf-server.onrender.com/generate-pdf";
+
+                const response = await fetch(SERVER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        htmlContent: printContent,
+                        cssContent: styles,
+                        userId: userId
+                    })
                 });
-            }, 100);
+
+                if (response.ok) {
+                    alert("КП успешно отправлено вам в личные сообщения от бота!");
+                    tg.close(); // Можно закрыть окно WebApp
+                } else {
+                    alert("Ошибка при отправке на сервер.");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Произошла ошибка сети.");
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+
         } else {
-            // Desktop standard print
-            setTimeout(() => {
-                window.print();
-            }, 300);
+            // ОБЫЧНЫЙ БРАУЗЕР (Desktop или Mobile Web)
+            // Оставляем вашу старую логику html2pdf
+            
+            const isMobile = window.matchMedia('(max-width: 900px)').matches;
+            
+            if (isMobile) {
+                const element = document.getElementById('print-area');
+                document.body.classList.add('pdf-mode');
+                window.scrollTo(0, 0);
+                
+                const opt = {
+                  margin:       5,
+                  filename:     'KP_UIS.pdf',
+                  image:        { type: 'jpeg', quality: 0.98 },
+                  html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, scrollX: 0, windowWidth: 800 },
+                  jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                  pagebreak:    { mode: ['css', 'legacy'] } 
+                };
+
+                setTimeout(() => {
+                    html2pdf().set(opt).from(element).save().then(function(){
+                        document.body.classList.remove('pdf-mode');
+                    });
+                }, 100);
+            } else {
+                setTimeout(() => {
+                    window.print();
+                }, 300);
+            }
         }
     }
 
@@ -2516,7 +2463,7 @@
                 badge.textContent = isNum ? `${val.toLocaleString('ru-RU')} ₽${type === 'cost' ? ' / мес' : ''}` : val;
                 
                 // --- NEW FORMAT FOR LIMIT ---
-                if(type === 'limit' && isNum) badge.textContent = `+${val.toLocaleString('ru-RU')} ₽ / мес`;
+                if(type === 'limit' && isNum) badge.textContent = `+${val.toLocaleString('ru-RU')} ₽ / мес - расширение лимита`;
                 
                 if(String(val).includes("вкл")) badge.textContent = "Включено";
                 if(String(val).includes("уменьшите")) { badge.textContent = val; badge.style.color = "red"; }
@@ -2573,7 +2520,7 @@
             if (delPrice > 0) {
                 regionPlaceholder.className = 'price-badge cost';
                 // --- UPDATED REGION FORMAT ---
-                regionPlaceholder.textContent = `+${delPrice.toLocaleString('ru-RU')} ₽ - доставка`;
+                regionPlaceholder.textContent = `[+${delPrice.toLocaleString('ru-RU')} ₽ - доставка]`;
             } else {
                 regionPlaceholder.textContent = '';
                 regionPlaceholder.className = '';
