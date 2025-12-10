@@ -1502,17 +1502,24 @@
     }
 
 async function printKP() {
+        // --- НАСТРОЙКИ ---
+        // Вставьте сюда юзернейм вашего бота (без @)
+        // Это нужно, чтобы перекинуть пользователя, если он открыл ссылку не там
+        const BOT_USERNAME = "RestCalcUIS_bot"; 
+        
+        // Вставьте ваш URL сервера Timeweb
+        const SERVER_URL = "https://gunevgeniy-uis-pdf-server-eeac.twc1.net/generate-pdf";
+        // ------------------
+
         const nameInput = document.getElementById('mgrName');
         const phoneInput = document.getElementById('mgrPhone');
         const emailInput = document.getElementById('mgrEmail');
         
-        // Валидация
         if (emailInput.value !== "" && !validateEmail(emailInput)) {
             alert("Пожалуйста, введите корректный Email");
             return;
         }
 
-        // 1. Сбор данных менеджера
         const name = nameInput.value.trim();
         const phone = phoneInput.value.trim();
         const email = emailInput.value.trim();
@@ -1527,17 +1534,12 @@ async function printKP() {
             mgrBlock.style.display = 'none';
         }
 
-        // 2. Генерация таблицы (ваша логика осталась прежней)
+        // --- ГЕНЕРАЦИЯ ТАБЛИЦЫ (Ваш стандартный код) ---
         const container = document.getElementById('print-sections-container');
         container.innerHTML = ''; 
-        
         const sections = document.querySelectorAll('.card');
         
         sections.forEach(card => {
-            // ... ВАШ КОД ГЕНЕРАЦИИ ТАБЛИЦЫ (БЕЗ ИЗМЕНЕНИЙ) ...
-            // Вставьте сюда ту же логику перебора (loop), что была у вас в оригинале
-            // Для краткости я не дублирую здесь 100 строк цикла forEach, 
-            // просто убедитесь, что таблица строится так же, как и раньше.
             const titleEl = card.querySelector('.card-title');
             if (!titleEl) return;
             const titleText = titleEl.textContent.trim();
@@ -1626,16 +1628,14 @@ async function printKP() {
                 container.appendChild(sectionDiv);
             }
         });
-        // --- КОНЕЦ ГЕНЕРАЦИИ ТАБЛИЦЫ ---
 
-        // 3. Обновление итогов
+        // --- ИТОГИ ---
         document.getElementById('print-total-monthly').textContent = document.getElementById('total-monthly').textContent + " ₽ / мес";
         document.getElementById('print-total-minimal').textContent = document.getElementById('total-minimal').textContent;
         document.getElementById('print-total-connection').textContent = document.getElementById('total-connection').textContent;
         document.getElementById('print-total-delivery').textContent = document.getElementById('total-delivery').textContent;
         document.getElementById('print-total-guarantee').textContent = document.getElementById('total-guarantee').textContent;
         
-        // Скрытие нулевых итогов
         ['print-total-minimal', 'print-total-connection', 'print-total-delivery', 'print-total-guarantee'].forEach(id => {
             const el = document.getElementById(id);
             const row = el.closest('.print-total-row');
@@ -1643,40 +1643,38 @@ async function printKP() {
             else row.style.display = 'flex';
         });
 
-        // Закрываем модалку
         document.getElementById('managerModal').classList.remove('open');
 
-        // ===============================================
-        // ЛОГИКА ОПРЕДЕЛЕНИЯ TELEGRAM
-        // ===============================================
-        const isTelegram = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData);
 
-        if (isTelegram) {
-            // МЫ В ТЕЛЕГРАМЕ
+        // ===============================================
+        //  ФИНАЛЬНАЯ ЛОГИКА ОПРЕДЕЛЕНИЯ И РЕДИРЕКТА
+        // ===============================================
+
+        // 1. Проверяем, есть ли данные WebApp (значит открыто правильно, через кнопку)
+        const isWebApp = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData && window.Telegram.WebApp.initData.length > 0);
+        
+        // 2. Проверяем User Agent на наличие слова Telegram (встроенный браузер)
+        const isTelegramBrowser = navigator.userAgent.includes("Telegram");
+
+        if (isWebApp) {
+            // --- СЦЕНАРИЙ 1: ПРАВИЛЬНЫЙ (Через меню бота) ---
             const tg = window.Telegram.WebApp;
-            // Убедимся, что приложение готово
             tg.ready();
-
             const userId = tg.initDataUnsafe?.user?.id;
 
             if (!userId) {
-                alert("Ошибка: Не удалось определить ID пользователя Telegram. Запустите сайт через бота.");
+                alert("Ошибка авторизации WebApp. Попробуйте перезапустить бота.");
                 return;
             }
 
-            // Показываем пользователю, что идет отправка
             const btn = document.querySelector('.btn-manager-print');
             const originalText = btn.textContent;
             btn.textContent = "Отправка в чат...";
             btn.disabled = true;
 
             try {
-                // Собираем HTML для печати и стили
                 const printContent = document.getElementById('print-area').innerHTML;
                 const styles = document.querySelector('style').innerHTML;
-
-                // URL вашего сервера на Render (замените ПОСЛЕ деплоя)
-                const SERVER_URL = "https://gunevgeniy-uis-pdf-server-eeac.twc1.net/generate-pdf";
 
                 const response = await fetch(SERVER_URL, {
                     method: 'POST',
@@ -1690,7 +1688,7 @@ async function printKP() {
 
                 if (response.ok) {
                     alert("КП успешно отправлено вам в личные сообщения от бота!");
-                    tg.close(); // Можно закрыть окно WebApp
+                    tg.close();
                 } else {
                     alert("Ошибка при отправке на сервер.");
                 }
@@ -1702,10 +1700,16 @@ async function printKP() {
                 btn.disabled = false;
             }
 
-        } else {
-            // ОБЫЧНЫЙ БРАУЗЕР (Desktop или Mobile Web)
-            // Оставляем вашу старую логику html2pdf
+        } else if (isTelegramBrowser) {
+            // --- СЦЕНАРИЙ 2: НЕПРАВИЛЬНЫЙ (Просто ссылка в чате) ---
+            // Редиректим пользователя в бота, где есть кнопка "Калькулятор"
             
+            if (confirm("Чтобы получить PDF-файл, нужно открыть калькулятор через меню бота.\n\nПерейти в бота сейчас?")) {
+                window.location.href = `https://t.me/${BOT_USERNAME}`;
+            }
+
+        } else {
+            // --- СЦЕНАРИЙ 3: ОБЫЧНЫЙ БРАУЗЕР (Chrome, Safari, PC) ---
             const isMobile = window.matchMedia('(max-width: 900px)').matches;
             
             if (isMobile) {
@@ -1734,7 +1738,6 @@ async function printKP() {
             }
         }
     }
-
 
     /* --- BUSINESS LOGIC --- */
 
