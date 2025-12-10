@@ -8,9 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
   
-  <!-- Telegram WebApp -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- HTML2PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   
   <style>
@@ -34,14 +32,12 @@
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: var(--font-body); background-color: var(--color-bg); color: var(--color-text-main); margin: 0; padding: 0; overflow-x: hidden; }
 
-    /* Cloud Background */
     .bg-cloud {
       position: fixed; top: -10%; left: -10%; width: 70vw; height: 70vw;
       background: radial-gradient(circle, rgba(0,0,170,0.12) 0%, rgba(255,255,255,0) 70%);
       filter: blur(80px); z-index: -1; pointer-events: none;
     }
 
-    /* Layout */
     .layout-wrapper {
       max-width: 1200px; margin: 0 auto; padding: 40px 20px 140px 20px;
       display: grid; grid-template-columns: 1fr 340px; gap: 30px; align-items: start;
@@ -49,7 +45,6 @@
     .main-column { display: flex; flex-direction: column; gap: 24px; }
     .sidebar-column { position: sticky; top: 24px; z-index: 10; }
 
-    /* Cards */
     .card {
       background: var(--color-card-bg); border-radius: var(--radius-card);
       padding: 24px; box-shadow: var(--shadow-card);
@@ -70,7 +65,6 @@
     }
     .card-header.collapsed .header-toggle-icon { transform: rotate(-90deg); }
 
-    /* Rows */
     .option-row {
       display: grid; 
       grid-template-columns: 1fr 150px; 
@@ -93,18 +87,9 @@
 
     .option-info { display: flex; flex-direction: column; gap: 6px; }
     
-    .option-name {
-      font-weight: 600; 
-      font-size: 15px; 
-      line-height: 1.4;
-      display: block; 
-    }
+    .option-name { font-weight: 600; font-size: 15px; line-height: 1.4; display: block; }
+    .option-meta { font-size: 12px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; min-height: 24px; justify-content: center; }
 
-    .option-meta {
-      font-size: 12px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; min-height: 24px; justify-content: center;
-    }
-
-    /* Price Badges */
     .price-badge {
       display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 6px; 
       font-weight: 600; font-size: 11px; white-space: nowrap; line-height: 1.4;
@@ -112,21 +97,16 @@
     .price-badge.cost { background: #E6F0FF; color: var(--color-primary); }
     .price-badge.limit { background: #FFF4E6; color: var(--color-limit); }
 
-    /* Tooltip Icon */
     .info-icon {
       display: inline-flex; align-items: center; justify-content: center;
       width: 18px; height: 18px;
       background: var(--color-primary-light); color: var(--color-primary);
       border-radius: 50%; font-size: 11px; font-weight: 800; font-family: serif; cursor: pointer;
-      vertical-align: middle; 
-      margin-left: 4px; 
-      margin-bottom: 2px;
+      vertical-align: middle; margin-left: 4px; margin-bottom: 2px;
     }
 
-    /* Controls */
     .control-wrapper { display: flex; justify-content: flex-end; align-items: center; }
 
-    /* Toggle Switch */
     .toggle-switch { position: relative; display: inline-block; width: 46px; height: 26px; }
     .toggle-switch input { opacity: 0; width: 0; height: 0; }
     .slider {
@@ -140,7 +120,6 @@
     input:checked + .slider { background-color: var(--color-primary); }
     input:checked + .slider:before { transform: translateX(20px); }
 
-    /* Stepper */
     .stepper {
       display: flex; align-items: center; 
       background: var(--color-input-bg);
@@ -163,7 +142,6 @@
     }
     .stepper-input::selection { background: var(--color-primary-light); }
 
-    /* Custom Select Trigger */
     .custom-select-trigger {
         width: 100%;
         background: var(--color-input-bg);
@@ -185,14 +163,12 @@
     .custom-select-trigger::after { content: "▼"; font-size: 10px; opacity: 0.6; margin-left: 8px; }
     .hidden-native-select { display: none; }
 
-    /* Read-only field */
     .readonly-field {
         background: #EAEAEA; padding: 8px 16px; border-radius: var(--radius-input);
         font-weight: 700; color: #555; display: flex; align-items: center; gap: 6px;
         border: 1px solid #ccc;
     }
 
-    /* FMC Container */
     .fmc-container {
       border: 1px solid #D0D0D0; border-radius: 16px; padding: 20px;
       margin-top: 10px; background: #FFFFFF; position: relative;
@@ -207,7 +183,6 @@
     .fmc-subgroup .option-row { border-bottom: none; padding: 8px 0; }
     .fmc-cost-row { padding-top: 10px; border-top: 1px dashed #e0e0e0; margin-top: 5px; display: flex; justify-content: flex-start; }
 
-    /* Summary Sidebar (Desktop) */
     .summary-card {
       background: var(--color-primary); color: #fff; padding: 24px;
       border-radius: var(--radius-card); box-shadow: 0 10px 40px rgba(0, 0, 170, 0.25);
@@ -231,7 +206,6 @@
     .btn-print { flex: 1; padding: 14px; background: #fff; border: none; color: var(--color-primary); border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 14px; transition: transform 0.2s; }
     .btn-print:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
-    /* Expert Toggle Button */
     .expert-toggle-btn {
         display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         background: #FFFFFF; border: 1px solid #D0D0D0;
@@ -250,7 +224,6 @@
     
     .expert-block { display: none; margin-top: 20px; padding-top: 10px; border-top: 1px dashed #e0e0e0; }
 
-    /* BOTTOM SHEET */
     .bottom-sheet { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; z-index: 500; box-shadow: 0 -5px 30px rgba(0,0,0,0.15); border-radius: 24px 24px 0 0; flex-direction: column; transition: transform 0.3s ease; }
     .sheet-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--color-primary); color: white; border-radius: 24px 24px 0 0; cursor: pointer; }
     .sheet-main-info { display: flex; align-items: center; justify-content: space-between; width: 100%; }
@@ -262,7 +235,6 @@
     .sheet-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #333; align-items: center; }
     .sheet-reset { margin-top: 20px; width: 100%; padding: 14px; background: #F0F0F0; color: #333; border: none; border-radius: 12px; font-weight: 700; }
 
-    /* MODALS */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.2s; }
     .modal-overlay.open { display: flex; opacity: 1; }
     .modal-content { background: #fff; padding: 25px; border-radius: 24px; max-width: 400px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); position: relative; max-height: 80vh; overflow-y: auto; }
@@ -274,7 +246,6 @@
     .modal-option-item.selected { background: var(--color-primary); color: white; }
     .modal-title { font-family: var(--font-head); font-weight: 700; font-size: 18px; margin-bottom: 15px; display: block; }
 
-    /* Manager Form Styles */
     .manager-form { display: flex; flex-direction: column; gap: 15px; }
     .form-group label { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 5px; display: block; }
     .form-group input { width: 100%; padding: 12px; border: 1px solid #D0D0D0; border-radius: 10px; font-size: 15px; outline: none; transition: border 0.2s; }
@@ -283,27 +254,87 @@
     .btn-manager-print { width: 100%; padding: 14px; background: var(--color-primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 16px; margin-top: 10px; }
     .btn-manager-print:hover { background: #000088; }
 
-    /* TOAST (OVERLAY STYLE) */
+    /* ========================================= */
+    /* NEW BEAUTIFUL TOAST (MODAL STYLE) */
+    /* ========================================= */
     #mobile-toast {
-        display: none; /* Скрыто по умолчанию */
+        display: none;
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.5); /* Фон затемнения */
+        background: rgba(0,0,0,0.6); /* Темный фон */
+        backdrop-filter: blur(4px);   /* Размытие фона */
         z-index: 99999;
-        align-items: center; /* Центрирование по вертикали */
-        justify-content: center; /* Центрирование по горизонтали */
-        backdrop-filter: blur(2px);
+        align-items: flex-end; /* По умолчанию снизу, для анимации */
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s;
     }
-    .toast-content {
-        background: rgba(0,0,0,0.85);
-        color: white;
-        padding: 20px;
-        border-radius: 16px;
+    
+    #mobile-toast.visible {
+        display: flex;
+        opacity: 1;
+    }
+
+    .toast-card {
+        background: #fff;
+        color: #1f1f1f;
         width: 90%;
         max-width: 400px;
+        border-radius: 24px;
+        padding: 24px;
         text-align: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        margin-bottom: 40px; /* Отступ снизу */
+        transform: translateY(20px);
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+    
+    #mobile-toast.visible .toast-card {
+        transform: translateY(0);
+    }
+
+    .toast-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        display: block;
+    }
+    
+    #toast-title {
+        font-family: var(--font-head);
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        color: #000;
+    }
+    
+    #toast-message {
+        font-family: var(--font-body);
+        font-size: 15px;
+        line-height: 1.5;
+        color: #555;
+        margin-bottom: 24px;
+    }
+    
+    .toast-btn {
+        background: var(--color-primary);
+        color: #fff;
+        border: none;
+        width: 100%;
+        padding: 14px;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.1s;
+    }
+    .toast-btn:active { transform: scale(0.98); }
+
+    /* Types colors */
+    .toast-type-success .toast-icon { color: #2ecc71; }
+    .toast-type-error .toast-icon { color: #e74c3c; }
+    .toast-type-loading .toast-icon { animation: spin 2s infinite linear; }
+    
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* PRINT STYLES */
     @page {
@@ -313,14 +344,12 @@
 
     #print-area { display: none; }
 
-    /* Styles applied when printing or when generating PDF */
     @media print {
         body { background: white; color: black; font-family: 'Inter', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         .layout-wrapper, .bg-cloud, .bottom-sheet, .modal-overlay, .expert-toggle-btn, #mobile-toast { display: none !important; }
         #print-area { display: flex !important; flex-direction: column; padding: 0; min-height: 100vh; }
     }
 
-    /* Helper class to simulate print styles for html2pdf generation */
     .pdf-mode {
         overflow: visible !important;
         height: auto !important;
@@ -348,7 +377,6 @@
         background: white;
     }
 
-    /* Print Layout Shared Styles */
     .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 3px solid var(--color-primary); padding-bottom: 20px; }
     .print-logo { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 32px; color: var(--color-primary); }
     .print-title { font-size: 18px; font-weight: 700; text-transform: uppercase; color: #333; }
@@ -357,7 +385,6 @@
     .print-manager h3 { margin: 0 0 10px 0; font-size: 14px; color: var(--color-primary); text-transform: uppercase; }
     .print-manager p { margin: 4px 0; font-size: 14px; color: #333; }
 
-    /* Grouping Logic Styles */
     .print-section { 
         margin-bottom: 20px; 
         page-break-inside: auto; 
@@ -384,7 +411,6 @@
     .print-row-desc { font-size: 10px; color: #777; line-height: 1.3; white-space: pre-wrap; margin-top: 4px; }
     .print-row-value { font-weight: 600; font-size: 13px; text-align: right; white-space: nowrap; }
     
-    /* Totals Block */
     .print-totals { 
         background: #F0F2F5; 
         border-radius: 16px; 
@@ -400,7 +426,6 @@
     .print-total-row.main .value { font-size: 28px; font-weight: 800; color: var(--color-primary); }
     .print-total-helper { display: block; font-size: 9px; color: #777; margin-top: 2px; line-height: 1.4; max-width: 300px; white-space: pre-wrap; }
 
-    /* Social Block */
     .print-social { 
         margin-top: auto; 
         padding-top: 20px; 
@@ -447,23 +472,24 @@
 </head>
 <body>
 
-<!-- Универсальное уведомление (Toast) -->
+<!-- Новое красивое уведомление -->
 <div id="mobile-toast" onclick="closeToastBackdrop(event)">
-    <div class="toast-content">
-        <div id="toast-title" style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">⏳ Формирование файла...</div>
-        <div id="toast-message" style="font-size: 13px; opacity: 0.9; line-height: 1.4;">
-            Если скачивание не началось — нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.
-        </div>
-        <button onclick="closeToast()" style="margin-top: 15px; background: white; color: black; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">ОК</button>
+    <div class="toast-card">
+        <div class="toast-icon" id="toast-icon">⏳</div>
+        <div id="toast-title">Загрузка...</div>
+        <div id="toast-message">Пожалуйста, подождите.</div>
+        <button class="toast-btn" onclick="closeToast()">Понятно</button>
     </div>
 </div>
 
 <div class="bg-cloud"></div>
 
-<!-- (Остальной HTML: layout-wrapper, columns, cards - без изменений) -->
-<!-- Для краткости я не дублирую 500 строк верстки карточек, вставьте их сюда -->
-<!-- ВСТАВЬТЕ СЮДА ВЕСЬ БЛОК <div class="layout-wrapper"> ... </div> из вашего кода -->
+<!-- (БЛОК С КАРТОЧКАМИ - ВСТАВЬТЕ СЮДА ВЕСЬ ВАШ <div class="layout-wrapper"> ... </div>) -->
+<!-- Я не дублирую его, чтобы код влез в сообщение, он у вас есть -->
 <div class="layout-wrapper">
+  <!-- Вставьте сюда всё содержимое layout-wrapper из предыдущего сообщения -->
+  <!-- ... Контент ... -->
+  <!-- ... Контент ... -->
   
   <!-- Left Column: Options -->
   <div class="main-column">
@@ -1164,6 +1190,8 @@
   
   <!-- Right Column: Sticky Sidebar (Desktop Only) -->
   <div class="sidebar-column">
+    <!-- Итоги -->
+    <!-- ... (код сайдбара и модалок остался тем же) ... -->
     <div class="summary-card">
       <div class="summary-total">
         <div class="summary-total-label">Ежемесячный платёж</div>
@@ -1485,7 +1513,6 @@
 
     document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
       input.addEventListener("focus", function() { this.select(); });
-      // FIX: Exclude Manager inputs from auto-zero
       if (!input.id.startsWith("mgr")) {
         input.addEventListener("blur", () => { if (input.value === "") input.value = "0"; });
       }
@@ -1504,7 +1531,6 @@
 
     function formatName(input) {
         let val = input.value;
-        // Capitalize first letter of every word
         val = val.replace(/(?:^|\s)\S/g, l => l.toUpperCase());
         input.value = val;
     }
@@ -1525,9 +1551,7 @@
     }
 
     function validateEmail(input) {
-        // Strict email check
         const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/;
-        
         if (!regex.test(input.value) && input.value !== "") {
             input.classList.add('invalid');
             return false;
@@ -1537,28 +1561,44 @@
         }
     }
 
-    // Хелпер для показа красивых уведомлений
-    function showToast(title, message, duration = 5000) {
+    // --- НОВОЕ УВЕДОМЛЕНИЕ (КРАСИВОЕ) ---
+    function showToast(type, title, message, duration = 0) {
         const toast = document.getElementById('mobile-toast');
-        document.getElementById('toast-title').innerHTML = title;
-        document.getElementById('toast-message').innerHTML = message;
+        const iconEl = document.getElementById('toast-icon');
+        const titleEl = document.getElementById('toast-title');
+        const msgEl = document.getElementById('toast-message');
         
-        toast.style.display = 'flex'; // Используем Flex для центрирования
+        // Сброс классов
+        toast.className = ''; 
+        if (type === 'success') {
+            toast.classList.add('toast-type-success');
+            iconEl.textContent = '✅';
+        } else if (type === 'error') {
+            toast.classList.add('toast-type-error');
+            iconEl.textContent = '❌';
+        } else {
+            toast.classList.add('toast-type-loading');
+            iconEl.textContent = '⏳';
+        }
         
-        // Авто-скрытие через duration миллисекунд
+        titleEl.innerHTML = title;
+        msgEl.innerHTML = message;
+        
+        // Показываем
+        toast.classList.add('visible');
+        
+        // Авто-скрытие (если duration > 0)
         if (duration > 0) {
             setTimeout(() => {
-                toast.style.display = 'none';
+                closeToast();
             }, duration);
         }
     }
     
-    // Функция закрытия уведомления по клику на кнопку
     function closeToast() {
-        document.getElementById('mobile-toast').style.display = 'none';
+        document.getElementById('mobile-toast').classList.remove('visible');
     }
     
-    // Функция закрытия по клику на фон
     function closeToastBackdrop(e) {
         if (e.target.id === 'mobile-toast') {
             closeToast();
@@ -1570,7 +1610,6 @@
         const SERVER_URL = "https://gunevgeniy-uis-pdf-server-eeac.twc1.net/generate-pdf";
         // -----------------------
 
-        // 1. Сохраняем состояние в URL (чтобы при переходе в браузер они остались)
         saveStateToURL();
 
         const nameInput = document.getElementById('mgrName');
@@ -1720,7 +1759,7 @@
             const userId = tg.initDataUnsafe?.user?.id;
 
             if (!userId) {
-                showToast("Ошибка", "Нет ID пользователя. Перезапустите бота.");
+                showToast("error", "Ошибка", "Нет ID пользователя. Перезапустите бота.");
                 return;
             }
 
@@ -1744,15 +1783,14 @@
                 });
 
                 if (response.ok) {
-                    // --- УСПЕХ: НЕ ЗАКРЫВАЕМ ПРИЛОЖЕНИЕ ---
-                    showToast("✅ Готово!", "КП успешно отправлено в чат с ботом.", 0);
-                    // Строка с tg.close() удалена, приложение останется открытым
+                    showToast("success", "Готово!", "КП успешно отправлено в чат с ботом.", 0);
+                    // НЕ ЗАКРЫВАЕМ ПРИЛОЖЕНИЕ (tg.close убрали)
                 } else {
-                    showToast("Ошибка", "Сервер вернул ошибку при отправке. Повторите позже.");
+                    showToast("error", "Ошибка", "Сервер вернул ошибку при отправке. Повторите позже.");
                 }
             } catch (e) {
                 console.error(e);
-                showToast("Ошибка сети", e.message);
+                showToast("error", "Ошибка сети", e.message);
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
@@ -1761,10 +1799,12 @@
         } else if (isMobile) {
             // --- МОБИЛЬНЫЙ БРАУЗЕР ---
             
-            // 1. Показываем уведомление ВЕЧНО (0), пока не нажмут ОК или на фон
+            // 1. Показываем красивое уведомление
             showToast(
-                "Если скачивание не началось — значит Telegram блокирует его.<br>Нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.", 
-                0 // 0 = Не скрывать автоматически
+                "loading",
+                "Формирование файла...", 
+                "Если скачивание не началось — значит браузер блокирует его.<br>Нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.", 
+                0 // 0 = НЕ СКРЫВАТЬ АВТОМАТИЧЕСКИ
             );
 
             // 2. Скачивание
@@ -1783,8 +1823,8 @@
 
             html2pdf().set(opt).from(element).save().then(function(){
                 document.body.classList.remove('pdf-mode');
-                // МЫ НЕ СКРЫВАЕМ ТОСТ АВТОМАТИЧЕСКИ
-                // Пользователь сам закроет его кнопкой ОК
+                // НЕ СКРЫВАЕМ УВЕДОМЛЕНИЕ ДАЖЕ ПРИ УСПЕХЕ
+                // Пользователь закроет сам
             }).catch(err => {
                 document.body.classList.remove('pdf-mode');
             });
@@ -2523,7 +2563,6 @@
                 const isNum = typeof val === 'number';
                 badge.textContent = isNum ? `${val.toLocaleString('ru-RU')} ₽${type === 'cost' ? ' / мес' : ''}` : val;
                 
-                // --- NEW FORMAT FOR LIMIT ---
                 if(type === 'limit' && isNum) badge.textContent = `+${val.toLocaleString('ru-RU')} ₽ / мес - расширение`;
                 
                 if(String(val).includes("вкл")) badge.textContent = "Включено";
@@ -2561,8 +2600,6 @@
 
         const nom8800 = parseVal("NomeraVATS8800") + parseVal("NomeraKT8800");
         const minimal = (nom8800 * 700).toLocaleString('ru-RU');
-        
-        // --- UPDATED MINIMAL ACCOUNT FORMAT (Main Screen) ---
         document.getElementById('total-minimal').textContent = minimal + " ₽ / мес";
 
         const connect = (parseVal("NomeraVATS") * 300 + parseVal("KolvoFMC") * 250).toLocaleString('ru-RU');
@@ -2580,8 +2617,7 @@
         if (regionPlaceholder) {
             if (delPrice > 0) {
                 regionPlaceholder.className = 'price-badge cost';
-                // --- UPDATED REGION FORMAT ---
-                regionPlaceholder.textContent = '+' + delPrice.toLocaleString('ru-RU') + ' ₽ - доставка';
+                regionPlaceholder.textContent = `+${delPrice.toLocaleString('ru-RU')} ₽ - доставка`;
             } else {
                 regionPlaceholder.textContent = '';
                 regionPlaceholder.className = '';
@@ -2599,7 +2635,6 @@
         const guaranteeTooltipText = `Будет "заморожен" на счете как гарантия оплаты и возвращен или учтен при закрытии договора. <br>Максимальный порог кредитного лимита: <b>${maxLimit.toLocaleString('ru-RU')} руб.</b>`;
         document.getElementById('tooltip-guarantee').innerHTML = guaranteeTooltipText;
         
-        // Update Print Description for Guarantee (dynamic)
         const printGuaranteeDesc = document.getElementById('print-total-guarantee-desc');
         if(printGuaranteeDesc) printGuaranteeDesc.innerHTML = guaranteeTooltipText;
         
@@ -2608,10 +2643,6 @@
     
     document.querySelectorAll('select').forEach(s => updateSelectTrigger(s.id));
     
-    // --- ФУНКЦИИ СОХРАНЕНИЯ И ВОССТАНОВЛЕНИЯ СОСТОЯНИЯ (URL) ---
-
-    // --- УЛУЧШЕННОЕ СОХРАНЕНИЕ И ВОССТАНОВЛЕНИЕ (С поддержкой кириллицы и логики) ---
-
     function saveStateToURL() {
         const params = new URLSearchParams();
 
@@ -2623,14 +2654,12 @@
             if (el.type === 'checkbox') {
                 if (el.checked) val = '1';
             } else {
-                // Сохраняем значения, отличные от пустых/нулевых
                 if (el.value && el.value !== '0' && el.value !== 'нет') {
                     val = el.value;
                 }
             }
 
             if (val !== null) {
-                // Принудительно кодируем значение, чтобы кириллица не ломалась
                 params.set(el.id, encodeURIComponent(val));
             }
         });
@@ -2643,67 +2672,47 @@
         const params = new URLSearchParams(window.location.search);
         if ([...params].length === 0) return;
 
-        // 1. Сначала восстанавливаем значения в DOM
         params.forEach((encodedVal, key) => {
             const el = document.getElementById(key);
             if (el) {
-                // Декодируем обратно
                 const val = decodeURIComponent(encodedVal);
-                
                 if (el.type === 'checkbox') {
                     el.checked = (val === '1');
                 } else {
                     el.value = val;
                 }
-                
-                // Обновляем визуальное отображение селектов
                 if (el.tagName === 'SELECT') {
                     updateSelectTrigger(el.id);
                 }
             }
         });
 
-        // 2. ЗАПУСКАЕМ ЛОГИКУ (Самое важное!)
-        // Проходим по всем ключевым переключателям, чтобы открыть скрытые блоки
-        // Порядок важен: сначала главные разделы, потом вложенные
         const cascadeOrder = [
             'VATS', 'VATSPRO', 'OMNI', 'AR', 'KT', 
             'KolvoSotrudnikovVATS', 'KolvoFMC', 'TarifFMC', 'RegionDostavki'
         ];
         
-        // Сначала запускаем основные переключатели
         cascadeOrder.forEach(id => {
             if (params.has(id)) {
                 runCascade(id);
             }
         });
 
-        // Потом запускаем все остальные поля, чтобы обновились лимиты и цены
         params.forEach((_, key) => {
             if (!cascadeOrder.includes(key)) {
                 runCascade(key);
             }
         });
 
-        // Финальный пересчет
         updateTotals();
-        
-        // Если заполнен менеджер, можно показать блок
-        const mgrName = document.getElementById('mgrName').value;
-        if(mgrName) {
-            // Если нужно, можно открыть модалку, но лучше не надо, чтобы не мешать
-        }
     }
 
-    // --- АВТО-СОХРАНЕНИЕ ---
-    // Добавляем сохранение URL при каждом изменении любого поля
     document.querySelectorAll('input, select').forEach(el => {
         el.addEventListener('change', saveStateToURL);
-        el.addEventListener('input', saveStateToURL); // Для текстовых полей
+        el.addEventListener('input', saveStateToURL);
     });
 
     restoreStateFromURL();
-    
     updateTotals();
 </script>
 
