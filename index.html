@@ -1525,12 +1525,11 @@
         }
     }
 
-    async function printKP() {
+async function printKP() {
         // --- ВАШИ НАСТРОЙКИ ---
         const SERVER_URL = "https://gunevgeniy-uis-pdf-server-eeac.twc1.net/generate-pdf";
         // -----------------------
 
-        // 1. Сохраняем состояние в URL (чтобы при переходе в браузер они остались)
         saveStateToURL();
 
         const nameInput = document.getElementById('mgrName');
@@ -1651,7 +1650,6 @@
             }
         });
 
-        // --- ИТОГИ ---
         document.getElementById('print-total-monthly').textContent = document.getElementById('total-monthly').textContent + " ₽ / мес";
         document.getElementById('print-total-minimal').textContent = document.getElementById('total-minimal').textContent;
         document.getElementById('print-total-connection').textContent = document.getElementById('total-connection').textContent;
@@ -1665,20 +1663,17 @@
             else row.style.display = 'flex';
         });
 
-        // Закрываем модалку
         document.getElementById('managerModal').classList.remove('open');
 
         // ===============================================
         // ЛОГИКА ОТПРАВКИ И СКАЧИВАНИЯ
         // ===============================================
 
-        // 1. WebApp (Меню бота)
         const isWebApp = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData && window.Telegram.WebApp.initData.length > 0);
-        // 2. Mobile (Любой, включая браузер Telegram и Chrome)
         const isMobile = window.matchMedia('(max-width: 900px)').matches;
 
         if (isWebApp) {
-            // --- СЦЕНАРИЙ 1: WebApp -> Отправляем в бота ---
+            // WebApp -> Сервер -> Бот
             const tg = window.Telegram.WebApp;
             tg.ready();
             const userId = tg.initDataUnsafe?.user?.id;
@@ -1708,12 +1703,9 @@
                 });
 
                 if (response.ok) {
-                    // Успех: Зеленый тост, ждем 4 сек
+                    // --- УСПЕХ: НЕ ЗАКРЫВАЕМ ПРИЛОЖЕНИЕ ---
                     showToast("✅ Готово!", "КП успешно отправлено в чат с ботом.", 0);
-                    
-                    setTimeout(() => {
-                        tg.close();
-                    }, 4000);
+                    // Строка с tg.close() удалена, приложение останется открытым
                 } else {
                     showToast("Ошибка", "Сервер вернул ошибку при отправке. Повторите позже.");
                 }
@@ -1726,16 +1718,16 @@
             }
 
         } else if (isMobile) {
-            // --- СЦЕНАРИЙ 2: МОБИЛЬНЫЙ БРАУЗЕР (Включая Telegram Browser) ---
+            // --- МОБИЛЬНЫЙ БРАУЗЕР ---
             
-            // 1. Сразу показываем уведомление (висит 7 секунд)
+            // 1. Показываем уведомление ВЕЧНО (0), пока не нажмут ОК
             showToast(
                 "⏳ Формирование файла...", 
                 "Если скачивание не началось — значит браузер блокирует его.<br>Нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.", 
-                15000
+                0 // 0 = Не скрывать автоматически
             );
 
-            // 2. Пытаемся скачать
+            // 2. Скачивание
             const element = document.getElementById('print-area');
             document.body.classList.add('pdf-mode');
             window.scrollTo(0, 0);
@@ -1751,22 +1743,19 @@
 
             html2pdf().set(opt).from(element).save().then(function(){
                 document.body.classList.remove('pdf-mode');
-                // Если скачалось (Хром) - можно скрыть тост чуть раньше
-                setTimeout(() => {
-                    document.getElementById('mobile-toast').style.display = 'none';
-                }, 2000); 
+                // МЫ НЕ СКРЫВАЕМ ТОСТ АВТОМАТИЧЕСКИ
+                // Пользователь сам закроет его кнопкой ОК
             }).catch(err => {
                 document.body.classList.remove('pdf-mode');
             });
 
         } else {
-            // --- СЦЕНАРИЙ 3: ДЕСКТОП ---
+            // --- ДЕСКТОП ---
             setTimeout(() => {
                 window.print();
             }, 300);
         }
     }
-
     /* --- BUSINESS LOGIC --- */
 
     function resetForm() {
