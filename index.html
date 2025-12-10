@@ -114,7 +114,6 @@
       .card { padding: 16px; }
     }
     .tooltip-content-hidden { display: none; }
-    .hidden-print-area { display: none; }
   </style>
 </head>
 <body>
@@ -124,6 +123,7 @@
 <div class="layout-wrapper">
   <!-- Left Column: Options -->
   <div class="main-column">
+    <!-- BLOCK 1: VATS -->
     <section class="card card-group">
       <div class="card-header static"><div class="card-title">Настройки ВАТС и номеров</div></div>
       <div class="option-row"><div class="option-info"><div class="option-name">Виртуальная АТС <span class="info-icon" onclick="openTooltip('tooltip-vats')">i</span></div><div class="option-meta"><span id="cost-VATS"></span><span id="limit-VATS"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VATS" onchange="runCascade('VATS')"><span class="slider"></span></label></div></div>
@@ -272,23 +272,51 @@
     function toggleSheet() { isSheetOpen = !isSheetOpen; const c = document.querySelector('.sheet-content'); c.classList.toggle('open', isSheetOpen); document.querySelector('.sheet-icon').style.transform = isSheetOpen ? "rotate(180deg)" : "rotate(0deg)"; }
     function updateMobileSheet(t, m, c, d, g) { document.getElementById('mobile-total').textContent = t; document.getElementById('mobile-minimal').textContent = m; document.getElementById('mobile-connection').textContent = c; document.getElementById('mobile-delivery').textContent = d; document.getElementById('mobile-guarantee').textContent = g; }
 
-    function openManagerModal() { 
-      // Перед открытием модалки, готовим данные для перехода и привязываем к ссылке
-      preparePrintLink();
-      document.getElementById('managerModal').classList.add('open'); 
+    function closeManagerModal(e, f) { 
+        if(f || e.target.id === 'managerModal') {
+            document.getElementById('managerModal').classList.remove('open'); 
+            // !!! ВАЖНО: При закрытии модалки восстанавливаем кнопку, чтобы она не была просто ссылкой
+            const form = document.querySelector('#managerModal .manager-form');
+            const link = form.querySelector('.btn-manager-print[target="_blank"]');
+            if (link) {
+                 const newButton = document.createElement('button');
+                 newButton.className = link.className.replace(' btn-manager-print', '');
+                 newButton.classList.add('btn-manager-print');
+                 newButton.textContent = link.textContent;
+                 newButton.onclick = printKP; // Восстанавливаем функцию
+                 form.replaceChild(newButton, link);
+            }
+        }
     }
-    function closeManagerModal(e, f) { if(f || e.target.id === 'managerModal') document.getElementById('managerModal').classList.remove('open'); }
+    
+    function openManagerModal() { 
+      // Перед открытием модалки, восстанавливаем кнопку, чтобы потом вызвать printKP
+      const form = document.querySelector('#managerModal .manager-form');
+      const currentLink = form.querySelector('.btn-manager-print[target="_blank"]') || form.querySelector('.btn-manager-print');
+      
+      if(currentLink && currentLink.tagName.toLowerCase() === 'a') {
+          const newButton = document.createElement('button');
+          newButton.className = currentLink.className.replace(' btn-manager-print', '');
+          newButton.classList.add('btn-manager-print');
+          newButton.textContent = currentLink.textContent;
+          newButton.onclick = printKP; // Восстанавливаем функцию
+          form.replaceChild(newButton, currentLink);
+      }
+      document.getElementById('managerModal').classList.add('open');
+    }
+    
     function formatName(i) { i.value = i.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase()); }
     function formatPhone(i) { let v = i.value.replace(/\D/g, ''); if(v.length){ if(v[0]==='8'||v[0]==='7') v=v.substring(1); let f='+7 '; if(v.length>0) f+='('+v.substring(0,3); if(v.length>=4) f+=') '+v.substring(3,6); if(v.length>=7) f+='-'+v.substring(6,8); if(v.length>=9) f+='-'+v.substring(8,10); i.value = f; } else i.value=''; }
     function validateEmail(i) { const r = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/; if(!r.test(i.value) && i.value!=="") { i.classList.add('invalid'); return false; } i.classList.remove('invalid'); return true; }
 
-    /* ФУНКЦИЯ ПЕЧАТИ (ПЕРЕХОД ПО ССЫЛКЕ) */
-    function preparePrintLink() {
+    /* ФУНКЦИЯ ПЕЧАТИ (ОТКРЫТИЕ ВНЕШНЕЙ ССЫЛКИ) */
+    function printKP() {
         const nameInput = document.getElementById('mgrName');
         const phoneInput = document.getElementById('mgrPhone');
         const emailInput = document.getElementById('mgrEmail');
         
-        // 1. Сбор данных
+        if (emailInput.value !== "" && !validateEmail(emailInput)) { alert("Введите корректный Email"); return; }
+
         const managerData = { name: nameInput.value.trim(), phone: phoneInput.value.trim(), email: emailInput.value.trim() };
         const sectionsData = [];
         
@@ -379,32 +407,20 @@
         const json = JSON.stringify({ m: managerData, s: sectionsData, t: totalsData });
         const payload = encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
         
-        // --- ДИНАМИЧЕСКАЯ ССЫЛКА НА ЭКСПОРТ ---
+        // --- ПЕРЕХОД НА СТРАНИЦУ ЭКСПОРТА ---
         const exportUrl = 'https://jonathan-soulmate.github.io/pdf_export/pdf_export.html?payload=' + payload;
 
-        // Находим кнопку "Сформировать и напечатать" в модальном окне
-        const printButton = document.querySelector('#managerModal .btn-manager-print');
-        
-        // Меняем её на ссылку, чтобы задействовать нативное поведение браузера/системы
-        if(printButton) {
-            const newLink = document.createElement('a');
-            newLink.className = printButton.className;
-            newLink.textContent = printButton.textContent;
-            newLink.href = exportUrl;
-            newLink.target = "_blank";
-            newLink.rel = "noopener";
-            newLink.onclick = () => {
-                // Маленькая задержка, чтобы модалка успела закрыться перед переходом
-                setTimeout(() => {
-                    document.getElementById('managerModal').classList.remove('open');
-                }, 10);
-            };
-            printButton.parentNode.replaceChild(newLink, printButton);
+        // Находим кнопку/ссылку и меняем ее href. Она уже находится в модалке и готова к клику.
+        const printLink = document.querySelector('#managerModal .btn-manager-print');
+        if (printLink) {
+             printLink.href = exportUrl;
+             printLink.target = "_blank"; // Force new tab/browser
+             printLink.rel = "noopener noreferrer"; // Good practice
+             
+             // Имитируем клик, чтобы на некоторых Android WebView сработало нативное открытие
+             printLink.click();
         }
         
-        // Закрываем модалку, но не переходим, переход будет по клику на ссылку.
-        // Это нужно, чтобы пользователь кликнул на ссылку, а не на кнопку
-        // Скрипт просто готовит ссылку.
         document.getElementById('managerModal').classList.remove('open');
     }
 
@@ -466,7 +482,7 @@
              VneshnieATS: (c) => { if(getCheckbox("VneshnieATS")&&!getCheckbox("VATS")) c.set("VATS",true); },
              AmoBitrix: (c) => { if(getCheckbox("AmoBitrix")){ if(!getCheckbox("VATS")&&!getCheckbox("OMNI")&&!getCheckbox("AnalitikaProdaj")) c.set("VATS",true); } else { if(getCheckbox("AnalitikaProdaj")) c.set("AnalitikaProdaj",false); } },
              VezdeKakDoma: (c) => { if(getCheckbox("VezdeKakDoma")&&!getCheckbox("VATS")) c.set("VATS",true); },
-             UvedomlenieOSobitiyah: (c) => { if(getCheckbox("UvedomlenieOSobitiyah")){ if(getCheckbox("SpasenieKommunikatsiy")) c.set("UvedomlenieOSobitiyah",false); else if(!getCheckbox("VATS")&&!getCheckbox("OMNI")&&!getCheckbox("AR")) c.set("VedomlenieOSobitiyah",false); } },
+             UvedomlenieOSobitiyah: (c) => { if(getCheckbox("UvedomlenieOSobitiyah")){ if(getCheckbox("SpasenieKommunikatsiy")) c.set("UvedomlenieOSobitiyah",false); else if(!getCheckbox("VATS")&&!getCheckbox("OMNI")&&!getCheckbox("AR")) c.set("UvedomlenieOSobitiyah",false); } },
              SpasenieKommunikatsiy: (c) => { if(getCheckbox("SpasenieKommunikatsiy")){ document.getElementById('UvedomlenieOSobitiyah').disabled = true; if(!getCheckbox("VATS")) c.set("VATS",true); if(getCheckbox("UvedomlenieOSobitiyah")) c.set("UvedomlenieOSobitiyah",false); } else { document.getElementById('UvedomlenieOSobitiyah').disabled = false; } },
              AvtoperezvonPoZayavkam: (c) => { if(getCheckbox("AvtoperezvonPoZayavkam")){ if(!getCheckbox("VATS")) c.set("VATS",true); if(!getCheckbox("AR")) c.set("AR",true); } },
         };
@@ -484,7 +500,7 @@
         const vsego = document.getElementById("NomeraVATSVsego");
         if(vsego) vsego.value = sumAll;
 
-        const formulaMap = { /* ... (Формулы те же) ... */
+        const formulaMap = {
              VATS: { cost: () => getCheckbox("VATS") ? 1200 : 0 },
              VATSPRO: { cost: () => getCheckbox("VATSPRO") ? 2200 : 0 },
              KolvoSotrudnikovVATS: { limit: () => { const val = getNumber("KolvoSotrudnikovVATS"); const vatspro = getCheckbox("VATSPRO"); return val < 4 ? 0 : (val - 3) * (vatspro ? 200 : 120); } },
