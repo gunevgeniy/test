@@ -270,8 +270,26 @@
     function toggleSheet() { isSheetOpen = !isSheetOpen; const c = document.querySelector('.sheet-content'); c.classList.toggle('open', isSheetOpen); document.querySelector('.sheet-icon').style.transform = isSheetOpen ? "rotate(180deg)" : "rotate(0deg)"; }
     function updateMobileSheet(t, m, c, d, g) { document.getElementById('mobile-total').textContent = t; document.getElementById('mobile-minimal').textContent = m; document.getElementById('mobile-connection').textContent = c; document.getElementById('mobile-delivery').textContent = d; document.getElementById('mobile-guarantee').textContent = g; }
 
+    function closeManagerModal(e, f) { 
+        if(f || e.target.id === 'managerModal') {
+             // ВОССТАНОВЛЕНИЕ КНОПКИ
+             const form = document.querySelector('#managerModal .manager-form');
+             const currentLink = form.querySelector('.btn-manager-print[target="_blank"]');
+             
+             if(currentLink) {
+                 const newButton = document.createElement('button');
+                 newButton.className = currentLink.className;
+                 newButton.textContent = currentLink.textContent;
+                 newButton.onclick = printKP; 
+                 form.replaceChild(newButton, currentLink);
+             }
+             document.getElementById('managerModal').classList.remove('open'); 
+        }
+    }
+    
     function openManagerModal() { 
-        // Перед открытием модалки, восстанавливаем кнопку, чтобы потом вызвать printKP
+        // При открытии модалки, если кнопка была заменена, возвращаем её в состояние кнопки,
+        // чтобы следующий клик запустил printKP() и пересоздал ссылку.
         const form = document.querySelector('#managerModal .manager-form');
         const currentLink = form.querySelector('.btn-manager-print[target="_blank"]');
         
@@ -279,16 +297,10 @@
             const newButton = document.createElement('button');
             newButton.className = currentLink.className;
             newButton.textContent = currentLink.textContent;
-            newButton.onclick = printKP; // Восстанавливаем функцию
+            newButton.onclick = printKP;
             form.replaceChild(newButton, currentLink);
         }
         document.getElementById('managerModal').classList.add('open'); 
-    }
-    
-    function closeManagerModal(e, f) { 
-        if(f || e.target.id === 'managerModal') {
-             document.getElementById('managerModal').classList.remove('open'); 
-        }
     }
     
     function formatName(i) { i.value = i.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase()); }
@@ -396,22 +408,22 @@
         // --- ДИНАМИЧЕСКАЯ ССЫЛКА НА ЭКСПОРТ (ВАШ АКТУАЛЬНЫЙ АДРЕС) ---
         const exportUrl = 'https://jonathan-soulmate.github.io/pdf_export/pdf_export.html?payload=' + payload;
 
-        // Находим кнопку, которую мы кликнули (она button)
+        // Находим кнопку
         const printButton = document.querySelector('#managerModal .btn-manager-print');
         
-        // Превращаем ее в ССЫЛКУ и сразу же имитируем клик
+        // Превращаем ее в ССЫЛКУ с _blank и имитируем клик
         if (printButton) {
             const newLink = document.createElement('a');
             newLink.className = printButton.className;
             newLink.textContent = printButton.textContent;
             newLink.href = exportUrl;
             newLink.target = "_blank"; // Cистемный браузер
-            newLink.rel = "noopener noreferrer"; // Хорошая практика безопасности
+            newLink.rel = "noopener noreferrer";
             
             // Заменяем кнопку на ссылку
             printButton.parentNode.replaceChild(newLink, printButton);
             
-            // Имитируем клик. 
+            // Имитируем клик. Это самое "грязное", но рабочее решение для обхода TWA.
             newLink.click();
         }
         
@@ -445,8 +457,8 @@
              LiniyIshodyashihZvonkov: (c) => { const v=getNumber("LiniyIshodyashihZvonkov"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v>=0&&v<30&&getCheckbox("VATS")) c.set("LiniyIshodyashihZvonkov",30); },
              KolvoSIPTrankov: (c) => { const v=getNumber("KolvoSIPTrankov"); const k=document.getElementById("KanalnostSIPTrankov")?.value; if(v>0){ if(!getCheckbox("VATS")) c.set("VATS",true); if(parseInt(k,10)<30) c.select("KanalnostSIPTrankov","30"); } if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); if(v===0&&k!=="0") c.select("KanalnostSIPTrankov","0"); },
              KanalnostSIPTrankov: (c) => { const v=document.getElementById("KanalnostSIPTrankov")?.value; if(v!=="0"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoSIPTrankov")===0) c.set("KolvoSIPTrankov",1); } else { if(getNumber("KolvoSIPTrankov")!==0) c.set("KolvoSIPTrankov",0); } },
-             KolvoSIPURI: (c) => { const v=getNumber("KolvoSIPURI"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPTrankov")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); },
-             KolvoSIPAkkauntov: (c) => { const v=getNumber("KolvoSIPAkkauntov"); const k=document.getElementById("KanalnostSIPAkkauntov")?.value; if(v>0){ if(!getCheckbox("VATS")) c.set("VATS",true); if(parseInt(k,10)<30) c.select("KanalnostSIPAkkauntov","30"); } if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPTrankov")===0&&getCheckbox("VATS")) c.set("VATS",false); if(v===0&&k!=="0") c.select("KanalnostSIPAkkauntov","0"); },
+             KolvoSIPURI: (c) => { const v=getNumber("KolvoSIPURI"); if(v>0&&!getCheckbox("VATS")) c.set("VATS",true); if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); },
+             KolvoSIPAkkauntov: (c) => { const v=getNumber("KolvoSIPAkkauntov"); const k=document.getElementById("KanalnostSIPAkkauntov")?.value; if(v>0){ if(!getCheckbox("VATS")) c.set("VATS",true); if(parseInt(k,10)<30) c.select("KanalnostSIPAkkauntov","30"); } if(v===0&&getNumber("KolvoSotrudnikovVATS")===0&&getNumber("KolvoSIPURI")===0&&getNumber("KolvoSIPAkkauntov")===0&&getCheckbox("VATS")) c.set("VATS",false); if(v===0&&k!=="0") c.select("KanalnostSIPAkkauntov","0"); },
              KanalnostSIPAkkauntov: (c) => { const v=document.getElementById("KanalnostSIPAkkauntov")?.value; if(v!=="0"){ if(!getCheckbox("VATS")) c.set("VATS",true); if(getNumber("KolvoSIPAkkauntov")===0) c.set("KolvoSIPAkkauntov",1); } else { if(getNumber("KolvoSIPAkkauntov")!==0) c.set("KolvoSIPAkkauntov",0); } },
              NomeraVATS: (c) => { if(getNumber("NomeraVATS")>0&&!getCheckbox("VATS")) c.set("VATS",true); },
              NomeraVATS8800: (c) => { if(getNumber("NomeraVATS8800")>0&&!getCheckbox("VATS")) c.set("VATS",true); },
