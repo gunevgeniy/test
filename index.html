@@ -422,41 +422,11 @@
     }
     .tooltip-content-hidden { display: none; }
     /* Стили для просмотра КП в браузере Телеграма без скачивания */
-    .preview-mode body { background: white; overflow: auto; }
-    .preview-mode .layout-wrapper, 
-    .preview-mode .bg-cloud, 
-    .preview-mode .bottom-sheet, 
-    .preview-mode .expert-toggle-btn { display: none !important; }
     
-    .preview-mode #print-area { 
-        display: block !important; 
-        padding: 20px 15px !important; /* Отступы для телефона */
-        width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
-    }
 
     /* Кнопка "Назад" для режима просмотра */
     /* Панель управления в режиме просмотра */
-    .preview-controls {
-        display: none; /* Скрыто по умолчанию */
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 90%;
-        max-width: 400px;
-        background: white;
-        padding: 15px;
-        border-radius: 16px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        z-index: 10000;
-        text-align: center;
-        flex-direction: column;
-        gap: 10px;
-    }
     
-    .preview-mode .preview-controls { display: flex; }
 
     .btn-preview-download {
         background: var(--color-primary);
@@ -500,14 +470,14 @@
   </style>
 </head>
 <body>
-<!-- Плавающая панель для мобильных -->
-<div id="preview-controls" class="preview-controls">
-    <div class="preview-hint">
-        <b>Предварительный просмотр</b><br>
-        Если файл не скачивается — нажмите ••• сверху и выберите «Открыть в браузере».
+<!-- Уведомление для мобильных -->
+<div id="mobile-toast" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(0,0,0,0.85); color: white; padding: 16px; border-radius: 12px; z-index: 99999; text-align: center; font-size: 14px; box-shadow: 0 5px 20px rgba(0,0,0,0.3);">
+    <div>⏳ <b>Формирование файла...</b></div>
+    <div style="margin-top: 8px; font-size: 12px; opacity: 0.9;">
+        Если скачивание не началось — значит браузер блокирует его (Telegram).<br>
+        Нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.
     </div>
-    <button class="btn-preview-download" onclick="downloadPdfMobile()">Скачать PDF</button>
-    <button class="btn-preview-back" onclick="exitPreviewMode()">Вернуться к редактированию</button>
+    <button onclick="document.getElementById('mobile-toast').style.display='none'" style="margin-top: 10px; background: white; color: black; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">Понятно</button>
 </div>
 <div class="bg-cloud"></div>
 
@@ -1614,13 +1584,13 @@
         window.scrollTo(0, 0);
     }
 
-    async function printKP() {
-        // --- ВАШИ НАСТРОЙКИ ---
+async function printKP() {
+        // --- НАСТРОЙКИ ---
         const SERVER_URL = "https://gunevgeniy-uis-pdf-server-eeac.twc1.net/generate-pdf";
-        // -----------------------
+        // ------------------
 
-        saveStateToURL(); 
-        // Теперь URL обновился, и если пользователь откроет его в браузере, данные сохранятся.
+        // 1. Сохраняем данные в ссылку (чтобы при переходе в браузер они остались)
+        saveStateToURL();
 
         const nameInput = document.getElementById('mgrName');
         const phoneInput = document.getElementById('mgrPhone');
@@ -1645,7 +1615,7 @@
             mgrBlock.style.display = 'none';
         }
 
-        // --- ГЕНЕРАЦИЯ ТАБЛИЦЫ (Ваш стандартный код) ---
+        // --- ГЕНЕРАЦИЯ ТАБЛИЦЫ ---
         const container = document.getElementById('print-sections-container');
         container.innerHTML = ''; 
         const sections = document.querySelectorAll('.card');
@@ -1740,7 +1710,6 @@
             }
         });
 
-        // --- ИТОГИ ---
         document.getElementById('print-total-monthly').textContent = document.getElementById('total-monthly').textContent + " ₽ / мес";
         document.getElementById('print-total-minimal').textContent = document.getElementById('total-minimal').textContent;
         document.getElementById('print-total-connection').textContent = document.getElementById('total-connection').textContent;
@@ -1754,22 +1723,19 @@
             else row.style.display = 'flex';
         });
 
-        // Закрываем модалку менеджера
         document.getElementById('managerModal').classList.remove('open');
 
-
         // ===============================================
-        //  ФИНАЛЬНАЯ ЛОГИКА (БЕЗ ДЕТЕКЦИИ UA)
+        // ЛОГИКА ОТПРАВКИ И СКАЧИВАНИЯ
         // ===============================================
 
-        // 1. Проверяем WebApp (Тут все надежно через объект Telegram)
+        // 1. WebApp
         const isWebApp = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData && window.Telegram.WebApp.initData.length > 0);
-        
-        // 2. Проверяем, мобильное ли устройство (ширина экрана)
+        // 2. Mobile (Любой)
         const isMobile = window.matchMedia('(max-width: 900px)').matches;
 
         if (isWebApp) {
-            // --- КЕЙС 1: WebApp -> Шлем на сервер ---
+            // WebApp -> Сервер -> Бот
             const tg = window.Telegram.WebApp;
             tg.ready();
             const userId = tg.initDataUnsafe?.user?.id;
@@ -1778,7 +1744,7 @@
                 alert("Ошибка ID. Перезапустите бота.");
                 return;
             }
-            
+
             const btn = document.querySelector('.btn-manager-print');
             const originalText = btn.textContent;
             btn.textContent = "Отправка в чат...";
@@ -1806,26 +1772,48 @@
                 }
             } catch (e) {
                 console.error(e);
-                alert("Ошибка сети.");
+                alert("Ошибка сети:\n" + e.message);
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
             }
 
         } else if (isMobile) {
-            // --- КЕЙС 2: ЛЮБОЙ МОБИЛЬНЫЙ БРАУЗЕР (Включая Telegram WebView) ---
-            // Вместо авто-скачивания (которое глючит в ТГ), показываем Превью.
+            // --- МОБИЛЬНЫЙ БРАУЗЕР (И Телеграм, и Хром) ---
             
-            document.body.classList.add('preview-mode');
+            // 1. Показываем уведомление (для тех, кто в Телеграме)
+            // Оно появится сразу, чтобы пользователь знал, что делать, если скачивание не пойдет
+            document.getElementById('mobile-toast').style.display = 'block';
+
+            // 2. Сразу запускаем скачивание
+            const element = document.getElementById('print-area');
+            document.body.classList.add('pdf-mode');
             window.scrollTo(0, 0);
             
-            // Пользователь увидит сформированное КП и кнопку "Скачать PDF".
-            // Если он в Chrome -> нажмет и скачает.
-            // Если он в Telegram -> нажмет, ничего не произойдет (или ошибка), он прочитает текст и откроет в браузере.
+            const opt = {
+              margin:       5,
+              filename:     'KP_UIS.pdf',
+              image:        { type: 'jpeg', quality: 0.98 },
+              html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, scrollX: 0, windowWidth: 800 },
+              jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+              pagebreak:    { mode: ['css', 'legacy'] } 
+            };
+
+            html2pdf().set(opt).from(element).save().then(function(){
+                // Если скачалось (Хром) - убираем класс и уведомление
+                document.body.classList.remove('pdf-mode');
+                // Можно скрыть уведомление через пару секунд, если успех,
+                // но лучше оставить, чтобы не мелькало
+                setTimeout(() => {
+                   document.getElementById('mobile-toast').style.display = 'none';
+                }, 3000);
+            }).catch(err => {
+                // Если ошибка - тоже убираем класс, уведомление остается висеть
+                document.body.classList.remove('pdf-mode');
+            });
 
         } else {
-            // --- КЕЙС 3: ДЕСКТОП (ПК) ---
-            // Тут всё работает стабильно, открываем окно печати
+            // --- ДЕСКТОП ---
             setTimeout(() => {
                 window.print();
             }, 300);
