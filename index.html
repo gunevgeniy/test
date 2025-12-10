@@ -283,6 +283,28 @@
     .btn-manager-print { width: 100%; padding: 14px; background: var(--color-primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 16px; margin-top: 10px; }
     .btn-manager-print:hover { background: #000088; }
 
+    /* TOAST (OVERLAY STYLE) */
+    #mobile-toast {
+        display: none; /* Скрыто по умолчанию */
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); /* Фон затемнения */
+        z-index: 99999;
+        align-items: center; /* Центрирование по вертикали */
+        justify-content: center; /* Центрирование по горизонтали */
+        backdrop-filter: blur(2px);
+    }
+    .toast-content {
+        background: rgba(0,0,0,0.85);
+        color: white;
+        padding: 20px;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
     /* PRINT STYLES */
     @page {
         size: A4;
@@ -294,7 +316,7 @@
     /* Styles applied when printing or when generating PDF */
     @media print {
         body { background: white; color: black; font-family: 'Inter', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .layout-wrapper, .bg-cloud, .bottom-sheet, .modal-overlay, .expert-toggle-btn { display: none !important; }
+        .layout-wrapper, .bg-cloud, .bottom-sheet, .modal-overlay, .expert-toggle-btn, #mobile-toast { display: none !important; }
         #print-area { display: flex !important; flex-direction: column; padding: 0; min-height: 100vh; }
     }
 
@@ -308,14 +330,14 @@
     .pdf-mode .bg-cloud, 
     .pdf-mode .bottom-sheet, 
     .pdf-mode .modal-overlay, 
-    .pdf-mode .expert-toggle-btn { display: none !important; }
+    .pdf-mode .expert-toggle-btn,
+    .pdf-mode #mobile-toast { display: none !important; }
     
     .pdf-mode #print-area { 
         display: block !important; 
         position: relative !important; 
         top: auto;
         left: auto;
-        /* FIXED WIDTH SAFE FOR MOBILE PDF GENERATION */
         width: 750px !important; 
         max-width: 750px !important;
         margin: 0 !important;
@@ -338,7 +360,6 @@
     /* Grouping Logic Styles */
     .print-section { 
         margin-bottom: 20px; 
-        /* Allow breaking but prevent abrupt cuts inside block */
         page-break-inside: auto; 
         break-inside: auto;
         border: 1px solid #e0e0e0;
@@ -353,7 +374,6 @@
     .print-table { width: 100%; border-collapse: collapse; }
     .print-table td { padding: 10px 5px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
     
-    /* PREVENT ROWS FROM SPLITTING */
     .print-table tr { 
         page-break-inside: avoid; 
         break-inside: avoid; 
@@ -428,25 +448,32 @@
 <body>
 
 <!-- Универсальное уведомление (Toast) -->
-<div id="mobile-toast" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(0,0,0,0.85); color: white; padding: 16px; border-radius: 12px; z-index: 99999; text-align: center; font-size: 14px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); transition: opacity 0.3s;">
-    <div id="toast-title" style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">⏳ Формирование файла...</div>
-    <div id="toast-message" style="font-size: 13px; opacity: 0.9; line-height: 1.4;">
-        Если скачивание не началось — нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.
+<div id="mobile-toast" onclick="closeToastBackdrop(event)">
+    <div class="toast-content">
+        <div id="toast-title" style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">⏳ Формирование файла...</div>
+        <div id="toast-message" style="font-size: 13px; opacity: 0.9; line-height: 1.4;">
+            Если скачивание не началось — нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.
+        </div>
+        <button onclick="closeToast()" style="margin-top: 15px; background: white; color: black; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">ОК</button>
     </div>
-    <button onclick="document.getElementById('mobile-toast').style.display='none'" style="margin-top: 15px; background: white; color: black; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">ОК</button>
 </div>
 
 <div class="bg-cloud"></div>
 
+<!-- (Остальной HTML: layout-wrapper, columns, cards - без изменений) -->
+<!-- Для краткости я не дублирую 500 строк верстки карточек, вставьте их сюда -->
+<!-- ВСТАВЬТЕ СЮДА ВЕСЬ БЛОК <div class="layout-wrapper"> ... </div> из вашего кода -->
 <div class="layout-wrapper">
+  
   <!-- Left Column: Options -->
   <div class="main-column">
+    
     <!-- BLOCK 1: VATS -->
     <section class="card card-group">
       <div class="card-header static">
         <div class="card-title">Настройки ВАТС и номеров</div>
       </div>
-      <!-- ... (Options truncated for brevity, same as provided) ... -->
+
       <div class="option-row">
         <div class="option-info">
           <div class="option-name">
@@ -465,7 +492,7 @@
           </label>
         </div>
       </div>
-      <!-- ... VATSPRO ... -->
+
       <div class="option-row">
         <div class="option-info">
             <div class="option-name">
@@ -484,7 +511,7 @@
             </label>
         </div>
       </div>
-      <!-- ... KolvoSotrudnikovVATS ... -->
+
       <div class="option-row">
         <div class="option-info">
             <div class="option-name">Кол-во сотрудников ВАТС</div>
@@ -501,7 +528,7 @@
             </div>
         </div>
       </div>
-      <!-- ... DlitelnostHraneniyaVATS ... -->
+
       <div class="option-row">
         <div class="option-info">
             <div class="option-name">Длительность хранения записей ВАТС</div>
@@ -524,7 +551,7 @@
             </select>
         </div>
       </div>
-      <!-- ... NomeraVATS ... -->
+
       <div class="option-row">
           <div class="option-info">
               <div class="option-name">Кол-во номеров UIS - Городские/Мобильные</div>
@@ -538,7 +565,7 @@
               </div>
           </div>
       </div>
-      <!-- ... NomeraVATS8800 ... -->
+
       <div class="option-row">
           <div class="option-info">
               <div class="option-name">Кол-во номеров UIS - 8800 <span class="info-icon" onclick="openTooltip('tooltip-8800')">i</span></div>
@@ -552,7 +579,7 @@
               </div>
           </div>
       </div>
-      <!-- ... KolvoSvoihNomerov ... -->
+      
       <div class="option-row">
           <div class="option-info">
               <div class="option-name">Кол-во cторонних номеров <span class="info-icon" onclick="openTooltip('tooltip-own')">i</span></div>
@@ -566,7 +593,8 @@
               </div>
           </div>
       </div>
-      <!-- ... NomeraVATSVsego ... -->
+
+      <!-- TOTAL NUMBERS (Read Only) -->
       <div class="option-row">
         <div class="option-info">
             <div class="option-name">Кол-во номеров UIS всего</div>
@@ -582,7 +610,7 @@
              </div>
         </div>
       </div>
-      
+
       <!-- FMC GROUP -->
       <div class="fmc-container">
           <div class="fmc-title">Мобильная связь (FMC)</div>
@@ -1515,7 +1543,7 @@
         document.getElementById('toast-title').innerHTML = title;
         document.getElementById('toast-message').innerHTML = message;
         
-        toast.style.display = 'block';
+        toast.style.display = 'flex'; // Используем Flex для центрирования
         
         // Авто-скрытие через duration миллисекунд
         if (duration > 0) {
@@ -1524,12 +1552,25 @@
             }, duration);
         }
     }
+    
+    // Функция закрытия уведомления по клику на кнопку
+    function closeToast() {
+        document.getElementById('mobile-toast').style.display = 'none';
+    }
+    
+    // Функция закрытия по клику на фон
+    function closeToastBackdrop(e) {
+        if (e.target.id === 'mobile-toast') {
+            closeToast();
+        }
+    }
 
-async function printKP() {
+    async function printKP() {
         // --- ВАШИ НАСТРОЙКИ ---
         const SERVER_URL = "https://gunevgeniy-uis-pdf-server-eeac.twc1.net/generate-pdf";
         // -----------------------
 
+        // 1. Сохраняем состояние в URL (чтобы при переходе в браузер они остались)
         saveStateToURL();
 
         const nameInput = document.getElementById('mgrName');
@@ -1720,10 +1761,9 @@ async function printKP() {
         } else if (isMobile) {
             // --- МОБИЛЬНЫЙ БРАУЗЕР ---
             
-            // 1. Показываем уведомление ВЕЧНО (0), пока не нажмут ОК
+            // 1. Показываем уведомление ВЕЧНО (0), пока не нажмут ОК или на фон
             showToast(
-                "⏳ Формирование файла...", 
-                "Если скачивание не началось — значит браузер блокирует его.<br>Нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.", 
+                "Если скачивание не началось — значит Telegram блокирует его.<br>Нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.", 
                 0 // 0 = Не скрывать автоматически
             );
 
@@ -1756,6 +1796,7 @@ async function printKP() {
             }, 300);
         }
     }
+
     /* --- BUSINESS LOGIC --- */
 
     function resetForm() {
