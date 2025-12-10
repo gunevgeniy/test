@@ -7,11 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
-  <!-- Подключаем Telegram WebApp -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
-    /* СТИЛИ ОСТАЮТСЯ ПРЕЖНИМИ (ДЛЯ КАЛЬКУЛЯТОРА) */
+    /* CSS СТИЛИ КАЛЬКУЛЯТОРА (БЕЗ ИЗМЕНЕНИЙ) */
     :root { --color-primary: #0000aa; --color-primary-light: rgba(0, 0, 170, 0.08); --color-bg: #F0F2F5; --color-card-bg: #FFFFFF; --color-input-bg: #FFFFFF; --color-input-border: #C4C4C4; --color-text-main: #252525; --color-text-secondary: #878787; --color-limit: #e67e22; --radius-card: 20px; --radius-input: 10px; --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05); --font-head: 'Manrope', sans-serif; --font-body: 'Inter', sans-serif; }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: var(--font-body); background-color: var(--color-bg); color: var(--color-text-main); margin: 0; padding: 0; overflow-x: hidden; }
@@ -122,219 +121,93 @@
 <div class="bg-cloud"></div>
 
 <div class="layout-wrapper">
-  <!-- Left Column: Options -->
+  <!-- ВСТАВЛЯЕМ ВЕСЬ ВАШ КОНТЕНТ (КАРТОЧКИ, ОПЦИИ И Т.Д.) -->
+  <!-- Я дублирую основную структуру для целостности -->
+  
   <div class="main-column">
-    <!-- BLOCK 1: VATS -->
+    <!-- BLOCK 1 -->
     <section class="card card-group">
       <div class="card-header static"><div class="card-title">Настройки ВАТС и номеров</div></div>
       <div class="option-row">
         <div class="option-info"><div class="option-name">Виртуальная АТС <span class="info-icon" onclick="openTooltip('tooltip-vats')">i</span></div><div class="option-meta"><span id="cost-VATS"></span><span id="limit-VATS"></span></div></div>
         <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VATS" onchange="runCascade('VATS')"><span class="slider"></span></label></div>
       </div>
-      <div class="option-row">
-        <div class="option-info"><div class="option-name">ВАТС Pro (максимум возможностей) <span class="info-icon" onclick="openTooltip('tooltip-vatspro')">i</span></div><div class="option-meta"><span id="cost-VATSPRO"></span><span id="limit-VATSPRO"></span></div></div>
-        <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VATSPRO" onchange="runCascade('VATSPRO')"><span class="slider"></span></label></div>
-      </div>
-      <div class="option-row">
-        <div class="option-info"><div class="option-name">Кол-во сотрудников ВАТС</div><div class="option-meta"><span id="cost-KolvoSotrudnikovVATS"></span><span id="limit-KolvoSotrudnikovVATS"></span></div></div>
-        <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSotrudnikovVATS', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSotrudnikovVATS" value="0" onchange="runCascade('KolvoSotrudnikovVATS')"><button class="stepper-btn" onclick="stepInput('KolvoSotrudnikovVATS', 1)">+</button></div></div>
-      </div>
-      <div class="option-row">
-        <div class="option-info"><div class="option-name">Длительность хранения записей ВАТС</div><div class="option-meta"><span id="cost-DlitelnostHraneniyaVATS"></span><span id="limit-DlitelnostHraneniyaVATS"></span></div></div>
-        <div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('DlitelnostHraneniyaVATS', 'Хранение записей')">0</div><select id="DlitelnostHraneniyaVATS" class="hidden-native-select" onchange="runCascade('DlitelnostHraneniyaVATS')"><option value="0">0</option><option value="1 неделя">1 неделя</option><option value="1 месяц">1 месяц</option><option value="3 месяца">3 месяца</option><option value="6 месяцев">6 месяцев</option><option value="1 год">1 год</option><option value="2 года">2 года</option><option value="4 года">4 года</option></select></div>
-      </div>
-      <div class="option-row">
-          <div class="option-info"><div class="option-name">Кол-во номеров UIS - Городские/Мобильные</div><div class="option-meta"><span id="cost-NomeraVATS"></span><span id="limit-NomeraVATS"></span></div></div>
-          <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('NomeraVATS', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="NomeraVATS" value="0" onchange="runCascade('NomeraVATS')"><button class="stepper-btn" onclick="stepInput('NomeraVATS', 1)">+</button></div></div>
-      </div>
-      <div class="option-row">
-          <div class="option-info"><div class="option-name">Кол-во номеров UIS - 8800 <span class="info-icon" onclick="openTooltip('tooltip-8800')">i</span></div><div class="option-meta"><span id="cost-NomeraVATS8800"></span><span id="limit-NomeraVATS8800"></span></div></div>
-          <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('NomeraVATS8800', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="NomeraVATS8800" value="0" onchange="runCascade('NomeraVATS8800')"><button class="stepper-btn" onclick="stepInput('NomeraVATS8800', 1)">+</button></div></div>
-      </div>
-      <div class="option-row">
-          <div class="option-info"><div class="option-name">Кол-во cторонних номеров <span class="info-icon" onclick="openTooltip('tooltip-own')">i</span></div><div class="option-meta"><span id="cost-KolvoSvoihNomerov"></span><span id="limit-KolvoSvoihNomerov"></span></div></div>
-          <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSvoihNomerov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSvoihNomerov" value="0" onchange="runCascade('KolvoSvoihNomerov')"><button class="stepper-btn" onclick="stepInput('KolvoSvoihNomerov', 1)">+</button></div></div>
-      </div>
-      <div class="option-row">
-        <div class="option-info"><div class="option-name">Кол-во номеров UIS всего</div><div class="option-meta"><span id="cost-NomeraVATSVsego"></span><span id="limit-NomeraVATSVsego"></span></div></div>
-        <div class="control-wrapper"><div class="readonly-field"><input type="text" id="NomeraVATSVsego" value="0" disabled style="background:transparent; border:none; width:30px; text-align:center; font-weight:700; color:inherit;"><span style="font-size:12px; opacity:0.5">🔒</span></div></div>
-      </div>
-
-      <!-- FMC GROUP -->
+      <!-- ... (Остальные опции блока 1 сокращены для краткости, они те же) ... -->
+      <div class="option-row"><div class="option-info"><div class="option-name">ВАТС Pro (максимум возможностей) <span class="info-icon" onclick="openTooltip('tooltip-vatspro')">i</span></div><div class="option-meta"><span id="cost-VATSPRO"></span><span id="limit-VATSPRO"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VATSPRO" onchange="runCascade('VATSPRO')"><span class="slider"></span></label></div></div>
+      <div class="option-row"><div class="option-info"><div class="option-name">Кол-во сотрудников ВАТС</div><div class="option-meta"><span id="cost-KolvoSotrudnikovVATS"></span><span id="limit-KolvoSotrudnikovVATS"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSotrudnikovVATS', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSotrudnikovVATS" value="0" onchange="runCascade('KolvoSotrudnikovVATS')"><button class="stepper-btn" onclick="stepInput('KolvoSotrudnikovVATS', 1)">+</button></div></div></div>
+      <div class="option-row"><div class="option-info"><div class="option-name">Длительность хранения записей ВАТС</div><div class="option-meta"><span id="cost-DlitelnostHraneniyaVATS"></span><span id="limit-DlitelnostHraneniyaVATS"></span></div></div><div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('DlitelnostHraneniyaVATS', 'Хранение записей')">0</div><select id="DlitelnostHraneniyaVATS" class="hidden-native-select" onchange="runCascade('DlitelnostHraneniyaVATS')"><option value="0">0</option><option value="1 неделя">1 неделя</option><option value="1 месяц">1 месяц</option><option value="3 месяца">3 месяца</option><option value="6 месяцев">6 месяцев</option><option value="1 год">1 год</option><option value="2 года">2 года</option><option value="4 года">4 года</option></select></div></div>
+      <div class="option-row"><div class="option-info"><div class="option-name">Кол-во номеров UIS - Городские/Мобильные</div><div class="option-meta"><span id="cost-NomeraVATS"></span><span id="limit-NomeraVATS"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('NomeraVATS', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="NomeraVATS" value="0" onchange="runCascade('NomeraVATS')"><button class="stepper-btn" onclick="stepInput('NomeraVATS', 1)">+</button></div></div></div>
+      <div class="option-row"><div class="option-info"><div class="option-name">Кол-во номеров UIS - 8800 <span class="info-icon" onclick="openTooltip('tooltip-8800')">i</span></div><div class="option-meta"><span id="cost-NomeraVATS8800"></span><span id="limit-NomeraVATS8800"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('NomeraVATS8800', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="NomeraVATS8800" value="0" onchange="runCascade('NomeraVATS8800')"><button class="stepper-btn" onclick="stepInput('NomeraVATS8800', 1)">+</button></div></div></div>
+      <div class="option-row"><div class="option-info"><div class="option-name">Кол-во cторонних номеров <span class="info-icon" onclick="openTooltip('tooltip-own')">i</span></div><div class="option-meta"><span id="cost-KolvoSvoihNomerov"></span><span id="limit-KolvoSvoihNomerov"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSvoihNomerov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSvoihNomerov" value="0" onchange="runCascade('KolvoSvoihNomerov')"><button class="stepper-btn" onclick="stepInput('KolvoSvoihNomerov', 1)">+</button></div></div></div>
+      <div class="option-row"><div class="option-info"><div class="option-name">Кол-во номеров UIS всего</div><div class="option-meta"><span id="cost-NomeraVATSVsego"></span><span id="limit-NomeraVATSVsego"></span></div></div><div class="control-wrapper"><div class="readonly-field"><input type="text" id="NomeraVATSVsego" value="0" disabled style="background:transparent; border:none; width:30px; text-align:center; font-weight:700; color:inherit;"><span style="font-size:12px; opacity:0.5">🔒</span></div></div></div>
+      
       <div class="fmc-container">
           <div class="fmc-title">Мобильная связь (FMC)</div>
           <div class="fmc-subgroup">
-              <div class="option-row">
-                  <div class="option-info"><div class="option-name">Кол-во сим карт <span class="info-icon" onclick="openTooltip('tooltip-fmc')">i</span></div></div>
-                  <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoFMC', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoFMC" value="0" onchange="runCascade('KolvoFMC')"><button class="stepper-btn" onclick="stepInput('KolvoFMC', 1)">+</button></div></div>
-              </div>
-              <div class="option-row stacked">
-                  <div class="option-info"><div class="option-name">Тариф FMC сим карт</div><div class="option-meta"><span id="cost-TarifFMC"></span><span id="limit-TarifFMC"></span></div></div>
-                  <div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('TarifFMC', 'Тариф FMC')">нет</div><select id="TarifFMC" class="hidden-native-select" onchange="runCascade('TarifFMC')"><option value="нет">нет</option><option value="200 минут, 1Гб интернета">200 минут, 1Гб интернета</option><option value="600 минут, 5Гб интернета">600 минут, 5Гб интернета</option><option value="800 минут, 10Гб интернета">800 минут, 10Гб интернета</option><option value="2000 минут, 20Гб интернета">2000 минут, 20Гб интернета</option><option value="15 минут, 0,2Гб интернета">15 минут, 0,2Гб интернета</option></select></div>
-              </div>
+              <div class="option-row"><div class="option-info"><div class="option-name">Кол-во сим карт <span class="info-icon" onclick="openTooltip('tooltip-fmc')">i</span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoFMC', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoFMC" value="0" onchange="runCascade('KolvoFMC')"><button class="stepper-btn" onclick="stepInput('KolvoFMC', 1)">+</button></div></div></div>
+              <div class="option-row stacked"><div class="option-info"><div class="option-name">Тариф FMC сим карт</div><div class="option-meta"><span id="cost-TarifFMC"></span><span id="limit-TarifFMC"></span></div></div><div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('TarifFMC', 'Тариф FMC')">нет</div><select id="TarifFMC" class="hidden-native-select" onchange="runCascade('TarifFMC')"><option value="нет">нет</option><option value="200 минут, 1Гб интернета">200 минут, 1Гб интернета</option><option value="600 минут, 5Гб интернета">600 минут, 5Гб интернета</option><option value="800 минут, 10Гб интернета">800 минут, 10Гб интернета</option><option value="2000 минут, 20Гб интернета">2000 минут, 20Гб интернета</option><option value="15 минут, 0,2Гб интернета">15 минут, 0,2Гб интернета</option></select></div></div>
               <div class="fmc-cost-row"><span id="cost-KolvoFMC"></span><span id="limit-KolvoFMC"></span></div>
           </div>
-          <div class="option-row stacked">
-              <div class="option-info"><div class="option-name">Регион доставки <span class="info-icon" onclick="openTooltip('tooltip-delivery-main')">i</span></div><div class="option-meta"><span id="cost-RegionDostavki"></span><span id="limit-RegionDostavki"></span></div></div>
-              <div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('RegionDostavki', 'Регион доставки')">нет</div><select id="RegionDostavki" class="hidden-native-select" onchange="runCascade('RegionDostavki')"><option value="нет">нет</option><option value="Москва и мск. обл.">Москва и мск. обл.</option><option value="Санкт-Петербург и лен. обл.">Санкт-Петербург и лен. обл.</option><option value="Центральная Россия, Поволжье">Центральная Россия, Поволжье</option><option value="Юг, Урал, Сибирь">Юг, Урал, Сибирь</option><option value="Дальний Восток">Дальний Восток</option></select></div>
-          </div>
+          <div class="option-row stacked"><div class="option-info"><div class="option-name">Регион доставки <span class="info-icon" onclick="openTooltip('tooltip-delivery-main')">i</span></div><div class="option-meta"><span id="cost-RegionDostavki"></span><span id="limit-RegionDostavki"></span></div></div><div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('RegionDostavki', 'Регион доставки')">нет</div><select id="RegionDostavki" class="hidden-native-select" onchange="runCascade('RegionDostavki')"><option value="нет">нет</option><option value="Москва и мск. обл.">Москва и мск. обл.</option><option value="Санкт-Петербург и лен. обл.">Санкт-Петербург и лен. обл.</option><option value="Центральная Россия, Поволжье">Центральная Россия, Поволжье</option><option value="Юг, Урал, Сибирь">Юг, Урал, Сибирь</option><option value="Дальний Восток">Дальний Восток</option></select></div></div>
           <div class="fmc-cost-row"><span id="cost-RegionDostavki-placeholder"></span></div>
       </div>
       
-      <!-- EXPERT TOGGLE -->
       <div style="text-align:center;"><div class="expert-toggle-btn" onclick="toggleExpert()"><span>Дополнительные опции ВАТС</span><div class="toggle-icon"></div></div></div>
-
-      <!-- Expert Block -->
       <div id="block-expert" class="expert-block card-group" style="display: none;">
-          <div class="option-row">
-            <div class="option-info"><div class="option-name">Кол-во линий группового вызова</div><div class="option-meta"><span id="cost-LiniyGrupovogoVizova"></span><span id="limit-LiniyGrupovogoVizova"></span></div></div>
-            <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('LiniyGrupovogoVizova', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="LiniyGrupovogoVizova" value="0" onchange="runCascade('LiniyGrupovogoVizova')"><button class="stepper-btn" onclick="stepInput('LiniyGrupovogoVizova', 1)">+</button></div></div>
-          </div>
-           <div class="option-row">
-            <div class="option-info"><div class="option-name">Кол-во линий исходящих звонков</div><div class="option-meta"><span id="cost-LiniyIshodyashihZvonkov"></span><span id="limit-LiniyIshodyashihZvonkov"></span></div></div>
-            <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('LiniyIshodyashihZvonkov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="LiniyIshodyashihZvonkov" value="0" onchange="runCascade('LiniyIshodyashihZvonkov')"><button class="stepper-btn" onclick="stepInput('LiniyIshodyashihZvonkov', 1)">+</button></div></div>
-          </div>
-          <div class="option-row">
-            <div class="option-info"><div class="option-name">Кол-во SIP-транков</div><div class="option-meta"><span id="cost-KolvoSIPTrankov"></span><span id="limit-KolvoSIPTrankov"></span></div></div>
-            <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSIPTrankov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSIPTrankov" value="0" onchange="runCascade('KolvoSIPTrankov')"><button class="stepper-btn" onclick="stepInput('KolvoSIPTrankov', 1)">+</button></div></div>
-          </div>
-          <div class="option-row">
-            <div class="option-info"><div class="option-name">Канальность SIP-транков</div><div class="option-meta"><span id="cost-KanalnostSIPTrankov"></span><span id="limit-KanalnostSIPTrankov"></span></div></div>
-            <div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('KanalnostSIPTrankov', 'Канальность SIP')">0</div><select id="KanalnostSIPTrankov" class="hidden-native-select" onchange="runCascade('KanalnostSIPTrankov')"><option value="0">0</option><option value="30">30</option><option value="60">60</option><option value="90">90</option><option value="180">180</option></select></div>
-          </div>
-          <div class="option-row">
-            <div class="option-info"><div class="option-name">Кол-во SIPURI</div><div class="option-meta"><span id="cost-KolvoSIPURI"></span><span id="limit-KolvoSIPURI"></span></div></div>
-            <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSIPURI', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSIPURI" value="0" onchange="runCascade('KolvoSIPURI')"><button class="stepper-btn" onclick="stepInput('KolvoSIPURI', 1)">+</button></div></div>
-          </div>
-          <div class="option-row">
-            <div class="option-info"><div class="option-name">Кол-во SIP-аккаунтов</div><div class="option-meta"><span id="cost-KolvoSIPAkkauntov"></span><span id="limit-KolvoSIPAkkauntov"></span></div></div>
-            <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSIPAkkauntov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSIPAkkauntov" value="0" onchange="runCascade('KolvoSIPAkkauntov')"><button class="stepper-btn" onclick="stepInput('KolvoSIPAkkauntov', 1)">+</button></div></div>
-          </div>
-          <div class="option-row">
-            <div class="option-info"><div class="option-name">Канальность SIP-аккаунтов</div><div class="option-meta"><span id="cost-KanalnostSIPAkkauntov"></span><span id="limit-KanalnostSIPAkkauntov"></span></div></div>
-            <div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('KanalnostSIPAkkauntov', 'Канальность SIP-акк')">0</div><select id="KanalnostSIPAkkauntov" class="hidden-native-select" onchange="runCascade('KanalnostSIPAkkauntov')"><option value="0">0</option><option value="30">30</option><option value="60">60</option><option value="90">90</option><option value="180">180</option></select></div>
-          </div>
+          <!-- Expert options... (все как раньше) -->
+          <div class="option-row"><div class="option-info"><div class="option-name">Кол-во линий группового вызова</div><div class="option-meta"><span id="cost-LiniyGrupovogoVizova"></span><span id="limit-LiniyGrupovogoVizova"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('LiniyGrupovogoVizova', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="LiniyGrupovogoVizova" value="0" onchange="runCascade('LiniyGrupovogoVizova')"><button class="stepper-btn" onclick="stepInput('LiniyGrupovogoVizova', 1)">+</button></div></div></div>
+          <div class="option-row"><div class="option-info"><div class="option-name">Кол-во линий исходящих звонков</div><div class="option-meta"><span id="cost-LiniyIshodyashihZvonkov"></span><span id="limit-LiniyIshodyashihZvonkov"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('LiniyIshodyashihZvonkov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="LiniyIshodyashihZvonkov" value="0" onchange="runCascade('LiniyIshodyashihZvonkov')"><button class="stepper-btn" onclick="stepInput('LiniyIshodyashihZvonkov', 1)">+</button></div></div></div>
+          <div class="option-row"><div class="option-info"><div class="option-name">Кол-во SIP-транков</div><div class="option-meta"><span id="cost-KolvoSIPTrankov"></span><span id="limit-KolvoSIPTrankov"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSIPTrankov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSIPTrankov" value="0" onchange="runCascade('KolvoSIPTrankov')"><button class="stepper-btn" onclick="stepInput('KolvoSIPTrankov', 1)">+</button></div></div></div>
+          <div class="option-row"><div class="option-info"><div class="option-name">Канальность SIP-транков</div><div class="option-meta"><span id="cost-KanalnostSIPTrankov"></span><span id="limit-KanalnostSIPTrankov"></span></div></div><div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('KanalnostSIPTrankov', 'Канальность SIP')">0</div><select id="KanalnostSIPTrankov" class="hidden-native-select" onchange="runCascade('KanalnostSIPTrankov')"><option value="0">0</option><option value="30">30</option><option value="60">60</option><option value="90">90</option><option value="180">180</option></select></div></div>
+          <div class="option-row"><div class="option-info"><div class="option-name">Кол-во SIPURI</div><div class="option-meta"><span id="cost-KolvoSIPURI"></span><span id="limit-KolvoSIPURI"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSIPURI', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSIPURI" value="0" onchange="runCascade('KolvoSIPURI')"><button class="stepper-btn" onclick="stepInput('KolvoSIPURI', 1)">+</button></div></div></div>
+          <div class="option-row"><div class="option-info"><div class="option-name">Кол-во SIP-аккаунтов</div><div class="option-meta"><span id="cost-KolvoSIPAkkauntov"></span><span id="limit-KolvoSIPAkkauntov"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSIPAkkauntov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSIPAkkauntov" value="0" onchange="runCascade('KolvoSIPAkkauntov')"><button class="stepper-btn" onclick="stepInput('KolvoSIPAkkauntov', 1)">+</button></div></div></div>
+          <div class="option-row"><div class="option-info"><div class="option-name">Канальность SIP-аккаунтов</div><div class="option-meta"><span id="cost-KanalnostSIPAkkauntov"></span><span id="limit-KanalnostSIPAkkauntov"></span></div></div><div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('KanalnostSIPAkkauntov', 'Канальность SIP-акк')">0</div><select id="KanalnostSIPAkkauntov" class="hidden-native-select" onchange="runCascade('KanalnostSIPAkkauntov')"><option value="0">0</option><option value="30">30</option><option value="60">60</option><option value="90">90</option><option value="180">180</option></select></div></div>
       </div>
     </section>
 
-    <!-- BLOCK 2: OMNI -->
+    <!-- BLOCK 2 -->
     <section class="card card-group">
         <div class="card-header static"><div class="card-title">ОМНИ Чаты</div></div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">ОМНИ Чаты</div><div class="option-meta"><span id="cost-OMNI"></span><span id="limit-OMNI"></span></div></div>
-            <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="OMNI" onchange="runCascade('OMNI')"><span class="slider"></span></label></div>
-        </div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">Кол-во сотрудников ОМНИ Чаты</div><div class="option-meta"><span id="cost-KolvoSotrudnikovOMNI"></span><span id="limit-KolvoSotrudnikovOMNI"></span></div></div>
-            <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSotrudnikovOMNI', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSotrudnikovOMNI" value="0" onchange="runCascade('KolvoSotrudnikovOMNI')"><button class="stepper-btn" onclick="stepInput('KolvoSotrudnikovOMNI', 1)">+</button></div></div>
-        </div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">Кол-во WhatsApp аккаунтов</div><div class="option-meta"><span id="cost-KolvoWA"></span><span id="limit-KolvoWA"></span></div></div>
-            <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoWA', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoWA" value="0" onchange="runCascade('KolvoWA')"><button class="stepper-btn" onclick="stepInput('KolvoWA', 1)">+</button></div></div>
-        </div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">Кол-во каналов WABA <span class="info-icon" onclick="openTooltip('tooltip-waba')">i</span></div><div class="option-meta"><span id="cost-KolvoWABA"></span><span id="limit-KolvoWABA"></span></div></div>
-            <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoWABA', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoWABA" value="0" onchange="runCascade('KolvoWABA')"><button class="stepper-btn" onclick="stepInput('KolvoWABA', 1)">+</button></div></div>
-        </div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">Telegram, Tg Bot, VK Groups, Авито и др.</div><div class="option-meta"><span id="cost-TgVkAvito"></span><span id="limit-TgVkAvito"></span></div></div>
-            <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="TgVkAvito" onchange="runCascade('TgVkAvito')"><span class="slider"></span></label></div>
-        </div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">ОМНИ виджет на сайт <span class="info-icon" onclick="openTooltip('tooltip-omniknopka')">i</span></div><div class="option-meta"><span id="cost-OMNIKnopka"></span><span id="limit-OMNIKnopka"></span></div></div>
-            <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="OMNIKnopka" onchange="runCascade('OMNIKnopka')"><span class="slider"></span></label></div>
-        </div>
+        <!-- Omni options... -->
+        <div class="option-row"><div class="option-info"><div class="option-name">ОМНИ Чаты</div><div class="option-meta"><span id="cost-OMNI"></span><span id="limit-OMNI"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="OMNI" onchange="runCascade('OMNI')"><span class="slider"></span></label></div></div>
+        <div class="option-row"><div class="option-info"><div class="option-name">Кол-во сотрудников ОМНИ Чаты</div><div class="option-meta"><span id="cost-KolvoSotrudnikovOMNI"></span><span id="limit-KolvoSotrudnikovOMNI"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSotrudnikovOMNI', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSotrudnikovOMNI" value="0" onchange="runCascade('KolvoSotrudnikovOMNI')"><button class="stepper-btn" onclick="stepInput('KolvoSotrudnikovOMNI', 1)">+</button></div></div></div>
+        <div class="option-row"><div class="option-info"><div class="option-name">Кол-во WhatsApp аккаунтов</div><div class="option-meta"><span id="cost-KolvoWA"></span><span id="limit-KolvoWA"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoWA', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoWA" value="0" onchange="runCascade('KolvoWA')"><button class="stepper-btn" onclick="stepInput('KolvoWA', 1)">+</button></div></div></div>
+        <div class="option-row"><div class="option-info"><div class="option-name">Кол-во каналов WABA <span class="info-icon" onclick="openTooltip('tooltip-waba')">i</span></div><div class="option-meta"><span id="cost-KolvoWABA"></span><span id="limit-KolvoWABA"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoWABA', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoWABA" value="0" onchange="runCascade('KolvoWABA')"><button class="stepper-btn" onclick="stepInput('KolvoWABA', 1)">+</button></div></div></div>
+        <div class="option-row"><div class="option-info"><div class="option-name">Telegram, Tg Bot, VK Groups, Авито и др.</div><div class="option-meta"><span id="cost-TgVkAvito"></span><span id="limit-TgVkAvito"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="TgVkAvito" onchange="runCascade('TgVkAvito')"><span class="slider"></span></label></div></div>
+        <div class="option-row"><div class="option-info"><div class="option-name">ОМНИ виджет на сайт <span class="info-icon" onclick="openTooltip('tooltip-omniknopka')">i</span></div><div class="option-meta"><span id="cost-OMNIKnopka"></span><span id="limit-OMNIKnopka"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="OMNIKnopka" onchange="runCascade('OMNIKnopka')"><span class="slider"></span></label></div></div>
     </section>
 
-    <!-- BLOCK 3: Analytics -->
+    <!-- BLOCK 3 -->
     <section class="card card-group">
         <div class="card-header collapsed" onclick="toggleAnalytics()"><div class="card-title">Аналитика рекламы</div><div class="header-toggle-icon"></div></div>
         <div id="block-ar" style="display:none;">
-             <div class="option-row">
-                <div class="option-info"><div class="option-name">Аналитика рекламы <span class="info-icon" onclick="openTooltip('tooltip-ar')">i</span></div><div class="option-meta"><span id="cost-AR"></span><span id="limit-AR"></span></div></div>
-                <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="AR" onchange="runCascade('AR')"><span class="slider"></span></label></div>
-            </div>
-            <div class="option-row">
-                <div class="option-info"><div class="option-name">Кол-во сайтов</div><div class="option-meta"><span id="cost-KolvoSaitov"></span><span id="limit-KolvoSaitov"></span></div></div>
-                <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSaitov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSaitov" value="0" onchange="runCascade('KolvoSaitov')"><button class="stepper-btn" onclick="stepInput('KolvoSaitov', 1)">+</button></div></div>
-            </div>
-            <div class="option-row">
-                <div class="option-info"><div class="option-name">Кол-во пользовательских источников</div><div class="option-meta"><span id="cost-KolvoPolzovatelskihIstochnikov"></span><span id="limit-KolvoPolzovatelskihIstochnikov"></span></div></div>
-                <div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('KolvoPolzovatelskihIstochnikov', 'Польз. источники')">0</div><select id="KolvoPolzovatelskihIstochnikov" class="hidden-native-select" onchange="runCascade('KolvoPolzovatelskihIstochnikov')"><option value="0">0</option><option value="50">50</option><option value="250">250</option><option value="500">500</option><option value="5000">5000</option></select></div>
-            </div>
-             <div class="option-row">
-                <div class="option-info"><div class="option-name">Пакет трафика <span class="info-icon" onclick="openTooltip('tooltip-traffic')">i</span></div><div class="option-meta"><span id="cost-PaketTrafika"></span><span id="limit-PaketTrafika"></span></div></div>
-                <div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('PaketTrafika', 'Пакет трафика')">0</div><select id="PaketTrafika" class="hidden-native-select" onchange="runCascade('PaketTrafika')"><option value="0">0</option><option value="10000">10000</option><option value="20000">20000</option><option value="50000">50000</option><option value="100000">100000</option><option value="200000">200000</option><option value="500000">500000</option><option value="безлимит">безлимит</option></select></div>
-            </div>
-            <div class="option-row">
-                <div class="option-info"><div class="option-name">Коллтрекинг <span class="info-icon" onclick="openTooltip('tooltip-kt')">i</span></div><div class="option-meta"><span id="cost-KT"></span><span id="limit-KT"></span></div></div>
-                <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="KT" onchange="runCascade('KT')"><span class="slider"></span></label></div>
-            </div>
-             <div class="option-row">
-                <div class="option-info"><div class="option-name">Кол-во номеров КТ - Городские/Мобильные</div><div class="option-meta"><span id="cost-NomeraKT"></span><span id="limit-NomeraKT"></span></div></div>
-                <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('NomeraKT', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="NomeraKT" value="0" onchange="runCascade('NomeraKT')"><button class="stepper-btn" onclick="stepInput('NomeraKT', 1)">+</button></div></div>
-            </div>
-             <div class="option-row">
-                <div class="option-info"><div class="option-name">Кол-во номеров КТ - 8800 <span class="info-icon" onclick="openTooltip('tooltip-8800')">i</span></div><div class="option-meta"><span id="cost-NomeraKT8800"></span><span id="limit-NomeraKT8800"></span></div></div>
-                <div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('NomeraKT8800', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="NomeraKT8800" value="0" onchange="runCascade('NomeraKT8800')"><button class="stepper-btn" onclick="stepInput('NomeraKT8800', 1)">+</button></div></div>
-            </div>
-             <div class="option-row">
-                <div class="option-info"><div class="option-name">Длительность хранения записей КТ</div><div class="option-meta"><span id="cost-DlitelnostHraneniyaAR"></span><span id="limit-DlitelnostHraneniyaAR"></span></div></div>
-                <div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('DlitelnostHraneniyaAR', 'Хранение записей КТ')">0</div><select id="DlitelnostHraneniyaAR" class="hidden-native-select" onchange="runCascade('DlitelnostHraneniyaAR')"><option value="0">0</option><option value="1 неделя">1 неделя</option><option value="1 месяц">1 месяц</option><option value="3 месяца">3 месяца</option><option value="6 месяцев">6 месяцев</option><option value="1 год">1 год</option><option value="2 года">2 года</option><option value="4 года">4 года</option></select></div>
-            </div>
-             <div class="option-row">
-                <div class="option-info"><div class="option-name">Email-трекинг (кол-во писем в месяц)</div><div class="option-meta"><span id="cost-EmailTreking"></span><span id="limit-EmailTreking"></span></div></div>
-                <div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('EmailTreking', 'Email-трекинг')">нет</div><select id="EmailTreking" class="hidden-native-select" onchange="runCascade('EmailTreking')"><option value="нет">нет</option><option value="до 100 шт.">до 100 шт.</option><option value="больше 100 шт.">больше 100 шт.</option></select></div>
-            </div>
-            <div class="option-row">
-                <div class="option-info"><div class="option-name">Конструктор отчетов <span class="info-icon" onclick="openTooltip('tooltip-report')">i</span></div><div class="option-meta"><span id="cost-KonstruktorOtchetov"></span><span id="limit-KonstruktorOtchetov"></span></div></div>
-                <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="KonstruktorOtchetov" onchange="runCascade('KonstruktorOtchetov')"><span class="slider"></span></label></div>
-            </div>
-            <div class="option-row">
-                <div class="option-info"><div class="option-name">Аналитика продаж из CRM <span class="info-icon" onclick="openTooltip('tooltip-crm')">i</span></div><div class="option-meta"><span id="cost-AnalitikaProdaj"></span><span id="limit-AnalitikaProdaj"></span></div></div>
-                <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="AnalitikaProdaj" onchange="runCascade('AnalitikaProdaj')"><span class="slider"></span></label></div>
-            </div>
-            <div class="option-row">
-                <div class="option-info"><div class="option-name">Интеграция с виджетами <span class="info-icon" onclick="openTooltip('tooltip-widget')">i</span></div><div class="option-meta"><span id="cost-IntegraciyaSVidjetami"></span><span id="limit-IntegraciyaSVidjetami"></span></div></div>
-                <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="IntegraciyaSVidjetami" onchange="runCascade('IntegraciyaSVidjetami')"><span class="slider"></span></label></div>
-            </div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Аналитика рекламы <span class="info-icon" onclick="openTooltip('tooltip-ar')">i</span></div><div class="option-meta"><span id="cost-AR"></span><span id="limit-AR"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="AR" onchange="runCascade('AR')"><span class="slider"></span></label></div></div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Кол-во сайтов</div><div class="option-meta"><span id="cost-KolvoSaitov"></span><span id="limit-KolvoSaitov"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('KolvoSaitov', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="KolvoSaitov" value="0" onchange="runCascade('KolvoSaitov')"><button class="stepper-btn" onclick="stepInput('KolvoSaitov', 1)">+</button></div></div></div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Кол-во пользовательских источников</div><div class="option-meta"><span id="cost-KolvoPolzovatelskihIstochnikov"></span><span id="limit-KolvoPolzovatelskihIstochnikov"></span></div></div><div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('KolvoPolzovatelskihIstochnikov', 'Польз. источники')">0</div><select id="KolvoPolzovatelskihIstochnikov" class="hidden-native-select" onchange="runCascade('KolvoPolzovatelskihIstochnikov')"><option value="0">0</option><option value="50">50</option><option value="250">250</option><option value="500">500</option><option value="5000">5000</option></select></div></div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Пакет трафика <span class="info-icon" onclick="openTooltip('tooltip-traffic')">i</span></div><div class="option-meta"><span id="cost-PaketTrafika"></span><span id="limit-PaketTrafika"></span></div></div><div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('PaketTrafika', 'Пакет трафика')">0</div><select id="PaketTrafika" class="hidden-native-select" onchange="runCascade('PaketTrafika')"><option value="0">0</option><option value="10000">10000</option><option value="20000">20000</option><option value="50000">50000</option><option value="100000">100000</option><option value="200000">200000</option><option value="500000">500000</option><option value="безлимит">безлимит</option></select></div></div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Коллтрекинг <span class="info-icon" onclick="openTooltip('tooltip-kt')">i</span></div><div class="option-meta"><span id="cost-KT"></span><span id="limit-KT"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="KT" onchange="runCascade('KT')"><span class="slider"></span></label></div></div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Кол-во номеров КТ - Городские/Мобильные</div><div class="option-meta"><span id="cost-NomeraKT"></span><span id="limit-NomeraKT"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('NomeraKT', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="NomeraKT" value="0" onchange="runCascade('NomeraKT')"><button class="stepper-btn" onclick="stepInput('NomeraKT', 1)">+</button></div></div></div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Кол-во номеров КТ - 8800 <span class="info-icon" onclick="openTooltip('tooltip-8800')">i</span></div><div class="option-meta"><span id="cost-NomeraKT8800"></span><span id="limit-NomeraKT8800"></span></div></div><div class="control-wrapper"><div class="stepper"><button class="stepper-btn" onclick="stepInput('NomeraKT8800', -1)">−</button><input type="text" inputmode="numeric" class="stepper-input" id="NomeraKT8800" value="0" onchange="runCascade('NomeraKT8800')"><button class="stepper-btn" onclick="stepInput('NomeraKT8800', 1)">+</button></div></div></div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Длительность хранения записей КТ</div><div class="option-meta"><span id="cost-DlitelnostHraneniyaAR"></span><span id="limit-DlitelnostHraneniyaAR"></span></div></div><div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('DlitelnostHraneniyaAR', 'Хранение записей КТ')">0</div><select id="DlitelnostHraneniyaAR" class="hidden-native-select" onchange="runCascade('DlitelnostHraneniyaAR')"><option value="0">0</option><option value="1 неделя">1 неделя</option><option value="1 месяц">1 месяц</option><option value="3 месяца">3 месяца</option><option value="6 месяцев">6 месяцев</option><option value="1 год">1 год</option><option value="2 года">2 года</option><option value="4 года">4 года</option></select></div></div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Email-трекинг (кол-во писем в месяц)</div><div class="option-meta"><span id="cost-EmailTreking"></span><span id="limit-EmailTreking"></span></div></div><div class="control-wrapper"><div class="custom-select-trigger" onclick="openSelectModal('EmailTreking', 'Email-трекинг')">нет</div><select id="EmailTreking" class="hidden-native-select" onchange="runCascade('EmailTreking')"><option value="нет">нет</option><option value="до 100 шт.">до 100 шт.</option><option value="больше 100 шт.">больше 100 шт.</option></select></div></div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Конструктор отчетов <span class="info-icon" onclick="openTooltip('tooltip-report')">i</span></div><div class="option-meta"><span id="cost-KonstruktorOtchetov"></span><span id="limit-KonstruktorOtchetov"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="KonstruktorOtchetov" onchange="runCascade('KonstruktorOtchetov')"><span class="slider"></span></label></div></div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Аналитика продаж из CRM <span class="info-icon" onclick="openTooltip('tooltip-crm')">i</span></div><div class="option-meta"><span id="cost-AnalitikaProdaj"></span><span id="limit-AnalitikaProdaj"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="AnalitikaProdaj" onchange="runCascade('AnalitikaProdaj')"><span class="slider"></span></label></div></div>
+             <div class="option-row"><div class="option-info"><div class="option-name">Интеграция с виджетами <span class="info-icon" onclick="openTooltip('tooltip-widget')">i</span></div><div class="option-meta"><span id="cost-IntegraciyaSVidjetami"></span><span id="limit-IntegraciyaSVidjetami"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="IntegraciyaSVidjetami" onchange="runCascade('IntegraciyaSVidjetami')"><span class="slider"></span></label></div></div>
         </div>
     </section>
 
     <!-- BLOCK 4: Integrations -->
      <section class="card card-group">
         <div class="card-header static"><div class="card-title">Интеграции и доп. опции</div></div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">Интеграция с amoCRM или Битрикс 24</div><div class="option-meta"><span id="cost-AmoBitrix"></span><span id="limit-AmoBitrix"></span></div></div>
-            <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="AmoBitrix" onchange="runCascade('AmoBitrix')"><span class="slider"></span></label></div>
-        </div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">Интеграция с отраслевыми CRM <span class="info-icon" onclick="openTooltip('tooltip-otrasl')">i</span></div><div class="option-meta"><span id="cost-IntegraciyaOtraslevie"></span><span id="limit-IntegraciyaOtraslevie"></span></div></div>
-            <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="IntegraciyaOtraslevie" onchange="runCascade('IntegraciyaOtraslevie')"><span class="slider"></span></label></div>
-        </div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">Уведомления о событиях <span class="info-icon" onclick="openTooltip('tooltip-notify')">i</span></div><div class="option-meta"><span id="cost-UvedomlenieOSobitiyah"></span><span id="limit-UvedomlenieOSobitiyah"></span></div></div>
-            <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="UvedomlenieOSobitiyah" onchange="runCascade('UvedomlenieOSobitiyah')"><span class="slider"></span></label></div>
-        </div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">Внешние АТС <span class="info-icon" onclick="openTooltip('tooltip-ats')">i</span></div><div class="option-meta"><span id="cost-VneshnieATS"></span><span id="limit-VneshnieATS"></span></div></div>
-            <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VneshnieATS" onchange="runCascade('VneshnieATS')"><span class="slider"></span></label></div>
-        </div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">Спасение коммуникаций <span class="info-icon" onclick="openTooltip('tooltip-save')">i</span></div><div class="option-meta"><span id="cost-SpasenieKommunikatsiy"></span><span id="limit-SpasenieKommunikatsiy"></span></div></div>
-            <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="SpasenieKommunikatsiy" onchange="runCascade('SpasenieKommunikatsiy')"><span class="slider"></span></label></div>
-        </div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">Автоперезвон по заявкам с сайта</div><div class="option-meta"><span id="cost-AvtoperezvonPoZayavkam"></span><span id="limit-AvtoperezvonPoZayavkam"></span></div></div>
-            <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="AvtoperezvonPoZayavkam" onchange="runCascade('AvtoperezvonPoZayavkam')"><span class="slider"></span></label></div>
-        </div>
-        <div class="option-row">
-            <div class="option-info"><div class="option-name">Везде как дома <span class="info-icon" onclick="openTooltip('tooltip-home')">i</span></div><div class="option-meta"><span id="cost-VezdeKakDoma"></span><span id="limit-VezdeKakDoma"></span></div></div>
-            <div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VezdeKakDoma" onchange="runCascade('VezdeKakDoma')"><span class="slider"></span></label></div>
-        </div>
+        <div class="option-row"><div class="option-info"><div class="option-name">Интеграция с amoCRM или Битрикс 24</div><div class="option-meta"><span id="cost-AmoBitrix"></span><span id="limit-AmoBitrix"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="AmoBitrix" onchange="runCascade('AmoBitrix')"><span class="slider"></span></label></div></div>
+        <div class="option-row"><div class="option-info"><div class="option-name">Интеграция с отраслевыми CRM <span class="info-icon" onclick="openTooltip('tooltip-otrasl')">i</span></div><div class="option-meta"><span id="cost-IntegraciyaOtraslevie"></span><span id="limit-IntegraciyaOtraslevie"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="IntegraciyaOtraslevie" onchange="runCascade('IntegraciyaOtraslevie')"><span class="slider"></span></label></div></div>
+        <div class="option-row"><div class="option-info"><div class="option-name">Уведомления о событиях <span class="info-icon" onclick="openTooltip('tooltip-notify')">i</span></div><div class="option-meta"><span id="cost-UvedomlenieOSobitiyah"></span><span id="limit-UvedomlenieOSobitiyah"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="UvedomlenieOSobitiyah" onchange="runCascade('UvedomlenieOSobitiyah')"><span class="slider"></span></label></div></div>
+        <div class="option-row"><div class="option-info"><div class="option-name">Внешние АТС <span class="info-icon" onclick="openTooltip('tooltip-ats')">i</span></div><div class="option-meta"><span id="cost-VneshnieATS"></span><span id="limit-VneshnieATS"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VneshnieATS" onchange="runCascade('VneshnieATS')"><span class="slider"></span></label></div></div>
+        <div class="option-row"><div class="option-info"><div class="option-name">Спасение коммуникаций <span class="info-icon" onclick="openTooltip('tooltip-save')">i</span></div><div class="option-meta"><span id="cost-SpasenieKommunikatsiy"></span><span id="limit-SpasenieKommunikatsiy"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="SpasenieKommunikatsiy" onchange="runCascade('SpasenieKommunikatsiy')"><span class="slider"></span></label></div></div>
+        <div class="option-row"><div class="option-info"><div class="option-name">Автоперезвон по заявкам с сайта</div><div class="option-meta"><span id="cost-AvtoperezvonPoZayavkam"></span><span id="limit-AvtoperezvonPoZayavkam"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="AvtoperezvonPoZayavkam" onchange="runCascade('AvtoperezvonPoZayavkam')"><span class="slider"></span></label></div></div>
+        <div class="option-row"><div class="option-info"><div class="option-name">Везде как дома <span class="info-icon" onclick="openTooltip('tooltip-home')">i</span></div><div class="option-meta"><span id="cost-VezdeKakDoma"></span><span id="limit-VezdeKakDoma"></span></div></div><div class="control-wrapper"><label class="toggle-switch"><input type="checkbox" id="VezdeKakDoma" onchange="runCascade('VezdeKakDoma')"><span class="slider"></span></label></div></div>
     </section>
-
-  </div> 
+  </div>
   
   <!-- Right Column -->
   <div class="sidebar-column">
@@ -369,6 +242,7 @@
     </div>
 </div>
 
+<!-- INFO MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)"><div class="modal-content"><span class="modal-close" onclick="closeModal(event, true)">&times;</span><div class="modal-text" id="modalText"></div></div></div>
 <div class="modal-overlay" id="managerModal" onclick="closeManagerModal(event)"><div class="modal-content"><span class="modal-close" onclick="closeManagerModal(event, true)">&times;</span><span class="modal-title">Контактные данные</span><div class="manager-form"><div class="form-group"><label>ФИО Менеджера</label><input type="text" id="mgrName" placeholder="Иванов Иван Иванович" oninput="formatName(this)"></div><div class="form-group"><label>Телефон</label><input type="text" id="mgrPhone" placeholder="+7 (999) 999-99-99" oninput="formatPhone(this)"></div><div class="form-group"><label>Email</label><input type="email" id="mgrEmail" placeholder="manager@uiscom.ru" onblur="validateEmail(this)" oninput="this.classList.remove('invalid'); this.value = this.value.replace(/[^a-zA-Z0-9@._-]/g, '');"></div><button class="btn-manager-print" onclick="printKP()">Сформировать и напечатать</button></div></div></div>
 <div class="modal-overlay" id="selectModalOverlay" onclick="closeSelectModal(event)"><div class="modal-content"><span class="modal-close" onclick="closeSelectModal(event, true)">&times;</span><span class="modal-title" id="selectModalTitle">Выбор</span><div class="modal-options-list" id="selectModalOptions"></div></div></div>
@@ -392,7 +266,7 @@
     <div id="tooltip-save">- Автоматический перезвон по пропущенным<br>- Автотегирование<br>- Уведомления по E-mail и SMS (SMS — 3.7 руб/шт)<br>- Дашборд с аналитикой по звонкам</div>
     <div id="tooltip-home">Автоматический выбор номера при исходящих звонках</div>
     <div id="tooltip-min8800">Расходуется на звонки с номерами 8-800</div>
-    <div id="tooltip-guarantee">Будет "заморожен" на счете как гарантия оплаты и возвращен или учтен при закрытии договора.</div>
+    <div id="tooltip-guarantee">Будет "заморожен" на счете как гарантия оплаты и возвращен или учтен при закрытии договора. <br>Максимальный порог кредитного лимита: <b>${maxLimit.toLocaleString('ru-RU')} руб.</b></div>
     <div id="tooltip-widget">Интеграция аналитики рекламы с виджетами клиента</div>
     <div id="tooltip-connect">Разово за подключаемые номера и/или FMC-сим карты</div>
     <div id="tooltip-delivery">Разово за один адрес</div>
@@ -422,7 +296,7 @@
     function formatPhone(i) { let v = i.value.replace(/\D/g, ''); if(v.length){ if(v[0]==='8'||v[0]==='7') v=v.substring(1); let f='+7 '; if(v.length>0) f+='('+v.substring(0,3); if(v.length>=4) f+=') '+v.substring(3,6); if(v.length>=7) f+='-'+v.substring(6,8); if(v.length>=9) f+='-'+v.substring(8,10); i.value = f; } else i.value=''; }
     function validateEmail(i) { const r = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/; if(!r.test(i.value) && i.value!=="") { i.classList.add('invalid'); return false; } i.classList.remove('invalid'); return true; }
 
-    /* PRINT LOGIC START */
+    /* PRINT LOGIC START - FIXED FOR TELEGRAM */
     function printKP() {
         const nameInput = document.getElementById('mgrName');
         const phoneInput = document.getElementById('mgrPhone');
@@ -506,8 +380,8 @@
         });
 
         const totalsData = {
-            monthly: document.getElementById('total-monthly').textContent + " ₽ / мес", // Добавляем хвост, так как на главной он отделен
-            minimal: document.getElementById('total-minimal').textContent, // Уже с хвостом
+            monthly: document.getElementById('total-monthly').textContent + " ₽ / мес", // Добавляем хвост
+            minimal: document.getElementById('total-minimal').textContent, // Уже с хвостом из updateTotals
             minimalDesc: document.getElementById('tooltip-min8800').innerHTML,
             connection: document.getElementById('total-connection').textContent,
             connectDesc: document.getElementById('tooltip-connect').innerHTML,
@@ -520,13 +394,12 @@
         const json = JSON.stringify({ manager: managerData, sections: sectionsData, totals: totalsData });
         // Correct encoding for URL
         const payload = encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
+        // ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ РЕАЛЬНУЮ К ФАЙЛУ pdf_export.html
         const exportUrl = 'https://gunevgeniy.github.io/test/pdf_export.html?payload=' + payload;
 
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-             window.Telegram.WebApp.openLink(exportUrl, {try_instant_view: false});
-        } else {
-             window.open(exportUrl, '_blank');
-        }
+        // Прямое использование window.open с _blank и noopener, как просили
+        window.open(exportUrl, "_blank", "noopener");
+        
         document.getElementById('managerModal').classList.remove('open');
     }
     /* PRINT LOGIC END */
@@ -549,7 +422,7 @@
             set: (id, value) => { const el = document.getElementById(id); if (!el) return; const current = el.type === "checkbox" ? el.checked : el.value; if (current == value || manualChanges.has(id)) return; if (el.type === "checkbox") el.checked = value; else el.value = value; cascadeQueue.push(id); },
             select: (id, value) => { const el = document.getElementById(id); if (!el || el.value === value || manualChanges.has(id)) return; el.value = value; updateSelectTrigger(id); cascadeQueue.push(id); }
         };
-        // Simplified Logic Rules (Full Logic in previous responses, condensed here for size but functionally identical)
+        // Simplified Logic Rules (Condensed)
         const rules = {
              VATS: (c) => { if(getCheckbox("VATS")){ c.select("DlitelnostHraneniyaVATS","1 неделя"); if(getNumber("KolvoSotrudnikovVATS")<3)c.set("KolvoSotrudnikovVATS",3); if(getNumber("LiniyGrupovogoVizova")<3)c.set("LiniyGrupovogoVizova",3); if(getNumber("LiniyIshodyashihZvonkov")<30)c.set("LiniyIshodyashihZvonkov",30); } else { c.set("KolvoSotrudnikovVATS",0); c.set("LiniyGrupovogoVizova",0); c.set("LiniyIshodyashihZvonkov",0); c.set("KolvoSIPTrankov",0); c.set("KolvoSIPURI",0); c.set("KolvoSIPAkkauntov",0); c.set("NomeraVATS",0); c.set("NomeraVATS8800",0); c.set("KolvoSvoihNomerov",0); c.set("KolvoFMC",0); c.set("VATSPRO",false); c.select("DlitelnostHraneniyaVATS",0); c.select("KanalnostSIPTrankov",0); c.select("KanalnostSIPAkkauntov",0); c.select("TarifFMC","нет"); c.select("RegionDostavki","нет"); c.set("VneshnieATS",false); c.set("SpasenieKommunikatsiy",false); c.set("AvtoperezvonPoZayavkam",false); c.set("VezdeKakDoma",false); if(!getCheckbox("OMNI")&&!getCheckbox("AnalitikaProdaj")) c.set("AmoBitrix",false); c.set("IntegraciyaOtraslevie",false); if(getCheckbox("UvedomlenieOSobitiyah")&&!getCheckbox("OMNI")&&!getCheckbox("AR")) c.set("UvedomlenieOSobitiyah",false); } },
              VATSPRO: (c) => { if(getCheckbox("VATSPRO")&&!getCheckbox("VATS")) c.set("VATS",true); },
@@ -672,7 +545,6 @@
                 if(String(val).includes("уменьшите")) { b.textContent = val; b.style.color = "red"; }
                 return b;
             };
-
             if(costEl && costVal !== null) costEl.appendChild(createBadge(costVal, 'cost'));
             if(limitVal !== null) { if(limitEl && limitEl !== costEl) limitEl.appendChild(createBadge(limitVal, 'limit')); else if(costEl) costEl.appendChild(createBadge(limitVal, 'limit')); }
         });
@@ -721,7 +593,6 @@
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
     }
-    
     document.querySelectorAll('select').forEach(s => updateSelectTrigger(s.id));
     updateTotals();
 </script>
