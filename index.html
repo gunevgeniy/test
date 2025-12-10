@@ -470,14 +470,13 @@
   </style>
 </head>
 <body>
-<!-- Уведомление для мобильных -->
-<div id="mobile-toast" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(0,0,0,0.85); color: white; padding: 16px; border-radius: 12px; z-index: 99999; text-align: center; font-size: 14px; box-shadow: 0 5px 20px rgba(0,0,0,0.3);">
-    <div>⏳ <b>Формирование файла...</b></div>
-    <div style="margin-top: 8px; font-size: 12px; opacity: 0.9;">
-        Если скачивание не началось — значит браузер блокирует его (Telegram).<br>
-        Нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.
+<!-- Универсальное уведомление (Toast) -->
+<div id="mobile-toast" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(0,0,0,0.85); color: white; padding: 16px; border-radius: 12px; z-index: 99999; text-align: center; font-size: 14px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); transition: opacity 0.3s;">
+    <div id="toast-title" style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">⏳ Формирование файла...</div>
+    <div id="toast-message" style="font-size: 13px; opacity: 0.9; line-height: 1.4;">
+        Если скачивание не началось — нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.
     </div>
-    <button onclick="document.getElementById('mobile-toast').style.display='none'" style="margin-top: 10px; background: white; color: black; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">Понятно</button>
+    <button onclick="document.getElementById('mobile-toast').style.display='none'" style="margin-top: 15px; background: white; color: black; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">ОК</button>
 </div>
 <div class="bg-cloud"></div>
 
@@ -1584,12 +1583,27 @@
         window.scrollTo(0, 0);
     }
 
-async function printKP() {
-        // --- НАСТРОЙКИ ---
-        const SERVER_URL = "https://gunevgeniy-uis-pdf-server-eeac.twc1.net/generate-pdf";
-        // ------------------
+// Хелпер для показа красивых уведомлений
+    function showToast(title, message, duration = 5000) {
+        const toast = document.getElementById('mobile-toast');
+        document.getElementById('toast-title').innerHTML = title;
+        document.getElementById('toast-message').innerHTML = message;
+        
+        toast.style.display = 'block';
+        
+        // Авто-скрытие через duration миллисекунд
+        if (duration > 0) {
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, duration);
+        }
+    }
 
-        // 1. Сохраняем данные в ссылку (чтобы при переходе в браузер они остались)
+    async function printKP() {
+        // --- ВАШИ НАСТРОЙКИ ---
+        const SERVER_URL = "https://gunevgeniy-uis-pdf-server-eeac.twc1.net/generate-pdf";
+        // -----------------------
+
         saveStateToURL();
 
         const nameInput = document.getElementById('mgrName');
@@ -1726,12 +1740,10 @@ async function printKP() {
         document.getElementById('managerModal').classList.remove('open');
 
         // ===============================================
-        // ЛОГИКА ОТПРАВКИ И СКАЧИВАНИЯ
+        // ЛОГИКА ОТПРАВКИ
         // ===============================================
 
-        // 1. WebApp
         const isWebApp = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData && window.Telegram.WebApp.initData.length > 0);
-        // 2. Mobile (Любой)
         const isMobile = window.matchMedia('(max-width: 900px)').matches;
 
         if (isWebApp) {
@@ -1741,7 +1753,7 @@ async function printKP() {
             const userId = tg.initDataUnsafe?.user?.id;
 
             if (!userId) {
-                alert("Ошибка ID. Перезапустите бота.");
+                showToast("Ошибка", "Нет ID пользователя. Перезапустите бота.");
                 return;
             }
 
@@ -1765,34 +1777,38 @@ async function printKP() {
                 });
 
                 if (response.ok) {
-                    alert("КП успешно отправлено в чат!");
-                    tg.close();
+                    // --- КРАСИВОЕ УВЕДОМЛЕНИЕ ОБ УСПЕХЕ ---
+                    showToast("✅ Готово!", "КП успешно отправлено в чат с ботом.", 0);
+                    
+                    // Ждем 2.5 секунды, чтобы пользователь успел прочитать, и закрываем
+                    setTimeout(() => {
+                        tg.close();
+                    }, 4000);
                 } else {
-                    alert("Ошибка отправки.");
+                    showToast("Ошибка", "Сервер вернул ошибку при отправке. Повторите позже.");
                 }
             } catch (e) {
                 console.error(e);
-                alert("Ошибка сети:\n" + e.message);
+                showToast("Ошибка сети", e.message);
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
             }
 
         } else if (isMobile) {
-            // --- МОБИЛЬНЫЙ БРАУЗЕР (И Телеграм, и Хром) ---
+            // --- МОБИЛЬНЫЙ БРАУЗЕР ---
             
-            // 1. Показываем уведомление (для тех, кто в Телеграме)
-            // Оно появится сразу, чтобы пользователь знал, что делать, если скачивание не пойдет
-            document.getElementById('mobile-toast').style.display = 'block';
+            // 1. Показываем уведомление (висит 10 секунд)
+            showToast("⏳ Формирование файла...", "Если скачивание не началось — значит браузер блокирует его.<br>Нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.", 10000;
 
-            // 2. Сразу запускаем скачивание
+            // 2. Скачивание
             const element = document.getElementById('print-area');
             document.body.classList.add('pdf-mode');
             window.scrollTo(0, 0);
             
             const opt = {
               margin:       5,
-              filename:     'KP_UIS.pdf',
+              filename:     'UIS - коммерческое предложение.pdf',
               image:        { type: 'jpeg', quality: 0.98 },
               html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, scrollX: 0, windowWidth: 800 },
               jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
@@ -1800,15 +1816,12 @@ async function printKP() {
             };
 
             html2pdf().set(opt).from(element).save().then(function(){
-                // Если скачалось (Хром) - убираем класс и уведомление
                 document.body.classList.remove('pdf-mode');
-                // Можно скрыть уведомление через пару секунд, если успех,
-                // но лучше оставить, чтобы не мелькало
+                // Если скачалось (Хром) - можно скрыть тост раньше
                 setTimeout(() => {
-                   document.getElementById('mobile-toast').style.display = 'none';
-                }, 3000);
+                    document.getElementById('mobile-toast').style.display = 'none';
+                }, 4000); 
             }).catch(err => {
-                // Если ошибка - тоже убираем класс, уведомление остается висеть
                 document.body.classList.remove('pdf-mode');
             });
 
@@ -2546,7 +2559,7 @@ async function printKP() {
                 badge.textContent = isNum ? `${val.toLocaleString('ru-RU')} ₽${type === 'cost' ? ' / мес' : ''}` : val;
                 
                 // --- NEW FORMAT FOR LIMIT ---
-                if(type === 'limit' && isNum) badge.textContent = `+${val.toLocaleString('ru-RU')} ₽ / мес - расширение лимита`;
+                if(type === 'limit' && isNum) badge.textContent = `+${val.toLocaleString('ru-RU')} ₽ / мес - расширение`;
                 
                 if(String(val).includes("вкл")) badge.textContent = "Включено";
                 if(String(val).includes("уменьшите")) { badge.textContent = val; badge.style.color = "red"; }
@@ -2603,7 +2616,7 @@ async function printKP() {
             if (delPrice > 0) {
                 regionPlaceholder.className = 'price-badge cost';
                 // --- UPDATED REGION FORMAT ---
-                regionPlaceholder.textContent = `[+${delPrice.toLocaleString('ru-RU')} ₽ - доставка]`;
+                regionPlaceholder.textContent = '+' + delPrice.toLocaleString('ru-RU') + ' ₽ - доставка';
             } else {
                 regionPlaceholder.textContent = '';
                 regionPlaceholder.className = '';
