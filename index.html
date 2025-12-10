@@ -501,7 +501,7 @@
         const payload = encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
         
         // --- ПЕРЕХОД НА СТРАНИЦУ ЭКСПОРТА ---
-        const exportUrl = 'https://gunevgeniy.github.io/uis-calculator/pdf_export.html?payload=' + payload;
+        const exportUrl = 'https://jonathan-soulmate.github.io/pdf_export/pdf_export.html?payload=' + payload;
 
         // Метод 1: Telegram WebApp API (если доступен)
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
