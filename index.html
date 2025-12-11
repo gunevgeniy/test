@@ -1899,7 +1899,7 @@ function clearFmcBundles() {
                             <div style="font-size: 11px; color: #777; margin-top: 4px;">Тариф: ${tariffName}</div>
                         </td>
                         <td style="width:30%; vertical-align:middle;">
-                            <div class="print-row-value"><div class="price-badge cost">${costFormatted}</div></div>
+                            <div class="print-row-value"><div class="print-row-value">${costFormatted}</div></div>
                         </td>
                     </tr>`);
                 });
@@ -2895,7 +2895,8 @@ RegionDostavki: (context) => {
     <div class="fmc-subgroup" data-index="INDEX_ID" style="padding-top: 15px; margin-top: 30px; border-top: 1px dashed #ddd;">
         <div class="fmc-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; padding-bottom: 8px;">
              <div>Набор SIM #<span class="bundle-num">1</span></div>
-             <button type="button" class="stepper-btn remove-bundle-btn" style="width: 30px; height: 30px; background: #FFEDEA; color: #E74C3C;" onclick="removeFmcBundle('INDEX_ID')">
+             <!-- Добавили saveStateToURL() при удалении -->
+             <button type="button" class="stepper-btn remove-bundle-btn" style="width: 30px; height: 30px; background: #FFEDEA; color: #E74C3C;" onclick="removeFmcBundle('INDEX_ID'); saveStateToURL()">
                  −
              </button>
         </div>
@@ -2909,7 +2910,8 @@ RegionDostavki: (context) => {
             <div class="control-wrapper">
                 <div class="stepper">
                     <button type="button" class="stepper-btn" onclick="stepInput('KolvoFMC_INDEX_ID', -1)">−</button>
-                    <input type="text" inputmode="numeric" class="stepper-input" id="KolvoFMC_INDEX_ID" value="0" onchange="runCascade('KolvoFMC_INDEX_ID')">
+                    <!-- ДОБАВЛЕНО: saveStateToURL() в onchange -->
+                    <input type="text" inputmode="numeric" class="stepper-input" id="KolvoFMC_INDEX_ID" value="0" onchange="runCascade('KolvoFMC_INDEX_ID'); saveStateToURL()">
                     <button type="button" class="stepper-btn" onclick="stepInput('KolvoFMC_INDEX_ID', 1)">+</button>
                 </div>
             </div>
@@ -2923,7 +2925,8 @@ RegionDostavki: (context) => {
             </div>
             <div class="control-wrapper">
                 <div class="custom-select-trigger" onclick="openSelectModal('TarifFMC_INDEX_ID', 'Тариф FMC')">нет</div>
-                <select id="TarifFMC_INDEX_ID" class="hidden-native-select" onchange="runCascade('TarifFMC_INDEX_ID')">
+                <!-- ДОБАВЛЕНО: saveStateToURL() в onchange -->
+                <select id="TarifFMC_INDEX_ID" class="hidden-native-select" onchange="runCascade('TarifFMC_INDEX_ID'); saveStateToURL()">
                     <option value="нет">нет</option>
                     <option value="200 минут, 1Гб интернета">200 минут, 1Гб интернета</option>
                     <option value="600 минут, 5Гб интернета">600 минут, 5Гб интернета</option>
