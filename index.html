@@ -2027,7 +2027,7 @@
       VATS: (context) => {
         const val = getCheckbox("VATS");
         if (val === true) {
-          context.select("DlitelnostHraneniyaVATS", "1 неделя");
+          if (getSelect("DlitelnostHraneniyaVATS") === "0") context.select("DlitelnostHraneniyaVATS", "1 неделя");
           if (getNumber("KolvoSotrudnikovVATS") < 3) context.set("KolvoSotrudnikovVATS", 3);
           if (getNumber("LiniyGrupovogoVizova") < 3) context.set("LiniyGrupovogoVizova", 3);
           if (getNumber("LiniyIshodyashihZvonkov") < 30) context.set("LiniyIshodyashihZvonkov", 30);
@@ -2044,9 +2044,9 @@
           context.set("KolvoFMC", 0);
 
           context.set("VATSPRO", false);
-          context.select("DlitelnostHraneniyaVATS", 0);
-          context.select("KanalnostSIPTrankov", 0);
-          context.select("KanalnostSIPAkkauntov", 0);
+          context.select("DlitelnostHraneniyaVATS", "0");
+          context.select("KanalnostSIPTrankov", "0");
+          context.select("KanalnostSIPAkkauntov", "0");
           context.select("TarifFMC", "нет");
           context.select("RegionDostavki", "нет");
 
