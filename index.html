@@ -1288,10 +1288,10 @@
 <div class="modal-overlay" id="managerModal" onclick="closeManagerModal(event)">
     <div class="modal-content">
         <span class="modal-close" onclick="closeManagerModal(event, true)">&times;</span>
-        <span class="modal-title">Контактные данные</span>
+        <span class="modal-title">Данные для подписи в КП</span>
         <div class="manager-form">
             <div class="form-group">
-                <label>ФИО Менеджера</label>
+                <label>Менеджер</label>
                 <input type="text" id="mgrName" placeholder="Иванов Иван Иванович" oninput="formatName(this)">
             </div>
             <div class="form-group">
@@ -1303,6 +1303,9 @@
                 <input type="email" id="mgrEmail" placeholder="manager@uiscom.ru" onblur="validateEmail(this)" oninput="this.classList.remove('invalid'); this.value = this.value.replace(/[^a-zA-Z0-9@._-]/g, '');">
             </div>
             <button type="button" class="btn-manager-print" onclick="printKP()">Сформировать и напечатать</button>
+            <div style="font-size: 10px; color: #999; margin-top: 8px; line-height: 1.3; text-align: center;">
+    Нажимая кнопку, вы даете согласие на обработку введенных данных в целях формирования PDF-документа. Данные не сохраняются на сервере.
+</div>
         </div>
     </div>
 </div>
@@ -2671,6 +2674,11 @@
         const params = new URLSearchParams();
 
         document.querySelectorAll('input, select').forEach(el => {
+            // --- НОВАЯ ПРОВЕРКА ---
+            if (el.id === 'mgrName' || el.id === 'mgrPhone' || el.id === 'mgrEmail') {
+                return; // Игнорируем поля с ПД
+            }
+            // ---------------------
             if (!el.id || el.id.startsWith('mobile-') || el.id.startsWith('total-') || el.id.startsWith('cost-') || el.id.startsWith('limit-')) return;
             
             let val = null;
