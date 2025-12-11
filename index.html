@@ -373,7 +373,7 @@
         width: 750px !important; 
         max-width: 750px !important;
         margin: 0 !important;
-        padding: 20px !important; 
+        padding: 20px 30px 20px 20px !important; 
         box-sizing: border-box !important;
         min-height: 100vh;
         z-index: 99999;
@@ -397,9 +397,24 @@
         padding: 15px 20px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         background: #fff;
+        position: relative;
     }
     
-    .print-section-title { display: none; }
+    .print-section-title { 
+        display: block; /* Было none, но в JS мы удаляем display:none при печати, тут зададим явно */
+        font-weight: 700; 
+        font-size: 14px; 
+        color: var(--color-primary); 
+        text-transform: uppercase; 
+        margin-bottom: 15px; 
+        border-bottom: 2px solid #eee; 
+        padding-bottom: 8px;
+        
+        /* ГЛАВНОЕ: Клеим заголовок к следующему элементу (таблице) */
+        page-break-after: avoid; 
+        break-after: avoid; 
+    }
+    
 
     .print-table { width: 100%; border-collapse: collapse; }
     .print-table td { padding: 10px 5px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
