@@ -2,10 +2,8 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-    <!-- ЗАПРЕТ ИНДЕКСАЦИИ -->
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="yandex" content="noindex, nofollow">
-  <!-- /ЗАПРЕТ ИНДЕКСАЦИИ -->
   <title>Калькулятор стоимости сервиса UIS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -255,8 +253,9 @@
     .form-group input { width: 100%; padding: 12px; border: 1px solid #D0D0D0; border-radius: 10px; font-size: 15px; outline: none; transition: border 0.2s; }
     .form-group input:focus { border-color: var(--color-primary); }
     .form-group input.invalid { border-color: #ff4d4f; background: #fff1f0; }
-    .btn-manager-print { width: 100%; padding: 14px; background: var(--color-primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 16px; margin-top: 10px; }
+    .btn-manager-print { width: 100%; padding: 14px; background: var(--color-primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 16px; margin-top: 10px; transition: all 0.2s; }
     .btn-manager-print:hover { background: #000088; }
+    .btn-manager-print:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* ========================================= */
     /* NEW BEAUTIFUL TOAST (MODAL STYLE) */
@@ -363,7 +362,7 @@
     .pdf-mode .bg-cloud, 
     .pdf-mode .bottom-sheet, 
     .pdf-mode .modal-overlay, 
-    .pdf-mode .expert-toggle-btn,
+    .pdf-mode .expert-toggle-btn, 
     .pdf-mode #mobile-toast { display: none !important; }
     
     .pdf-mode #print-area { 
@@ -482,7 +481,7 @@
         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
     })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105781169', 'ym');
 
-    ym(105781169, 'init', {ssr:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    ym(105781169, 'init', {ssr:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/105781169" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
@@ -501,12 +500,7 @@
 
 <div class="bg-cloud"></div>
 
-<!-- (БЛОК С КАРТОЧКАМИ - ВСТАВЬТЕ СЮДА ВЕСЬ ВАШ <div class="layout-wrapper"> ... </div>) -->
-<!-- Я не дублирую его, чтобы код влез в сообщение, он у вас есть -->
 <div class="layout-wrapper">
-  <!-- Вставьте сюда всё содержимое layout-wrapper из предыдущего сообщения -->
-  <!-- ... Контент ... -->
-  <!-- ... Контент ... -->
   
   <!-- Left Column: Options -->
   <div class="main-column">
@@ -655,69 +649,43 @@
       </div>
 
       <!-- FMC GROUP -->
-      <div class="fmc-container">
-          <div class="fmc-title">Мобильная связь (FMC)</div>
-          
-          <div class="fmc-subgroup">
-              <div class="option-row">
-                  <div class="option-info">
-                      <div class="option-name">Кол-во сим карт <span class="info-icon" onclick="openTooltip('tooltip-fmc')">i</span></div>
-                  </div>
-                  <div class="control-wrapper">
-                      <div class="stepper">
-                          <button class="stepper-btn" onclick="stepInput('KolvoFMC', -1)">−</button>
-                          <input type="text" inputmode="numeric" class="stepper-input" id="KolvoFMC" value="0" onchange="runCascade('KolvoFMC')">
-                          <button class="stepper-btn" onclick="stepInput('KolvoFMC', 1)">+</button>
-                      </div>
-                  </div>
-              </div>
+<div class="fmc-container">
+    <div class="fmc-title">Мобильная связь (FMC)</div>
+    
+    <!-- Контейнер для динамических наборов (Сим-карта + Тариф) -->
+    <div id="fmc-bundles-container">
+        <!-- Сюда JS добавит первый набор при загрузке страницы -->
+    </div>
+    
+    <!-- КНОПКА ДОБАВЛЕНИЯ НАБОРА -->
+    <div style="text-align: center; margin: 15px 0 20px;">
+        <button id="add-fmc-bundle-btn" class="stepper-btn" style="width: auto; padding: 5px 15px; font-size: 14px; background: #E6F0FF; color: var(--color-primary); border: 1px solid var(--color-primary);" onclick="addFmcBundle(false, '200 минут, 1Гб интернета', 1)">
+            + Добавить набор SIM
+        </button>
+    </div>
 
-              <div class="option-row stacked">
-                  <div class="option-info">
-                      <div class="option-name">Тариф FMC сим карт</div>
-                      <div class="option-meta"><span id="cost-TarifFMC"></span><span id="limit-TarifFMC"></span></div>
-                  </div>
-                  <div class="control-wrapper">
-                      <div class="custom-select-trigger" onclick="openSelectModal('TarifFMC', 'Тариф FMC')">нет</div>
-                      <select id="TarifFMC" class="hidden-native-select" onchange="runCascade('TarifFMC')">
-                        <option value="нет">нет</option>
-                        <option value="200 минут, 1Гб интернета">200 минут, 1Гб интернета</option>
-                        <option value="600 минут, 5Гб интернета">600 минут, 5Гб интернета</option>
-                        <option value="800 минут, 10Гб интернета">800 минут, 10Гб интернета</option>
-                        <option value="2000 минут, 20Гб интернета">2000 минут, 20Гб интернета</option>
-                        <option value="15 минут, 0,2Гб интернета">15 минут, 0,2Гб интернета</option>
-                      </select>
-                  </div>
-              </div>
-              
-              <div class="fmc-cost-row">
-                  <span id="cost-KolvoFMC"></span><span id="limit-KolvoFMC"></span>
-              </div>
-          </div>
-
-          <div class="option-row stacked">
-              <div class="option-info">
-                  <div class="option-name">Регион доставки <span class="info-icon" onclick="openTooltip('tooltip-delivery-main')">i</span></div>
-                  <div class="option-meta"><span id="cost-RegionDostavki"></span><span id="limit-RegionDostavki"></span></div>
-              </div>
-              <div class="control-wrapper">
-                  <div class="custom-select-trigger" onclick="openSelectModal('RegionDostavki', 'Регион доставки')">нет</div>
-                  <select id="RegionDostavki" class="hidden-native-select" onchange="runCascade('RegionDostavki')">
-                    <option value="нет">нет</option>
-                    <option value="Москва и мск. обл.">Москва и мск. обл.</option>
-                    <option value="Санкт-Петербург и лен. обл.">Санкт-Петербург и лен. обл.</option>
-                    <option value="Центральная Россия, Поволжье">Центральная Россия, Поволжье</option>
-                    <option value="Юг, Урал, Сибирь">Юг, Урал, Сибирь</option>
-                    <option value="Дальний Восток">Дальний Восток</option>
-                  </select>
-              </div>
-          </div>
-          
-          <div class="fmc-cost-row">
-              <span id="cost-RegionDostavki-placeholder"></span>
-          </div>
-      </div>
-      
+    <!-- ТОЛЬКО РЕГИОН ДОСТАВКИ (Он один на все сим-карты) -->
+    <div class="option-row stacked" style="border-top: 1px solid #eef2f6;">
+        <div class="option-info">
+            <div class="option-name">Регион доставки <span class="info-icon" onclick="openTooltip('tooltip-delivery-main')">i</span></div>
+            <div class="option-meta"><span id="cost-RegionDostavki"></span></div>
+        </div>
+        <div class="control-wrapper">
+            <div class="custom-select-trigger" onclick="openSelectModal('RegionDostavki', 'Регион доставки')">нет</div>
+            <select id="RegionDostavki" class="hidden-native-select" onchange="runCascade('RegionDostavki')">
+                <option value="нет">нет</option>
+                <option value="Москва и мск. обл.">Москва и мск. обл.</option>
+                <option value="Санкт-Петербург и лен. обл.">Санкт-Петербург и лен. обл.</option>
+                <option value="Центральная Россия, Поволжье">Центральная Россия, Поволжье</option>
+                <option value="Юг, Урал, Сибирь">Юг, Урал, Сибирь</option>
+                <option value="Дальний Восток">Дальний Восток</option>
+            </select>
+        </div>
+    </div>
+    <div class="fmc-cost-row">
+        <span id="cost-RegionDostavki-placeholder"></span>
+    </div>
+</div>
       <!-- EXPERT TOGGLE -->
       <div style="text-align:center;">
           <div class="expert-toggle-btn" onclick="toggleExpert()">
@@ -1207,8 +1175,6 @@
   
   <!-- Right Column: Sticky Sidebar (Desktop Only) -->
   <div class="sidebar-column">
-    <!-- Итоги -->
-    <!-- ... (код сайдбара и модалок остался тем же) ... -->
     <div class="summary-card">
       <div class="summary-total">
         <div class="summary-total-label">Ежемесячный платёж</div>
@@ -1300,9 +1266,9 @@
             </div>
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" id="mgrEmail" placeholder="manager@uiscom.ru" onblur="validateEmail(this)" oninput="this.classList.remove('invalid'); this.value = this.value.replace(/[^a-zA-Z0-9@._-]/g, '');">
+                <input type="email" id="mgrEmail" placeholder="manager@uiscom.ru" oninput="validateEmailAndToggleBtn(this)">
             </div>
-            <button type="button" class="btn-manager-print" onclick="printKP()">Сформировать и напечатать</button>
+            <button type="button" id="btn-generate-pdf" class="btn-manager-print" onclick="printKP()">Сформировать и напечатать</button>
             <div style="font-size: 10px; color: #999; margin-top: 8px; line-height: 1.3; text-align: center;">
     Нажимая кнопку, вы даете согласие на обработку введенных данных в целях формирования PDF-документа. Данные не сохраняются на сервере.
 </div>
@@ -1325,7 +1291,7 @@
 <div id="print-area">
     <div class="print-header">
         <div class="print-logo">UIS</div>
-        <div class="print-title">Коммерческое предложение</div>
+        <div class="print-title">Коммерческое предложение  </div>
     </div>
     
     <div id="print-manager-block" class="print-manager" style="display:none;">
@@ -1541,6 +1507,9 @@
     /* --- MANAGER MODAL & PRINT LOGIC --- */
     function openManagerModal() {
         document.getElementById('managerModal').classList.add('open');
+        // Validate button state on open
+        const emailInput = document.getElementById('mgrEmail');
+        validateEmailAndToggleBtn(emailInput);
     }
     
     function closeManagerModal(e, force) {
@@ -1570,18 +1539,135 @@
         }
     }
 
-    function validateEmail(input) {
+    function validateEmailAndToggleBtn(input) {
+        const btn = document.getElementById('btn-generate-pdf');
+        const val = input.value.trim();
         const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/;
-        if (!regex.test(input.value) && input.value !== "") {
+        
+        // Allow empty, but if filled, must be valid
+        if (val !== "" && !regex.test(val)) {
             input.classList.add('invalid');
-            return false;
+            btn.disabled = true;
         } else {
             input.classList.remove('invalid');
-            return true;
+            btn.disabled = false;
         }
     }
 
-    // --- НОВОЕ УВЕДОМЛЕНИЕ (КРАСИВОЕ) ---
+// --- НОВАЯ ЛОГИКА ДИНАМИЧЕСКИХ FMC НАБОРОВ ---
+
+// Глобальный счетчик для обеспечения уникальности ID (не сбрасывается при удалении)
+let fmcUniqueIdCounter = 0; 
+const MAX_FMC_BUNDLES = 5;
+
+// Добавляет новый набор по шаблону
+function addFmcBundle(isRestoring = false, initialTarif = '200 минут, 1Гб интернета', initialCount = 1) {
+    const currentCount = document.querySelectorAll('#fmc-bundles-container > .fmc-subgroup').length;
+    if (currentCount >= MAX_FMC_BUNDLES) return;
+
+    // Включаем ВАТС, если она выключена, ПЕРЕД добавлением DOM, чтобы не было конфликтов
+    if (!isRestoring && !getCheckbox("VATS")) {
+        const vatsCheckbox = document.getElementById("VATS");
+        if(vatsCheckbox) {
+             vatsCheckbox.checked = true;
+             runCascade("VATS");
+        }
+    }
+
+    fmcUniqueIdCounter++;
+    const newId = fmcUniqueIdCounter;
+    const container = document.getElementById('fmc-bundles-container');
+    
+    // Клонируем содержимое шаблона
+    const templateContent = document.getElementById('fmc-bundle-template').content;
+    const newBundle = templateContent.cloneNode(true).querySelector('.fmc-subgroup');
+
+    // 1. Замена ID и атрибутов внутри клонированного элемента
+    newBundle.setAttribute('data-index', newId);
+    newBundle.innerHTML = newBundle.innerHTML.replace(/INDEX_ID/g, newId);
+    newBundle.querySelector('.bundle-num').textContent = currentCount + 1;
+
+    container.appendChild(newBundle); 
+
+    // 2. Установка начальных значений для нового набора
+    const countInput = document.getElementById('KolvoFMC_' + newId);
+    const tarifSelect = document.getElementById('TarifFMC_' + newId);
+    
+    // --- ИСПРАВЛЕНИЕ: Явно устанавливаем значения ---
+    if(countInput) {
+        countInput.setAttribute('value', initialCount);
+        countInput.value = initialCount;
+    }
+    if(tarifSelect) {
+        tarifSelect.value = initialTarif;
+    }
+
+    // 3. Обновление нумерации и кнопок
+    updateFmcLabels();
+    
+    if (currentCount + 1 >= MAX_FMC_BUNDLES) {
+        document.getElementById('add-fmc-bundle-btn').style.display = 'none';
+    }
+    
+    // Обновление кастомных селектов
+    newBundle.querySelectorAll('select').forEach(s => updateSelectTrigger(s.id));
+    
+    // 4. Запускаем каскад (это должно установить минимум, если нужно)
+    if (!isRestoring) {
+        runCascade('KolvoFMC_' + newId); // Запускаем с поля кол-ва
+    } else {
+        // При восстановлении просто пересчитываем итоги
+        runCascade('KolvoFMC_' + newId); 
+    }
+}
+
+// Удаляет набор
+function removeFmcBundle(id) {
+    const bundle = document.querySelector(`[data-index="${id}"]`);
+    if (bundle) {
+        // Обнуляем значения чтобы убрать стоимость перед удалением
+        const input = document.getElementById('KolvoFMC_' + id);
+        if(input) input.value = 0;
+        
+        bundle.remove();
+        
+        updateFmcLabels();
+        document.getElementById('add-fmc-bundle-btn').style.display = 'block';
+
+        // Если все FMC удалены, инициируем очистку Региона доставки
+        if (document.querySelectorAll('#fmc-bundles-container > .fmc-subgroup').length === 0) {
+            const reg = document.getElementById('RegionDostavki');
+            if(reg) {
+                reg.value = 'нет';
+                updateSelectTrigger('RegionDostavki');
+            }
+        }
+        
+        // Важно: запускаем пересчет после удаления DOM
+        updateTotals();
+    }
+}
+
+// Обновляет нумерацию и скрывает/показывает кнопки удаления
+function updateFmcLabels() {
+    const bundles = document.querySelectorAll('#fmc-bundles-container > .fmc-subgroup');
+    bundles.forEach((bundle, index) => {
+        const numEl = bundle.querySelector('.bundle-num');
+        if (numEl) numEl.textContent = index + 1;
+        
+        const removeBtn = bundle.querySelector('.remove-bundle-btn');
+        if(removeBtn) removeBtn.style.display = 'flex';
+    });
+}
+
+function clearFmcBundles() {
+    const container = document.getElementById('fmc-bundles-container');
+    container.innerHTML = '';
+    fmcUniqueIdCounter = 0; // Сбрасываем счетчик для чистого старта
+    document.getElementById('add-fmc-bundle-btn').style.display = 'block';
+}
+
+// Хелпер для показа красивых уведомлений
     function showToast(type, title, message, duration = 0) {
         const toast = document.getElementById('mobile-toast');
         const iconEl = document.getElementById('toast-icon');
@@ -1590,6 +1676,8 @@
         
         // Сброс классов
         toast.className = ''; 
+        toast.classList.add('visible'); // Показываем фон
+        
         if (type === 'success') {
             toast.classList.add('toast-type-success');
             iconEl.textContent = '✅';
@@ -1603,9 +1691,6 @@
         
         titleEl.innerHTML = title;
         msgEl.innerHTML = message;
-        
-        // Показываем
-        toast.classList.add('visible');
         
         // Авто-скрытие (если duration > 0)
         if (duration > 0) {
@@ -1625,17 +1710,19 @@
         }
     }
 
+    // --- Sanitization Helper (STRIP TAGS) ---
+    function escapeHtml(text) {
+        if (!text) return text;
+        // Removes <...> entirely to be safe
+        return text.replace(/<[^>]*>?/gm, '');
+    }
+
     async function printKP() {
-        // --- ОТПРАВКА ЦЕЛИ В МЕТРИКУ ---
-        // Замените XXXXXXXX на ваш номер счетчика
         if (typeof ym === 'function') {
             ym(105781169,'reachGoal','print_kp');
         }
-        // ------------------------------
 
-        // --- ВАШИ НАСТРОЙКИ ---
         const SERVER_URL = "https://gunevgeniy-uis-pdf-server-eeac.twc1.net/generate-pdf";
-        // -----------------------
 
         saveStateToURL();
 
@@ -1643,14 +1730,18 @@
         const phoneInput = document.getElementById('mgrPhone');
         const emailInput = document.getElementById('mgrEmail');
         
-        if (emailInput.value !== "" && !validateEmail(emailInput)) {
+        // FIX 1: Double check email inside printKP too
+        const emailVal = emailInput.value.trim();
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/;
+        if (emailVal !== "" && !emailRegex.test(emailVal)) {
             alert("Пожалуйста, введите корректный Email");
             return;
         }
 
-        const name = nameInput.value.trim();
-        const phone = phoneInput.value.trim();
-        const email = emailInput.value.trim();
+        // Apply Sanitization
+        const name = escapeHtml(nameInput.value.trim());
+        const phone = escapeHtml(phoneInput.value.trim());
+        const email = escapeHtml(emailVal);
         
         const mgrBlock = document.getElementById('print-manager-block');
         if (name || phone || email) {
@@ -1667,15 +1758,23 @@
         container.innerHTML = ''; 
         const sections = document.querySelectorAll('.card');
         
+        // --- Flag to track if we've added the FMC section to avoid duplication if multiple cards match logic
+        let fmcSectionAdded = false;
+
         sections.forEach(card => {
             const titleEl = card.querySelector('.card-title');
             if (!titleEl) return;
             const titleText = titleEl.textContent.trim();
             const optionRows = card.querySelectorAll('.option-row');
             const tableRows = [];
-            let pendingFMC = null;
+            
+            // Check if this card contains FMC elements (it is the VATS card)
+            const hasFMC = card.querySelector('.fmc-container');
 
             optionRows.forEach(row => {
+                // SKIP FMC ROWS in the main card loop
+                if (row.closest('.fmc-container')) return;
+
                 const checkbox = row.querySelector('input[type="checkbox"]');
                 const number = row.querySelector('input[type="number"], input.stepper-input');
                 const select = row.querySelector('select');
@@ -1705,12 +1804,9 @@
                     let descText = "";
                     if (infoIcon) {
                         const onClickAttr = infoIcon.getAttribute('onclick');
-                        if (onClickAttr) {
-                            const match = onClickAttr.match(/'([^']+)'/);
-                            if (match && match[1]) {
-                                const tooltipContent = document.getElementById(match[1]);
-                                if (tooltipContent) descText = tooltipContent.innerHTML;
-                            }
+                        if (match = onClickAttr.match(/'([^']+)'/)) {
+                            const tooltipContent = document.getElementById(match[1]);
+                            if (tooltipContent) descText = tooltipContent.innerHTML;
                         }
                     }
                     const metaBadges = row.querySelectorAll('.price-badge');
@@ -1718,42 +1814,88 @@
                     metaBadges.forEach(badge => { costHtml += `<div>${badge.textContent}</div>`; });
 
                     if (checkbox && (checkbox.id === 'TgVkAvito' || checkbox.id === 'OMNIKnopka') || (number && number.id === 'KolvoSaitov')) {
-                         costHtml = `<div class="price-badge">безлимитно</div>`;
+                        costHtml = `<div class="price-badge">безлимитно</div>`;
                     }
-                    if (select && select.id === "RegionDostavki") {
-                        const regCost = document.getElementById('cost-RegionDostavki-placeholder');
-                        let costDisplay = "";
-                        if(regCost && regCost.textContent) costDisplay = `<div>${regCost.textContent}</div>`;
-                        tableRows.push(`<tr><td style="width:70%"><div class="print-row-name">${nameText}</div><div style="margin-top:4px; font-weight:400; color:#555; font-size:11px;">${valueText}</div>${descText ? `<div class="print-row-desc">${descText}</div>` : ''}</td><td style="width:30%"><div class="print-row-value">${costDisplay}</div></td></tr>`);
-                        return;
-                    }
-                    if (number && number.id === 'KolvoFMC') {
-                         const fmcCost = row.closest('.fmc-subgroup')?.querySelector('.fmc-cost-row .price-badge');
-                         let finalFmcCost = "";
-                         if(fmcCost) finalFmcCost = `<div>${fmcCost.textContent}</div>`;
-                         pendingFMC = { name: nameText, val: valueText, cost: finalFmcCost, desc: descText };
-                         return;
-                    }
-                    if (select && select.id === 'TarifFMC') {
-                        if (pendingFMC) {
-                            tableRows.push(`<tr><td style="width:70%"><div class="print-row-name">${pendingFMC.name} <span style="font-weight:400; color:#555;">(${pendingFMC.val})</span></div><div class="print-row-name" style="margin-top:6px;">${nameText} <span style="font-weight:400; color:#555;">(${valueText})</span></div></td><td style="width:30%; vertical-align:middle;"><div class="print-row-value">${pendingFMC.cost}</div></td></tr>`);
-                            pendingFMC = null;
-                        } else {
-                             tableRows.push(`<tr><td style="width:70%"><div class="print-row-name">${nameText} <span style="font-weight:400; color:#555;">(${valueText})</span></div></td><td style="width:30%"><div class="print-row-value">${costHtml}</div></td></tr>`);
-                        }
-                        return;
-                    }
+                    
                     tableRows.push(`<tr><td style="width:70%"><div class="print-row-name">${nameText} <span style="font-weight:400; color:#555;">(${valueText})</span></div>${descText ? `<div class="print-row-desc">${descText}</div>` : ''}</td><td style="width:30%"><div class="print-row-value">${costHtml}</div></td></tr>`);
                 }
             });
-            if (pendingFMC) {
-                 tableRows.push(`<tr><td style="width:70%"><div class="print-row-name">${pendingFMC.name} <span style="font-weight:400; color:#555;">(${pendingFMC.val})</span></div></td><td style="width:30%"><div class="print-row-value">${pendingFMC.cost}</div></td></tr>`);
-            }
+
+            // Add Card Section to PDF
             if (tableRows.length > 0) {
                 const sectionDiv = document.createElement('div');
                 sectionDiv.className = 'print-section';
                 sectionDiv.innerHTML = `<div class="print-section-title">${titleText}</div><table class="print-table"><tbody>${tableRows.join('')}</tbody></table>`;
                 container.appendChild(sectionDiv);
+            }
+
+            // --- PROCESS FMC SEPARATELY IF THIS CARD HAD IT ---
+            if (hasFMC && !fmcSectionAdded) {
+                const fmcRows = [];
+                const fmcAggregator = new Map(); // Key: TariffName, Val: {count, cost}
+                
+                // 1. Process Region
+                const regionSelect = document.getElementById("RegionDostavki");
+                if (regionSelect && regionSelect.value !== "нет") {
+                    const regCostEl = document.getElementById('cost-RegionDostavki-placeholder');
+                    let costDisplay = "";
+                    if(regCostEl && regCostEl.textContent) costDisplay = `<div>${regCostEl.textContent}</div>`;
+                    const descText = "Указана разовая стоимость доставки на один адрес"; 
+                    fmcRows.push(`<tr><td style="width:70%"><div class="print-row-name">Регион доставки</div><div style="margin-top:4px; font-weight:400; color:#555; font-size:11px;">${regionSelect.value}</div><div class="print-row-desc">${descText}</div></td><td style="width:30%"><div class="print-row-value">${costDisplay}</div></td></tr>`);
+                }
+
+                // 2. Process Bundles
+                const bundleDivs = document.querySelectorAll('.fmc-subgroup');
+                bundleDivs.forEach(bundle => {
+                    const id = bundle.getAttribute('data-index');
+                    const countInput = document.getElementById('KolvoFMC_' + id);
+                    const tariffSelect = document.getElementById('TarifFMC_' + id);
+                    
+                    if(countInput && tariffSelect) {
+                        const count = parseInt(countInput.value) || 0;
+                        const tariffName = tariffSelect.value;
+                        
+                        if (count > 0 && tariffName !== 'нет') {
+                            let pricePerSim = 0;
+                            switch (tariffName) {
+                                case "200 минут, 1Гб интернета": pricePerSim = 790; break;
+                                case "600 минут, 5Гб интернета": pricePerSim = 1290; break;
+                                case "800 минут, 10Гб интернета": pricePerSim = 1990; break;
+                                case "2000 минут, 20Гб интернета": pricePerSim = 4490; break;
+                                case "15 минут, 0,2Гб интернета": pricePerSim = 390; break;
+                            }
+                            const totalCost = pricePerSim * count;
+
+                            if (!fmcAggregator.has(tariffName)) {
+                                fmcAggregator.set(tariffName, { count: 0, cost: 0 });
+                            }
+                            const entry = fmcAggregator.get(tariffName);
+                            entry.count += count;
+                            entry.cost += totalCost;
+                        }
+                    }
+                });
+
+                fmcAggregator.forEach((data, tariffName) => {
+                    const costFormatted = data.cost.toLocaleString('ru-RU') + ' ₽ / мес';
+                    fmcRows.push(`<tr>
+                        <td style="width:70%">
+                            <div class="print-row-name">Количество сим карт <span style="font-weight:400; color:#555;">(${data.count} шт.)</span></div>
+                            <div style="font-size: 11px; color: #777; margin-top: 4px;">Тариф: ${tariffName}</div>
+                        </td>
+                        <td style="width:30%; vertical-align:middle;">
+                            <div class="print-row-value"><div class="price-badge cost">${costFormatted}</div></div>
+                        </td>
+                    </tr>`);
+                });
+
+                if (fmcRows.length > 0) {
+                    const fmcSectionDiv = document.createElement('div');
+                    fmcSectionDiv.className = 'print-section';
+                    fmcSectionDiv.innerHTML = `<div class="print-section-title">Мобильная связь (FMC)</div><table class="print-table"><tbody>${fmcRows.join('')}</tbody></table>`;
+                    container.appendChild(fmcSectionDiv);
+                    fmcSectionAdded = true;
+                }
             }
         });
 
@@ -1772,15 +1914,10 @@
 
         document.getElementById('managerModal').classList.remove('open');
 
-        // ===============================================
-        // ЛОГИКА ОТПРАВКИ И СКАЧИВАНИЯ
-        // ===============================================
-
         const isWebApp = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData && window.Telegram.WebApp.initData.length > 0);
         const isMobile = window.matchMedia('(max-width: 900px)').matches;
 
         if (isWebApp) {
-            // WebApp -> Сервер -> Бот
             const tg = window.Telegram.WebApp;
             tg.ready();
             const userId = tg.initDataUnsafe?.user?.id;
@@ -1811,7 +1948,6 @@
 
                 if (response.ok) {
                     showToast("success", "Готово!", "КП успешно отправлено в чат с ботом.", 0);
-                    // НЕ ЗАКРЫВАЕМ ПРИЛОЖЕНИЕ (tg.close убрали)
                 } else {
                     showToast("error", "Ошибка", "Сервер вернул ошибку при отправке. Повторите позже.");
                 }
@@ -1824,17 +1960,13 @@
             }
 
         } else if (isMobile) {
-            // --- МОБИЛЬНЫЙ БРАУЗЕР ---
-            
-            // 1. Показываем красивое уведомление
             showToast(
                 "loading",
                 "КП сформировано.", 
                 "Если скачивание PDF файла не началось — значит приложение блокирует его.<br>Нажмите <b>•••</b> сверху &rarr; <b>Открыть в браузере</b>.", 
-                0 // 0 = НЕ СКРЫВАТЬ АВТОМАТИЧЕСКИ
+                0 
             );
 
-            // 2. Скачивание
             const element = document.getElementById('print-area');
             document.body.classList.add('pdf-mode');
             window.scrollTo(0, 0);
@@ -1850,14 +1982,11 @@
 
             html2pdf().set(opt).from(element).save().then(function(){
                 document.body.classList.remove('pdf-mode');
-                // НЕ СКРЫВАЕМ УВЕДОМЛЕНИЕ ДАЖЕ ПРИ УСПЕХЕ
-                // Пользователь закроет сам
             }).catch(err => {
                 document.body.classList.remove('pdf-mode');
             });
 
         } else {
-            // --- ДЕСКТОП ---
             setTimeout(() => {
                 window.print();
             }, 300);
@@ -1881,6 +2010,9 @@
         if (vsego) vsego.value = 0;
 
         if (typeof manualChanges !== 'undefined') manualChanges.clear();
+        
+        clearFmcBundles();
+        
         updateTotals();
     }
 
@@ -1944,22 +2076,11 @@
         NomeraVATS: { cost: () => getNumber("NomeraVATS") * 300 },
         NomeraVATS8800: { cost: () => getNumber("NomeraVATS8800") * 590 },
         KolvoSvoihNomerov: { cost: () => { const val = getNumber("KolvoSvoihNomerov"); if (val < 1) return 0; if (val < 11) return val * 200; return 2000 + ((val - 10) * 100); } },
-        KolvoFMC: {
-            cost: () => {
-                const tarif = document.getElementById("TarifFMC")?.value || "";
-                const count = getNumber("KolvoFMC");
-                let price = 0;
-                switch (tarif) {
-                    case "200 минут, 1Гб интернета": price = 790; break;
-                    case "600 минут, 5Гб интернета": price = 1290; break;
-                    case "800 минут, 10Гб интернета": price = 1990; break;
-                    case "2000 минут, 20Гб интернета": price = 4490; break;
-                    case "15 минут, 0,2Гб интернета": price = 390; break;
-                }
-                return price * count;
-            }
-        },
+        
+        // --- ИСПРАВЛЕНИЕ 5 (из ТЗ): Считаем только расширение лимита ---
         NomeraVATSVsego: { limit: () => { const val = getNumber("NomeraVATSVsego"); return val < 4 ? 0 : (val - 3) * 100; } },
+        
+        KolvoFMC: { cost: () => 0 },
         OMNI: { cost: () => getCheckbox("OMNI") ? 2600 : 0 },
         KolvoSotrudnikovOMNI: {
             limit: () => {
@@ -2025,51 +2146,37 @@
 
     const rules = {
       VATS: (context) => {
-        const val = getCheckbox("VATS");
-        if (val === true) {
-          if (getSelect("DlitelnostHraneniyaVATS") === "0") context.select("DlitelnostHraneniyaVATS", "1 неделя");
-          if (getNumber("KolvoSotrudnikovVATS") < 3) context.set("KolvoSotrudnikovVATS", 3);
-          if (getNumber("LiniyGrupovogoVizova") < 3) context.set("LiniyGrupovogoVizova", 3);
-          if (getNumber("LiniyIshodyashihZvonkov") < 30) context.set("LiniyIshodyashihZvonkov", 30);
-        } else {
-          context.set("KolvoSotrudnikovVATS", 0);
-          context.set("LiniyGrupovogoVizova", 0);
-          context.set("LiniyIshodyashihZvonkov", 0);
-          context.set("KolvoSIPTrankov", 0);
-          context.set("KolvoSIPURI", 0);
-          context.set("KolvoSIPAkkauntov", 0);
-          context.set("NomeraVATS", 0);
-          context.set("NomeraVATS8800", 0);
-          context.set("KolvoSvoihNomerov", 0);
-          context.set("KolvoFMC", 0);
+    const val = getCheckbox("VATS");
+    if (val === true) {
+        if (getSelect("DlitelnostHraneniyaVATS") === "0") context.select("DlitelnostHraneniyaVATS", "1 неделя");
+        
+        if (getNumber("KolvoSotrudnikovVATS") < 3) context.set("KolvoSotrudnikovVATS", 3);
+        if (getNumber("LiniyGrupovogoVizova") < 3) context.set("LiniyGrupovogoVizova", 3);
+        if (getNumber("LiniyIshodyashihZvonkov") < 30) context.set("LiniyIshodyashihZvonkov", 30);
+    } else {
+        // --- ИСПРАВЛЕНИЕ 5 (выключение ВАТС очищает FMC) ---
+        const fmcContainer = document.getElementById('fmc-bundles-container');
+        if(fmcContainer) fmcContainer.innerHTML = ''; // Очищаем DOM
+        fmcUniqueIdCounter = 0; // Сбрасываем счетчик, но это не обязательно, главное DOM
+        updateFmcLabels(); 
 
-          context.set("VATSPRO", false);
-          context.select("DlitelnostHraneniyaVATS", "0");
-          context.select("KanalnostSIPTrankov", "0");
-          context.select("KanalnostSIPAkkauntov", "0");
-          context.select("TarifFMC", "нет");
-          context.select("RegionDostavki", "нет");
+        context.set("KolvoSotrudnikovVATS", 0);
+        context.set("LiniyGrupovogoVizova", 0);
+        context.set("LiniyIshodyashihZvonkov", 0);
+        context.set("KolvoSIPTrankov", 0);
+        context.set("KolvoSIPURI", 0);
+        context.set("KolvoSIPAkkauntov", 0);
+        context.set("NomeraVATS", 0);
+        context.set("NomeraVATS8800", 0);
+        context.set("KolvoSvoihNomerov", 0);
 
-          context.set("VneshnieATS", false);
-          context.set("SpasenieKommunikatsiy", false);
-          context.set("AvtoperezvonPoZayavkam", false);
-          context.set("VezdeKakDoma", false);
-
-          if (!getCheckbox("OMNI") && !getCheckbox("AnalitikaProdaj")) {
-            context.set("AmoBitrix", false);
-          }
-
-          context.set("IntegraciyaOtraslevie", false);
-
-          if (
-            getCheckbox("UvedomlenieOSobitiyah") === true &&
-            !getCheckbox("OMNI") &&
-            !getCheckbox("AR")
-          ) {
-            context.set("UvedomlenieOSobitiyah", false);
-          }
-        }
-      },
+        context.set("VATSPRO", false);
+        context.select("DlitelnostHraneniyaVATS", "0");
+        context.select("KanalnostSIPTrankov", "0");
+        context.select("KanalnostSIPAkkauntov", "0");
+        context.select("RegionDostavki", "нет");
+    }
+},
       VATSPRO: (context) => {
         if (getCheckbox("VATSPRO") && !getCheckbox("VATS")) {
           context.set("VATS", true);
@@ -2099,9 +2206,6 @@
         const val = document.getElementById("DlitelnostHraneniyaVATS")?.value;
         if (val !== "0" && !getCheckbox("VATS")) {
           context.set("VATS", true);
-        }
-        if (val === "0" && getCheckbox("VATS")) {
-          context.select("DlitelnostHraneniyaVATS", "1 неделя");
         }
       },
       LiniyGrupovogoVizova: (context) => {
@@ -2233,64 +2337,40 @@
           context.set("VATS", true);
         }
       },
-      KolvoFMC: (context) => {
-        const val = getNumber("KolvoFMC");
-        if (val > 0) {
-          if (!getCheckbox("VATS")) {
+      fmcDynamicRule: (context, id) => {
+    const isFmcField = id.startsWith('KolvoFMC_') || id.startsWith('TarifFMC_');
+    if (!isFmcField) return; 
+    
+    const index = id.split('_')[1];
+    const count = getNumber('KolvoFMC_' + index);
+    const tarif = getSelect('TarifFMC_' + index);
+    
+    // --- ИСПРАВЛЕНИЕ 2 (Удаление набора при 0 или нет) ---
+    // Если мы уже в процессе cascade и обнаружили 0 или нет -> планируем удаление
+    if (count === 0 || tarif === "нет") {
+        setTimeout(() => removeFmcBundle(index), 10);
+        return; 
+    }
+
+    if (count > 0 || tarif !== "нет") {
+        if (!getCheckbox("VATS")) {
             context.set("VATS", true);
-          }
-          const tarif = document.getElementById("TarifFMC")?.value;
-          if (tarif === "нет") {
-            const options = document.getElementById("TarifFMC")?.options;
-            if (options?.length > 1) {
-              context.select("TarifFMC", options[1].value);
-            }
-          }
-        } else {
-          if (document.getElementById("TarifFMC")?.value !== "нет") {
-            context.select("TarifFMC", "нет");
-          }
-          if (document.getElementById("RegionDostavki")?.value !== "нет") {
-            context.select("RegionDostavki", "нет");
-          }
         }
-      },
-      TarifFMC: (context) => {
-        const val = document.getElementById("TarifFMC")?.value;
-        if (val && val !== "нет") {
-          if (!getCheckbox("VATS")) {
-            context.set("VATS", true);
-          }
-          if (getNumber("KolvoFMC") === 0) {
-            context.set("KolvoFMC", 1);
-          }
-        } else {
-          if (getNumber("KolvoFMC") !== 0) {
-            context.set("KolvoFMC", 0);
-          }
-          if (document.getElementById("RegionDostavki")?.value !== "нет") {
-            context.select("RegionDostavki", "нет");
-          }
+    }
+},
+RegionDostavki: (context) => {
+    const val = document.getElementById("RegionDostavki")?.value;
+    const totalFmcBundles = document.querySelectorAll('#fmc-bundles-container > .fmc-subgroup').length;
+    
+    if (val !== "нет") {
+        if (!getCheckbox("VATS")) {
+          context.set("VATS", true);
         }
-      },
-      RegionDostavki: (context) => {
-        const val = document.getElementById("RegionDostavki")?.value;
-        if (val && val !== "нет") {
-          if (!getCheckbox("VATS")) {
-            context.set("VATS", true);
-          }
-          if (getNumber("KolvoFMC") === 0) {
-            context.set("KolvoFMC", 1);
-          }
-          const tarif = document.getElementById("TarifFMC")?.value;
-          if (tarif === "нет") {
-            const options = document.getElementById("TarifFMC")?.options;
-            if (options?.length > 1) {
-              context.select("TarifFMC", options[1].value);
-            }
-          }
+        if (totalFmcBundles === 0) {
+            addFmcBundle(false, '200 минут, 1Гб интернета', 1);
         }
-      },
+    }
+},
       OMNI: (context) => {
         const val = getCheckbox("OMNI");
         if (val === true) {
@@ -2521,46 +2601,88 @@
 
     function runCascade(startField) {
         if (isProcessing) { manualChanges.add(startField); return; }
-        cascadeQueue = [startField];
-        isProcessing = true;
-        let depth = 0; const maxDepth = 3;
-        const context = {
-            set: (id, value) => {
-                const el = document.getElementById(id); if (!el) return;
-                const current = el.type === "checkbox" ? el.checked : el.value;
-                const changedByUser = manualChanges.has(id);
-                const isSame = current == value; 
-                if (isSame || changedByUser) return;
-                
-                if (el.type === "checkbox") el.checked = value; else el.value = value;
-                cascadeQueue.push(id);
-            },
-            select: (id, value) => {
-                const el = document.getElementById(id); if (!el) return;
-                const changedByUser = manualChanges.has(id);
-                const isSame = el.value === value;
-                if (isSame || changedByUser) return;
-                
-                el.value = value;
-                updateSelectTrigger(id);
-                cascadeQueue.push(id);
+        // --- ИСПРАВЛЕНИЕ 1 (try/finally) ---
+        try {
+            cascadeQueue = [startField];
+            isProcessing = true;
+            let depth = 0; const maxDepth = 3;
+            const context = {
+                set: (id, value) => {
+                    const el = document.getElementById(id); if (!el) return;
+                    const current = el.type === "checkbox" ? el.checked : el.value;
+                    const changedByUser = manualChanges.has(id);
+                    const isSame = current == value; 
+                    if (isSame || changedByUser) return;
+                    
+                    if (el.type === "checkbox") el.checked = value; else el.value = value;
+                    cascadeQueue.push(id);
+                },
+                select: (id, value) => {
+                    const el = document.getElementById(id); if (!el) return;
+                    const changedByUser = manualChanges.has(id);
+                    const isSame = el.value === value;
+                    if (isSame || changedByUser) return;
+                    
+                    el.value = value;
+                    updateSelectTrigger(id);
+                    cascadeQueue.push(id);
+                }
+            };
+            while (cascadeQueue.length && depth < maxDepth) {
+                const current = cascadeQueue.shift();
+                const rule = rules[current];
+                if (rule) rule(context);
+                rules.fmcDynamicRule(context, current);
+                depth++;
             }
-        };
-        while (cascadeQueue.length && depth < maxDepth) {
-            const current = cascadeQueue.shift();
-            const rule = rules[current];
-            if (rule) rule(context);
-            depth++;
+        } finally {
+            isProcessing = false;
         }
-        isProcessing = false;
         manualChanges.clear();
         updateTotals();
     }
 
     function updateTotals() {
-        const sumAll = parseVal("NomeraVATS") + parseVal("NomeraVATS8800") + parseVal("KolvoFMC");
+        let totalFmcCost = 0;
+        let totalFmcCount = 0;
+
+        const fmcBundles = document.querySelectorAll('#fmc-bundles-container > .fmc-subgroup');
+
+        fmcBundles.forEach((bundle) => {
+            const index = bundle.getAttribute('data-index');
+            const count = getNumber('KolvoFMC_' + index);
+            const tarif = getSelect('TarifFMC_' + index);
+            
+            totalFmcCount += count;
+            
+            let pricePerSim = 0;
+            switch (tarif) {
+                case "200 минут, 1Гб интернета": pricePerSim = 790; break;
+                case "600 минут, 5Гб интернета": pricePerSim = 1290; break;
+                case "800 минут, 10Гб интернета": pricePerSim = 1990; break;
+                case "2000 минут, 20Гб интернета": pricePerSim = 4490; break;
+                case "15 минут, 0,2Гб интернета": pricePerSim = 390; break;
+            }
+            
+            const costBundle = pricePerSim * count;
+            totalFmcCost += costBundle;
+
+            const costEl = document.getElementById(`fmc-cost-total-${index}`);
+            if(costEl) {
+                 costEl.textContent = costBundle.toLocaleString('ru-RU') + ' ₽ / мес';
+                 costEl.className = 'price-badge cost';
+            }
+        });
+
+        const sumAll = parseVal("NomeraVATS") + parseVal("NomeraVATS8800") + totalFmcCount;
         const vsego = document.getElementById("NomeraVATSVsego");
         if(vsego) vsego.value = sumAll;
+        
+        // --- ИСПРАВЛЕНИЕ 5 (из ТЗ): Плашка "всего" показывает только лимит ---
+        const costNomeraVsegoEl = document.getElementById('cost-NomeraVATSVsego');
+        if(costNomeraVsegoEl) {
+             costNomeraVsegoEl.innerHTML = '';
+        }
 
         Object.entries(formulaMap).forEach(([id, formula]) => {
             const costEl = document.getElementById(`cost-${id}`);
@@ -2621,7 +2743,7 @@
                 if(typeof v === 'number') total += v;
             }
         });
-
+        total += totalFmcCost; 
         const totalFormatted = total.toLocaleString('ru-RU');
         document.getElementById('total-monthly').textContent = totalFormatted;
 
@@ -2629,7 +2751,7 @@
         const minimal = (nom8800 * 700).toLocaleString('ru-RU');
         document.getElementById('total-minimal').textContent = minimal + " ₽ / мес";
 
-        const connect = (parseVal("NomeraVATS") * 300 + parseVal("KolvoFMC") * 250).toLocaleString('ru-RU');
+        const connect = (parseVal("NomeraVATS") * 300 + totalFmcCount * 250).toLocaleString('ru-RU');
         document.getElementById('total-connection').textContent = connect + " ₽";
 
         const region = (document.getElementById("RegionDostavki")?.value || "").trim();
@@ -2653,7 +2775,7 @@
 
         const monthly = total;
         const minimalNum = nom8800 * 700;
-        const connectionNum = parseVal("NomeraVATS") * 300 + parseVal("KolvoFMC") * 250;
+        const connectionNum = parseVal("NomeraVATS") * 300 + totalFmcCount * 250;
         const baseSum = monthly + minimalNum + connectionNum;
         const guarantee = baseSum > 0 ? (baseSum < 4000 ? 4000 : baseSum) : 0;
         document.getElementById('total-guarantee').textContent = guarantee.toLocaleString('ru-RU') + " ₽";
@@ -2674,11 +2796,9 @@
         const params = new URLSearchParams();
 
         document.querySelectorAll('input, select').forEach(el => {
-            // --- НОВАЯ ПРОВЕРКА ---
             if (el.id === 'mgrName' || el.id === 'mgrPhone' || el.id === 'mgrEmail') {
-                return; // Игнорируем поля с ПД
+                return;
             }
-            // ---------------------
             if (!el.id || el.id.startsWith('mobile-') || el.id.startsWith('total-') || el.id.startsWith('cost-') || el.id.startsWith('limit-')) return;
             
             let val = null;
@@ -2704,6 +2824,25 @@
         const params = new URLSearchParams(window.location.search);
         if ([...params].length === 0) return;
 
+        let maxFmcIndex = 0;
+        params.forEach((val, key) => {
+             if (key.startsWith('KolvoFMC_') || key.startsWith('TarifFMC_')) {
+                 const index = parseInt(key.split('_')[1]);
+                 if (!isNaN(index) && index > maxFmcIndex) {
+                     maxFmcIndex = index;
+                 }
+             }
+        });
+        
+        clearFmcBundles(); 
+        for(let i = 1; i <= maxFmcIndex; i++) {
+            addFmcBundle(true); 
+        }
+        
+        if (maxFmcIndex === 0) {
+             addFmcBundle(true);
+        }
+
         params.forEach((encodedVal, key) => {
             const el = document.getElementById(key);
             if (el) {
@@ -2719,21 +2858,8 @@
             }
         });
 
-        const cascadeOrder = [
-            'VATS', 'VATSPRO', 'OMNI', 'AR', 'KT', 
-            'KolvoSotrudnikovVATS', 'KolvoFMC', 'TarifFMC', 'RegionDostavki'
-        ];
-        
-        cascadeOrder.forEach(id => {
-            if (params.has(id)) {
-                runCascade(id);
-            }
-        });
-
         params.forEach((_, key) => {
-            if (!cascadeOrder.includes(key)) {
-                runCascade(key);
-            }
+            runCascade(key);
         });
 
         updateTotals();
@@ -2747,6 +2873,56 @@
     restoreStateFromURL();
     updateTotals();
 </script>
+<!-- ============================================================== -->
+<!-- СКРЫТЫЙ ШАБЛОН ДЛЯ ОДНОГО НАБОРА СИМ-КАРТ (Добавьте в конец <body>) -->
+<!-- ============================================================== -->
+<template id="fmc-bundle-template">
+    <div class="fmc-subgroup" data-index="INDEX_ID" style="padding-top: 15px; margin-top: 30px; border-top: 1px dashed #ddd;">
+        <div class="fmc-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; padding-bottom: 8px;">
+             <div>Набор SIM #<span class="bundle-num">1</span></div>
+             <button type="button" class="stepper-btn remove-bundle-btn" style="width: 30px; height: 30px; background: #FFEDEA; color: #E74C3C;" onclick="removeFmcBundle('INDEX_ID')">
+                 −
+             </button>
+        </div>
+        
+        <!-- КОЛ-ВО СИМ КАРТ -->
+        <div class="option-row" style="padding-bottom: 5px; border-bottom: none;">
+            <div class="option-info">
+                <div class="option-name">Кол-во сим карт</div>
+                <div class="option-meta"></div>
+            </div>
+            <div class="control-wrapper">
+                <div class="stepper">
+                    <button type="button" class="stepper-btn" onclick="stepInput('KolvoFMC_INDEX_ID', -1)">−</button>
+                    <input type="text" inputmode="numeric" class="stepper-input" id="KolvoFMC_INDEX_ID" value="0" onchange="runCascade('KolvoFMC_INDEX_ID')">
+                    <button type="button" class="stepper-btn" onclick="stepInput('KolvoFMC_INDEX_ID', 1)">+</button>
+                </div>
+            </div>
+        </div>
 
+        <!-- ТАРИФ FMC СИМ КАРТ -->
+        <div class="option-row stacked" style="padding-top: 0; padding-bottom: 8px;">
+            <div class="option-info">
+                <div class="option-name">Тариф FMC сим карт</div>
+                <div class="option-meta"><span id="cost-TarifFMC_INDEX_ID"></span></div>
+            </div>
+            <div class="control-wrapper">
+                <div class="custom-select-trigger" onclick="openSelectModal('TarifFMC_INDEX_ID', 'Тариф FMC')">нет</div>
+                <select id="TarifFMC_INDEX_ID" class="hidden-native-select" onchange="runCascade('TarifFMC_INDEX_ID')">
+                    <option value="нет">нет</option>
+                    <option value="200 минут, 1Гб интернета">200 минут, 1Гб интернета</option>
+                    <option value="600 минут, 5Гб интернета">600 минут, 5Гб интернета</option>
+                    <option value="800 минут, 10Гб интернета">800 минут, 10Гб интернета</option>
+                    <option value="2000 минут, 20Гб интернета">2000 минут, 20Гб интернета</option>
+                    <option value="15 минут, 0,2Гб интернета">15 минут, 0,2Гб интернета</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="fmc-cost-row">
+            <span id="fmc-cost-total-INDEX_ID"></span>
+        </div>
+    </div>
+</template>
 </body>
 </html>
