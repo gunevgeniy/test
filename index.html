@@ -382,7 +382,7 @@
 
     .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 3px solid var(--color-primary); padding-bottom: 20px; }
     .print-logo { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 32px; color: var(--color-primary); }
-    .print-title { font-size: 18px; font-weight: 700; text-transform: uppercase; color: #333; margin-right: 30px; }
+    .print-title { font-size: 18px; font-weight: 700; text-transform: uppercase; color: #333; }
     
     .print-manager { margin-bottom: 30px; padding: 15px; background: #F8F9FC; border-radius: 12px; border: 1px solid #eee; }
     .print-manager h3 { margin: 0 0 10px 0; font-size: 14px; color: var(--color-primary); text-transform: uppercase; }
@@ -401,7 +401,7 @@
     }
     
     .print-section-title { 
-        display: block; 
+        display: block; /* Было none, но в JS мы удаляем display:none при печати, тут зададим явно */
         font-weight: 700; 
         font-size: 14px; 
         color: var(--color-primary); 
@@ -409,6 +409,8 @@
         margin-bottom: 15px; 
         border-bottom: 2px solid #eee; 
         padding-bottom: 8px;
+        
+        /* ГЛАВНОЕ: Клеим заголовок к следующему элементу (таблице) */
         page-break-after: avoid; 
         break-after: avoid; 
     }
@@ -1423,6 +1425,7 @@
         if (val < 0) val = 0;
         input.value = val;
         runCascade(id);
+        saveStateToURL();
     }
 
     // --- MODAL LOGIC (Info) ---
@@ -1469,6 +1472,7 @@
         document.getElementById('selectModalOverlay').classList.remove('open');
         updateSelectTrigger(currentSelectId);
         runCascade(currentSelectId);
+        saveStateToURL();
     }
 
     function closeSelectModal(e, force) {
@@ -1625,11 +1629,8 @@ function addFmcBundle(isRestoring = false, initialTarif = '200 минут, 1Гб
     // Обновление кастомных селектов
     newBundle.querySelectorAll('select').forEach(s => updateSelectTrigger(s.id));
     
-    // 4. Запускаем каскад (это должно установить минимум, если нужно)
+    // 4. Запускаем каскад ТОЛЬКО если это не восстановление, иначе набор с 0 удалится сразу
     if (!isRestoring) {
-        runCascade('KolvoFMC_' + newId); // Запускаем с поля кол-ва
-    } else {
-        // При восстановлении просто пересчитываем итоги
         runCascade('KolvoFMC_' + newId); 
     }
 }
@@ -1897,7 +1898,7 @@ function clearFmcBundles() {
                             <div style="font-size: 11px; color: #777; margin-top: 4px;">Тариф: ${tariffName}</div>
                         </td>
                         <td style="width:30%; vertical-align:middle;">
-                            <div class="print-row-value">${costFormatted}</div>
+                            <div class="print-row-value"><div class="print-row-value">${costFormatted}</div></div>
                         </td>
                     </tr>`);
                 });
@@ -2837,47 +2838,28 @@ RegionDostavki: (context) => {
         const params = new URLSearchParams(window.location.search);
         if ([...params].length === 0) return;
 
-        // --- ИСПРАВЛЕНИЕ: ПРАВИЛЬНОЕ ВОССТАНОВЛЕНИЕ FMC ПО ПОРЯДКУ ---
-        // 1. Собираем данные обо всех FMC из URL в массив
-        const fmcData = [];
+        let maxFmcIndex = 0;
         params.forEach((val, key) => {
-            if (key.startsWith('KolvoFMC_')) {
-                const id = key.split('_')[1];
-                const count = val;
-                // Ищем тариф для этого же ID
-                // (если нет в URL, значит 'нет' - но это маловероятно, т.к. мы сохраняем все != 'нет')
-                const tariffKey = 'TarifFMC_' + id;
-                const tariff = params.get(tariffKey) || 'нет';
-                
-                fmcData.push({
-                    originalId: parseInt(id),
-                    count: count,
-                    tariff: tariff
-                });
-            }
-        });
-
-        // 2. Сортируем по ID, чтобы сохранить порядок, в котором они были созданы
-        fmcData.sort((a, b) => a.originalId - b.originalId);
-
-        // 3. Очищаем текущие (на всякий случай)
-        clearFmcBundles(); 
-
-        // 4. Создаем новые наборы, используя данные из URL
-        // Мы игнорируем старые ID и просто создаем новые 1, 2, 3...
-        fmcData.forEach(item => {
-            // isRestoring=true чтобы не сработал лишний каскад при добавлении
-            addFmcBundle(true, item.tariff, item.count);
+             if (key.startsWith('KolvoFMC_') || key.startsWith('TarifFMC_')) {
+                 const index = parseInt(key.split('_')[1]);
+                 if (!isNaN(index) && index > maxFmcIndex) {
+                     maxFmcIndex = index;
+                 }
+             }
         });
         
-        // Если FMC вообще не было в URL, но параметры есть (значит другие блоки), 
-        // addFmcBundle не вызывается, и это правильно (0 наборов).
+        clearFmcBundles(); 
+        for(let i = 1; i <= maxFmcIndex; i++) {
+            // ИСПРАВЛЕНИЕ: Добавляем наборы пустыми (0), чтобы избежать фантомных начислений,
+            // если в URL нет параметров для этого набора.
+            addFmcBundle(true, '200 минут, 1Гб интернета', 0); 
+        }
+        
+        if (maxFmcIndex === 0) {
+             addFmcBundle(true, '200 минут, 1Гб интернета', 1); // Дефолт, если в URL вообще нет FMC
+        }
 
-        // --- ВОССТАНОВЛЕНИЕ ОСТАЛЬНЫХ ПАРАМЕТРОВ ---
         params.forEach((encodedVal, key) => {
-            // Пропускаем FMC ключи, мы их уже обработали вручную
-            if (key.startsWith('KolvoFMC_') || key.startsWith('TarifFMC_')) return;
-
             const el = document.getElementById(key);
             if (el) {
                 const val = decodeURIComponent(encodedVal);
@@ -2892,18 +2874,8 @@ RegionDostavki: (context) => {
             }
         });
 
-        // Запускаем каскад для всего, кроме FMC (FMC уже инициализированы)
         params.forEach((_, key) => {
-            if (!key.startsWith('KolvoFMC_') && !key.startsWith('TarifFMC_')) {
-                runCascade(key);
-            }
-        });
-        
-        // Для FMC запускаем каскад отдельно по новым сгенерированным ID
-        // Нам нужно найти новые созданные ID.
-        document.querySelectorAll('.fmc-subgroup').forEach(bundle => {
-            const id = bundle.getAttribute('data-index');
-            runCascade('KolvoFMC_' + id);
+            runCascade(key);
         });
 
         updateTotals();
@@ -2939,8 +2911,8 @@ RegionDostavki: (context) => {
             <div class="control-wrapper">
                 <div class="stepper">
                     <button type="button" class="stepper-btn" onclick="stepInput('KolvoFMC_INDEX_ID', -1)">−</button>
-                    <!-- ДОБАВЛЕНО: saveStateToURL() в onchange и oninput -->
-                    <input type="text" inputmode="numeric" class="stepper-input" id="KolvoFMC_INDEX_ID" value="0" onchange="runCascade('KolvoFMC_INDEX_ID'); saveStateToURL()" oninput="saveStateToURL()">
+                    <!-- ДОБАВЛЕНО: saveStateToURL() в onchange -->
+                    <input type="text" inputmode="numeric" class="stepper-input" id="KolvoFMC_INDEX_ID" value="0" onchange="runCascade('KolvoFMC_INDEX_ID'); saveStateToURL()">
                     <button type="button" class="stepper-btn" onclick="stepInput('KolvoFMC_INDEX_ID', 1)">+</button>
                 </div>
             </div>
