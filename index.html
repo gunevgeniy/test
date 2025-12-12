@@ -689,8 +689,10 @@
             <div class="custom-select-trigger" onclick="openSelectModal('RegionDostavki', 'Регион доставки')">нет</div>
             <select id="RegionDostavki" class="hidden-native-select" onchange="runCascade('RegionDostavki')">
                 <option value="нет">нет</option>
-                <option value="Москва и мск. обл.">Москва и МСК. обл.</option>
-                <option value="Санкт-Петербург и лен. обл.">Санкт-Петербург и лен. обл.</option>
+                <option value="Москва">Москва</option>
+                <option value="Санкт-Петербург">Санкт-Петербург</option>
+                <option value="Московская область">Московская область</option>
+                <option value="Ленинградская область">Ленинградская область</option>
                 <option value="Центральная Россия, Поволжье">Центральная Россия, Поволжье</option>
                 <option value="Юг, Урал, Сибирь">Юг, Урал, Сибирь</option>
                 <option value="Дальний Восток">Дальний Восток</option>
@@ -2787,7 +2789,8 @@ RegionDostavki: (context) => {
 
         const region = (document.getElementById("RegionDostavki")?.value || "").trim();
         let delPrice = 0;
-        if (region.includes("Москва") || region.includes("Петербург")) delPrice = 500;
+        if (region.includes("Москва") || region.includes("Петербург")) delPrice = 0;
+        else if (region.includes("Московская") || region.includes("Ленинградская")) delPrice = 500;
         else if (region.includes("Центральная")) delPrice = 750;
         else if (region.includes("Юг")) delPrice = 1000;
         else if (region.includes("Дальний")) delPrice = 1300;
@@ -2795,7 +2798,13 @@ RegionDostavki: (context) => {
 
         const regionPlaceholder = document.getElementById('cost-RegionDostavki-placeholder');
         if (regionPlaceholder) {
-            if (delPrice > 0) {
+            if (delPrice === 0 && region !== "нет" && region !== "") {
+                // Если бесплатно - пишем текст
+                regionPlaceholder.className = 'price-badge cost';
+                regionPlaceholder.textContent = `бесплатная доставка`; 
+            
+            } else if (delPrice > 0) {
+                // Если платно - пишем цену
                 regionPlaceholder.className = 'price-badge cost';
                 regionPlaceholder.textContent = `+${delPrice.toLocaleString('ru-RU')} ₽ - доставка`;
             } else {
