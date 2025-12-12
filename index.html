@@ -1933,10 +1933,13 @@ function clearFmcBundles() {
         if (isWebApp) {
             const tg = window.Telegram.WebApp;
             tg.ready();
-            const userId = tg.initDataUnsafe?.user?.id;
+            
 
-            if (!userId) {
-                showToast("error", "Ошибка", "Нет ID пользователя. Перезапустите бота.");
+            const userId = tg.initDataUnsafe?.user?.id;
+            const initData = tg.initData;
+
+            if (!userId || !initData) {
+                showToast("error", "Ошибка", "Перезапустите бота.");
                 return;
             }
 
@@ -1949,20 +1952,26 @@ function clearFmcBundles() {
                 const printContent = document.getElementById('print-area').innerHTML;
                 const styles = document.querySelector('style').innerHTML;
 
+              
                 const response = await fetch(SERVER_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
                     body: JSON.stringify({
                         htmlContent: printContent,
                         cssContent: styles,
-                        userId: userId
+                        userId: userId,
+                        initData: initData
                     })
                 });
 
                 if (response.ok) {
                     showToast("success", "Готово!", "КП успешно отправлено в чат с ботом.", 0);
                 } else {
-                    showToast("error", "Ошибка", "Сервер вернул ошибку при отправке. Повторите позже.");
+                    
+                    const errorData = await response.json();
+                    showToast("error", "Ошибка сервера", errorData.error || "Не удалось отправить КП.");
                 }
             } catch (e) {
                 console.error(e);
@@ -1972,7 +1981,8 @@ function clearFmcBundles() {
                 btn.disabled = false;
             }
 
-        } else if (isMobile) {
+        }
+         else if (isMobile) {
             showToast(
                 "loading",
                 "КП сформировано.", 
