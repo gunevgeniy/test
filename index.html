@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="yandex" content="noindex, nofollow">
-  <title>Калькулятор стоимости сервиса UIS</title>
+  <title>Калькулятор стоимости сервиса</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -523,7 +523,7 @@
     <!-- BLOCK 1: VATS -->
     <section class="card card-group">
       <div class="card-header static">
-        <div class="card-title">Настройки Виртуальной АТС и номеров</div>
+        <div class="card-title">Виртуальная АТС и номера</div>
       </div>
 
       <div class="option-row">
@@ -566,7 +566,7 @@
 
       <div class="option-row">
         <div class="option-info">
-            <div class="option-name">Лицензии сотрудников ВАТС</div>
+            <div class="option-name">Лицензии сотрудников </div>
             <div class="option-meta">
                 <span id="cost-KolvoSotrudnikovVATS"></span>
                 <span id="limit-KolvoSotrudnikovVATS"></span>
@@ -583,7 +583,7 @@
 
       <div class="option-row">
         <div class="option-info">
-            <div class="option-name">Длительность хранения разговоров</div>
+            <div class="option-name">Хранение разговоров</div>
             <div class="option-meta">
                 <span id="cost-DlitelnostHraneniyaVATS"></span>
                 <span id="limit-DlitelnostHraneniyaVATS"></span>
@@ -756,7 +756,7 @@
                 <div class="option-meta"><span id="cost-KanalnostSIPTrankov"></span><span id="limit-KanalnostSIPTrankov"></span></div>
             </div>
             <div class="control-wrapper">
-                <div class="custom-select-trigger" onclick="openSelectModal('KanalnostSIPTrankov', 'Канальность SIP')">0</div>
+                <div class="custom-select-trigger" onclick="openSelectModal('KanalnostSIPTrankov', 'Канальность SIP-транков')">0</div>
                 <select id="KanalnostSIPTrankov" class="hidden-native-select" onchange="runCascade('KanalnostSIPTrankov')">
                     <option value="0">0</option>
                     <option value="30">30</option>
@@ -798,7 +798,7 @@
                 <div class="option-meta"><span id="cost-KanalnostSIPAkkauntov"></span><span id="limit-KanalnostSIPAkkauntov"></span></div>
             </div>
             <div class="control-wrapper">
-                <div class="custom-select-trigger" onclick="openSelectModal('KanalnostSIPAkkauntov', 'Канальность SIP-акк')">0</div>
+                <div class="custom-select-trigger" onclick="openSelectModal('KanalnostSIPAkkauntov', 'Канальность SIP-аккаунтов')">0</div>
                 <select id="KanalnostSIPAkkauntov" class="hidden-native-select" onchange="runCascade('KanalnostSIPAkkauntov')">
                     <option value="0">0</option>
                     <option value="30">30</option>
@@ -1013,7 +1013,7 @@
 
              <div class="option-row">
                 <div class="option-info">
-                    <div class="option-name">Длительность хранения разговоров</div>
+                    <div class="option-name">Хранение разговоров</div>
                     <div class="option-meta"><span id="cost-DlitelnostHraneniyaAR"></span><span id="limit-DlitelnostHraneniyaAR"></span></div>
                 </div>
                 <div class="control-wrapper">
@@ -1091,7 +1091,7 @@
     <!-- BLOCK 4: Integrations -->
      <section class="card card-group">
         <div class="card-header static">
-            <div class="card-title">Интеграции и дополнительные опции </div>
+            <div class="card-title">Интеграции и доп. опции </div>
         </div>
 
         <div class="option-row">
@@ -1328,7 +1328,7 @@
         </div>
         <div class="print-total-row">
             <div>
-                <span>Мин. счет за связь</span>
+                <span>Минимальный счет за связь</span>
                 <span class="print-total-helper" id="print-total-minimal-desc">Расходуется на звонки с номерами 8-800</span>
             </div>
             <span id="print-total-minimal">0 ₽</span>
@@ -2188,6 +2188,13 @@ function clearFmcBundles() {
         context.select("KanalnostSIPTrankov", "0");
         context.select("KanalnostSIPAkkauntov", "0");
         context.select("RegionDostavki", "нет");
+        
+        if (!getCheckbox("OMNI") && !getCheckbox("AnalitikaProdaj")) {
+            context.set("AmoBitrix", false);
+          }
+          if (!getCheckbox("OMNI") && !getCheckbox("AR")) {
+            context.set("UvedomlenieOSobitiyah", false);
+          }
     }
 },
       VATSPRO: (context) => {
@@ -2468,6 +2475,7 @@ RegionDostavki: (context) => {
           context.set("AvtoperezvonPoZayavkam", false);
           if (!getCheckbox("VATS") && !getCheckbox("OMNI")) {
             context.set("UvedomlenieOSobitiyah", false);
+            context.set("AmoBitrix", false);
           }
         }
       },
@@ -2843,7 +2851,7 @@ RegionDostavki: (context) => {
                 <div class="option-meta"><span id="cost-TarifFMC_INDEX_ID"></span></div>
             </div>
             <div class="control-wrapper">
-                <div class="custom-select-trigger" onclick="openSelectModal('TarifFMC_INDEX_ID', 'Тариф FMC')">нет</div>
+                <div class="custom-select-trigger" onclick="openSelectModal('TarifFMC_INDEX_ID', 'Тариф на сим картах')">нет</div>
                 <select id="TarifFMC_INDEX_ID" class="hidden-native-select" onchange="runCascade('TarifFMC_INDEX_ID')">
                     <option value="нет">нет</option>
                     <option value="200 минут, 1Гб интернета">200 минут, 1Гб интернета</option>
