@@ -1229,30 +1229,36 @@
 </div>
 
 <!-- MOBILE BOTTOM SHEET -->
+<!-- MOBILE BOTTOM SHEET -->
 <div class="bottom-sheet" id="mobileSheet">
     <div class="sheet-header" onclick="toggleSheet()">
         <div class="sheet-main-info">
             <div class="sheet-label">Ежемесячный платеж</div>
-            <div class="sheet-price"><span id="mobile-total">0</span></div>
+            <!-- БЫЛО: 0, СТАЛО: 0 ₽ / мес -->
+            <div class="sheet-price"><span id="mobile-total">0 ₽ / мес</span></div>
         </div>
         <div class="sheet-icon">▲</div>
     </div>
     <div class="sheet-content">
         <div class="sheet-row">
             <span>Минимальный счет за связь <span class="info-icon" onclick="openTooltip('tooltip-min8800')">i</span></span>
-            <span id="mobile-minimal">0</span>
+            <!-- БЫЛО: 0, СТАЛО: 0 ₽ / мес -->
+            <span id="mobile-minimal">0 ₽ / мес</span>
         </div>
         <div class="sheet-row">
             <span>Покупка номеров <span class="info-icon" onclick="openTooltip('tooltip-connect')">i</span></span>
-            <span id="mobile-connection">0</span>
+            <!-- БЫЛО: 0, СТАЛО: 0 ₽ -->
+            <span id="mobile-connection">0 ₽</span>
         </div>
         <div class="sheet-row">
             <span>Доставка FMC-сим карт <span class="info-icon" onclick="openTooltip('tooltip-delivery')">i</span></span>
-            <span id="mobile-delivery">0</span>
+            <!-- БЫЛО: 0, СТАЛО: 0 ₽ -->
+            <span id="mobile-delivery">0 ₽</span>
         </div>
         <div class="sheet-row">
             <span>Гарантийный платеж <span class="info-icon" onclick="openTooltip('tooltip-guarantee')">i</span></span>
-            <span id="mobile-guarantee">0</span>
+            <!-- БЫЛО: 0, СТАЛО: 0 ₽ -->
+            <span id="mobile-guarantee">0 ₽</span>
         </div>
         <button class="sheet-reset" onclick="resetForm(); toggleSheet()">Стереть расчет</button>
         <button class="btn-manager-print" style="background:#0000aa; color:white; margin-top:10px;" onclick="openManagerModal()">Печать КП</button>
@@ -1459,12 +1465,22 @@
             const item = document.createElement('div');
             item.className = 'modal-option-item';
             if (opt.selected) item.classList.add('selected');
-            item.textContent = opt.text;
+            
+            // --- НАЧАЛО ИЗМЕНЕНИЯ ---
+            let textToShow = opt.text;
+            // Если это пакет трафика и это число (не "безлимит" и не "0")
+            if (selectId === 'PaketTrafika' && !isNaN(parseInt(textToShow)) && textToShow !== "0") {
+                textToShow = parseInt(textToShow).toLocaleString('ru-RU');
+            }
+            item.textContent = textToShow;
+            // --- КОНЕЦ ИЗМЕНЕНИЯ ---
+
             item.onclick = () => selectOptionInModal(opt.value);
             container.appendChild(item);
         });
 
         document.getElementById('selectModalOverlay').classList.add('open');
+        document.body.classList.add('no-scroll');
     }
 
     function selectOptionInModal(value) {
@@ -1486,7 +1502,15 @@
         const nativeSelect = document.getElementById(id);
         const trigger = nativeSelect.parentElement.querySelector('.custom-select-trigger');
         if (trigger) {
-            trigger.textContent = nativeSelect.options[nativeSelect.selectedIndex].text;
+            let text = nativeSelect.options[nativeSelect.selectedIndex].text;
+            
+            // --- НАЧАЛО ИЗМЕНЕНИЯ ---
+            if (id === 'PaketTrafika' && !isNaN(parseInt(text)) && text !== "0") {
+                text = parseInt(text).toLocaleString('ru-RU');
+            }
+            // --- КОНЕЦ ИЗМЕНЕНИЯ ---
+            
+            trigger.textContent = text;
         }
     }
     
@@ -1807,6 +1831,9 @@ function clearFmcBundles() {
                 } else if (select && select.value !== "0" && select.value !== "нет") {
                     isActive = true;
                     valueText = select.options[select.selectedIndex].text;
+                    if (select.id === 'PaketTrafika' && valueText !== "безлимит") {
+                        valueText = parseInt(valueText).toLocaleString('ru-RU');
+                    }
                 } else if (readonly && parseInt(readonly.value) > 0) {
                     isActive = true;
                     valueText = readonly.value + " шт.";
